@@ -31,6 +31,7 @@ namespace InventarioEscolar.Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAssetWriteOnlyRepository, AssetRepository>();
             services.AddScoped<IAssetReadOnlyRepository, AssetRepository>();
+            services.AddScoped<IAssetUpdateOnlyRepository, AssetRepository>();
         }
     }
 }

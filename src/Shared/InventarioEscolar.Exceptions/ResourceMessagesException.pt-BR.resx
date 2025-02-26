@@ -147,4 +147,7 @@
   <data name="INVALID_ROOM_LOCALIZATION" xml:space="preserve">
     <value>A sala de localização deve ser válida.</value>
   </data>
+  <data name="ASSET_NOT_FOUND" xml:space="preserve">
+    <value>Patrimônio não encontrado</value>
+  </data>
 </root>

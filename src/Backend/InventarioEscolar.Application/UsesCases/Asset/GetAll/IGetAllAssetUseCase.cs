@@ -1,8 +1,11 @@
 ﻿
+using InventarioEscolar.Application.Dtos;
+using InventarioEscolar.Communication.Response;
+
 namespace InventarioEscolar.Application.UsesCases.Asset.GetAll
 {
     public interface IGetAllAssetUseCase
     {
-        Task<IList<Domain.Entities.Asset>> Execute();
+        Task<ResponseAssetJson<IEnumerable<AssetDto>>> Execute();
     }
 }

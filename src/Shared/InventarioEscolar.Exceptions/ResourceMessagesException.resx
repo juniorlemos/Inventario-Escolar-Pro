@@ -148,4 +148,7 @@ ve number</value>
   <data name="INVALID_ROOM_LOCALIZATION" xml:space="preserve">
     <value>The location room must be valid.</value>
   </data>
+  <data name="ASSET_NOT_FOUND" xml:space="preserve">
+    <value>ASSET NOT FOUND</value>
+  </data>
 </root>

@@ -70,6 +70,15 @@ namespace InventarioEscolar.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ASSET NOT FOUND.
+        /// </summary>
+        public static string ASSET_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("ASSET_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The conservation status of the asset is not recognized.
         /// </summary>
         public static string CONSERVATION_STATE_NOT_SUPPORTED_ {
