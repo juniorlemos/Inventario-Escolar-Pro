@@ -29,7 +29,7 @@ namespace InventarioEscolar.Application.UsesCases.Asset.Update
 
         public async Task Execute(RequestUpdateAssetJson request)
         {
-            var asset = _repositoryReadOnly.GetById(request.Id);
+            var asset = await _repositoryReadOnly.GetById(request.Id);
             if (asset is null)
                 throw new NotFoundException(ResourceMessagesException.ASSET_NOT_FOUND);
 
@@ -37,7 +37,7 @@ namespace InventarioEscolar.Application.UsesCases.Asset.Update
 
             var newAsset = _mapper.Map<Domain.Entities.Asset>(request);
 
-            _repositoryUpdateOnly.Update(newAsset);
+            _repositoryUpdateOnly.Update(asset);
 
             await _unitOfWork.Commit();
         }

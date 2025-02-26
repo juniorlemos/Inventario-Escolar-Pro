@@ -4,6 +4,5 @@
     {
         Task<IEnumerable<Entities.Asset>> GetAllAssets();
         Task<Entities.Asset?> GetById(long assetId);
-
     }
 }
