@@ -1,8 +1,10 @@
-﻿namespace InventarioEscolar.Domain.Repositories.Asset
+﻿using InventarioEscolar.Domain.Pagination;
+
+namespace InventarioEscolar.Domain.Repositories.Asset
 {
     public interface IAssetReadOnlyRepository
     {
-        Task<IEnumerable<Entities.Asset>> GetAllAssets();
+        Task<PagedResult<Entities.Asset>> GetAllAssets(int page, int pageSize);
         Task<Entities.Asset?> GetById(long assetId);
     }
 }

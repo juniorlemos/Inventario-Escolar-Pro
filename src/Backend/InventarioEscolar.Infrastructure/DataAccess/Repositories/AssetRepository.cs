@@ -1,4 +1,6 @@
-﻿using InventarioEscolar.Domain.Entities;
+﻿using Azure;
+using InventarioEscolar.Domain.Pagination;
+using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Repositories.Asset;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,12 +20,17 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
             _dbContext.Assets.Remove(asset!);
         }
 
-        public async Task<IEnumerable<Asset>> GetAllAssets()
+        public async Task<PagedResult<Asset>> GetAllAssets(int page, int pageSize)
         {
-            return await _dbContext.Assets.AsNoTracking()
-                .Include( c => c.Category)
-                .Include( l => l.RoomLocation )
-                .ToListAsync();
+            var query = _dbContext.Assets
+                .AsNoTracking()
+                .Include(c => c.Category)
+                .Include(l => l.RoomLocation);
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return new PagedResult<Asset>(items, totalCount, page, pageSize);
         }
         public async Task<Asset?> GetById(long assetId)
         {

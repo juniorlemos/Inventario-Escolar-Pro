@@ -37,12 +37,12 @@ namespace InventarioEscolar.Application.UsesCases.Asset.Update
 
             var newAsset = _mapper.Map<Domain.Entities.Asset>(request);
 
-            _repositoryUpdateOnly.Update(asset);
+            _repositoryUpdateOnly.Update(newAsset);
 
             await _unitOfWork.Commit();
         }
 
-        private async Task Validate(RequestUpdateAssetJson request)
+        private static async Task Validate(RequestUpdateAssetJson request)
         {
             var validator = new UpdateAssetValidator();
 

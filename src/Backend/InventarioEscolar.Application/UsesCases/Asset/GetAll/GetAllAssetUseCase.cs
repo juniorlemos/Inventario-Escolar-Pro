@@ -1,6 +1,7 @@
 ﻿
 using AutoMapper;
 using InventarioEscolar.Application.Dtos;
+using InventarioEscolar.Domain.Pagination;
 using InventarioEscolar.Communication.Response;
 using InventarioEscolar.Domain.Repositories.Asset;
 
@@ -17,12 +18,13 @@ namespace InventarioEscolar.Application.UsesCases.Asset.GetAll
             _readOnlyRepository = readOnlyRepository;
             _mapper = maper;
         }
-        public async Task<ResponseAssetJson<IEnumerable<AssetDto>>> Execute()
+        public async Task<PagedResult<AssetDto>> Execute(int page, int pageSize)
         {
-            var assets = await _readOnlyRepository.GetAllAssets();
-            var assetsDto =_mapper.Map<IEnumerable<AssetDto>>(assets);
+            var pagedResultAssets = await _readOnlyRepository.GetAllAssets( page,pageSize);
 
-            return new ResponseAssetJson<IEnumerable<AssetDto>>(assetsDto);
+            var itemsDto = _mapper.Map<List<AssetDto>>(pagedResultAssets.Items);
+
+            return new PagedResult<AssetDto>(itemsDto, pagedResultAssets.TotalCount, page, pageSize);
         }
     }
 }

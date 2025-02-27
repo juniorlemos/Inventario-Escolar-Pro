@@ -1,10 +1,12 @@
-﻿using InventarioEscolar.Application.UsesCases.Asset.Delete;
+﻿using InventarioEscolar.Application.Dtos;
+using InventarioEscolar.Application.UsesCases.Asset.Delete;
 using InventarioEscolar.Application.UsesCases.Asset.GetAll;
 using InventarioEscolar.Application.UsesCases.Asset.GetById;
 using InventarioEscolar.Application.UsesCases.Asset.Register;
 using InventarioEscolar.Application.UsesCases.Asset.Update;
 using InventarioEscolar.Communication.Request;
 using InventarioEscolar.Communication.Response;
+using InventarioEscolar.Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventarioEscolar.Api.Controllers
@@ -16,16 +18,18 @@ namespace InventarioEscolar.Api.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(ResponseRegisterAssetJson), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllAssets(
-             [FromServices] IGetAllAssetUseCase useCase)
+             [FromServices] IGetAllAssetUseCase useCase,
+             [FromQuery] int page = InventarioEscolarRuleConstants.PAGE,
+             [FromQuery] int pageSize = InventarioEscolarRuleConstants.PAGESIZE)
         {
-            var response = await useCase.Execute();
+            var response = await useCase.Execute(page, pageSize);
 
             return Ok(response);
         }
 
         [HttpGet]
         [Route("{id}")]
-        [ProducesResponseType(typeof(ResponseRegisterAssetJson), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseAssetJson<AssetDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetByIdAssets(
              [FromServices] IGetByIdAssetUseCase useCase,
