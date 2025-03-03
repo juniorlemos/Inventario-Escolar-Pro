@@ -1,6 +1,7 @@
 ﻿using InventarioEscolar.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Emit;
 
 namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
 {
@@ -16,7 +17,7 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
             builder.Property(x => x.CreatedOn).IsRequired();
 
             builder.Property(x => x.Active).IsRequired().HasDefaultValue(true);
-
+            builder.HasIndex(x => x.PatrimonyCode).IsUnique();
             builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
             builder.Property(x => x.Description).HasMaxLength(200);
                                

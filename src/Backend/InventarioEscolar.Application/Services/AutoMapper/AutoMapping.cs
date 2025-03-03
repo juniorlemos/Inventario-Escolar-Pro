@@ -21,7 +21,12 @@ namespace InventarioEscolar.Application.Services.AutoMapper
 
         private void DomainToReponse()
         {
-            CreateMap<Asset,AssetDto>();
+            CreateMap<Category, CategoryDto>(); 
+            CreateMap<RoomLocation, RoomLocationDto>();
+
+            CreateMap<Asset, AssetDto>()
+                .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
+                .ForMember(dest => dest.RoomLocation, opt => opt.MapFrom(src => src.RoomLocation));
         }
     }
 }

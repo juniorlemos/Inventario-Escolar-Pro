@@ -6,6 +6,7 @@ using InventarioEscolar.Application.UsesCases.Asset.Register;
 using InventarioEscolar.Application.UsesCases.Asset.Update;
 using InventarioEscolar.Communication.Request;
 using InventarioEscolar.Communication.Response;
+using InventarioEscolar.Domain.Pagination;
 using InventarioEscolar.Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace InventarioEscolar.Api.Controllers
     public class AssetController : ControllerBase
     {
         [HttpGet]
-        [ProducesResponseType(typeof(ResponseRegisterAssetJson), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllAssets(
              [FromServices] IGetAllAssetUseCase useCase,
              [FromQuery] int page = InventarioEscolarRuleConstants.PAGE,
@@ -29,7 +30,7 @@ namespace InventarioEscolar.Api.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        [ProducesResponseType(typeof(ResponseAssetJson<AssetDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetByIdAssets(
              [FromServices] IGetByIdAssetUseCase useCase,
@@ -47,7 +48,7 @@ namespace InventarioEscolar.Api.Controllers
         [FromServices] IUpdateAssetUseCase useCase,
         [FromBody] RequestUpdateAssetJson request)
         {
-             await useCase.Execute(request);
+            await useCase.Execute(request);
 
             return NoContent();
         }

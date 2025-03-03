@@ -150,4 +150,7 @@
   <data name="ASSET_NOT_FOUND" xml:space="preserve">
     <value>Patrimônio não encontrado</value>
   </data>
+  <data name="PATRIMONYCODE_ALREADY_EXISTS " xml:space="preserve">
+    <value>O código de patrimônio já existe</value>
+  </data>
 </root>

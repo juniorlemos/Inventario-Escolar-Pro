@@ -152,6 +152,15 @@ namespace InventarioEscolar.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PATRIMONYCODE ALREADY EXISTS.
+        /// </summary>
+        public static string PATRIMONYCODE_ALREADY_EXISTS_ {
+            get {
+                return ResourceManager.GetString("PATRIMONYCODE_ALREADY_EXISTS ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown error..
         /// </summary>
         public static string UNKNOWN_ERROR {

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
 {
-    public class AssetRepository : IAssetReadOnlyRepository , IAssetWriteOnlyRepository, IAssetUpdateOnlyRepository
+    public class AssetRepository : IAssetReadOnlyRepository, IAssetWriteOnlyRepository, IAssetUpdateOnlyRepository
     {
         private readonly InventárioEscolarProDBContext _dbContext;
         public AssetRepository(InventárioEscolarProDBContext dbContext) => _dbContext = dbContext;
@@ -20,12 +20,38 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
             _dbContext.Assets.Remove(asset!);
         }
 
+        public async Task<bool> ExistPatrimonyCode(long? patromonyCode)
+        {
+            return await _dbContext.Assets.AnyAsync(p => p.PatrimonyCode.Equals(patromonyCode));
+        }
+
         public async Task<PagedResult<Asset>> GetAllAssets(int page, int pageSize)
         {
             var query = _dbContext.Assets
                 .AsNoTracking()
-                .Include(c => c.Category)
-                .Include(l => l.RoomLocation);
+                 .Select(a => new Asset
+                 {
+                     Id = a.Id,
+                     Name = a.Name,
+                     Description = a.Description,
+                     PatrimonyCode = a.PatrimonyCode,
+                     AcquisitionValue = a.AcquisitionValue,
+                     ConservationState = a.ConservationState,
+                     SerieNumber = a.SerieNumber,
+                     Category = new Category
+                     {
+                         Id = a.Category.Id,
+                         Name = a.Category.Name,
+                         Description = a.Category.Description
+                     },
+                     RoomLocation = new RoomLocation
+                     {
+                         Id = a.RoomLocation.Id,
+                         Name = a.RoomLocation.Name,
+                         Description = a.RoomLocation.Description,
+                         Building = a.RoomLocation.Building
+                     }
+                 });
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
@@ -34,11 +60,37 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
         }
         public async Task<Asset?> GetById(long assetId)
         {
-            return await _dbContext.Assets.AsNoTracking()
-                                          .Include(c => c.Category)
-                                          .Include(l => l.RoomLocation)
-                                          .FirstOrDefaultAsync(a => a.Id == assetId);           
+
+            var asset = await _dbContext.Assets.AsNoTracking()
+        .Where(a => a.Id == assetId)
+        .Select(a => new Asset
+        {
+            Id = a.Id,
+            Name = a.Name,
+            Description = a.Description,
+            PatrimonyCode = a.PatrimonyCode,
+            AcquisitionValue = a.AcquisitionValue,
+            ConservationState = a.ConservationState,
+            SerieNumber = a.SerieNumber,
+            Category = new Category
+            {
+                Id = a.Category.Id,
+                Name = a.Category.Name,
+                Description = a.Category.Description
+            },
+            RoomLocation = new RoomLocation
+            {
+                Id = a.RoomLocation.Id,
+                Name = a.RoomLocation.Name,
+                Description = a.RoomLocation.Description,
+                Building = a.RoomLocation.Building
+            }
+        })
+        .FirstOrDefaultAsync();
+
+            return asset;
         }
         public void Update(Asset user) => _dbContext.Assets.Update(user);
+
     }
 }

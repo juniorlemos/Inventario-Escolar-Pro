@@ -151,4 +151,7 @@ ve number</value>
   <data name="ASSET_NOT_FOUND" xml:space="preserve">
     <value>ASSET NOT FOUND</value>
   </data>
+  <data name="PATRIMONYCODE_ALREADY_EXISTS " xml:space="preserve">
+    <value>PATRIMONYCODE ALREADY EXISTS</value>
+  </data>
 </root>
