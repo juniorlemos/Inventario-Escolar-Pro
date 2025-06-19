@@ -2,7 +2,7 @@
 
 namespace InventarioEscolar.Communication.Request
 {
-    public class RequestRegisterAssetJson
+    public record RequestRegisterAssetJson
     {
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
@@ -12,5 +12,6 @@ namespace InventarioEscolar.Communication.Request
         public string? SerieNumber { get; set; }
         public long CategoryId { get; set; } 
         public long? RoomLocationId { get; set; }
+        public long SchoolId { get; set; }
     }
 }

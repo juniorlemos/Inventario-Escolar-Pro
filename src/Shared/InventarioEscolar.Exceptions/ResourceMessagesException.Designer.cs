@@ -70,11 +70,47 @@ namespace InventarioEscolar.Exceptions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ASSET NOT FOUND.
+        ///   Looks up a localized string similar to Asset not found.
         /// </summary>
         public static string ASSET_NOT_FOUND {
             get {
                 return ResourceManager.GetString("ASSET_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The category description must not exceed 200 characters..
+        /// </summary>
+        public static string CATEGORY_DESCRIPTION_TOOLONG {
+            get {
+                return ResourceManager.GetString("CATEGORY_DESCRIPTION_TOOLONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Category name already exists.
+        /// </summary>
+        public static string CATEGORY_NAME_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("CATEGORY_NAME_ALREADY_EXISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The category name must not exceed 100 characters..
+        /// </summary>
+        public static string CATEGORY_NAME_TOOLONG {
+            get {
+                return ResourceManager.GetString("CATEGORY_NAME_TOOLONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The category name must be at least 2 characters long..
+        /// </summary>
+        public static string CATEGORY_NAME_TOOSHORT {
+            get {
+                return ResourceManager.GetString("CATEGORY_NAME_TOOSHORT", resourceCulture);
             }
         }
         
@@ -152,11 +188,128 @@ namespace InventarioEscolar.Exceptions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PATRIMONYCODE ALREADY EXISTS.
+        ///   Looks up a localized string similar to Patrimony code already exists.
         /// </summary>
-        public static string PATRIMONYCODE_ALREADY_EXISTS_ {
+        public static string PATRIMONY_CODE_ALREADY_EXISTS_ {
             get {
-                return ResourceManager.GetString("PATRIMONYCODE_ALREADY_EXISTS ", resourceCulture);
+                return ResourceManager.GetString("PATRIMONY_CODE_ALREADY_EXISTS ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The room location building must not exceed 50 characters..
+        /// </summary>
+        public static string ROOMLOCATION_BUILDING_TOOLONG {
+            get {
+                return ResourceManager.GetString("ROOMLOCATION_BUILDING_TOOLONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The room location description must not exceed 200 characters..
+        /// </summary>
+        public static string ROOMLOCATION_DESCRIPTION_TOOLONG {
+            get {
+                return ResourceManager.GetString("ROOMLOCATION_DESCRIPTION_TOOLONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Room location name already exists.
+        /// </summary>
+        public static string ROOMLOCATION_NAME_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("ROOMLOCATION_NAME_ALREADY_EXISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The room location name must not exceed 100 characters..
+        /// </summary>
+        public static string ROOMLOCATION_NAME_TOOLONG {
+            get {
+                return ResourceManager.GetString("ROOMLOCATION_NAME_TOOLONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The room location name must be at least 2 characters long..
+        /// </summary>
+        public static string ROOMLOCATION_NAME_TOOSHORT {
+            get {
+                return ResourceManager.GetString("ROOMLOCATION_NAME_TOOSHORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to School address already exists.
+        /// </summary>
+        public static string SCHOOL_ADDRESS_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("SCHOOL_ADDRESS_ALREADY_EXISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The school address must not exceed 100 characters..
+        /// </summary>
+        public static string SCHOOL_ADDRESS_TOOLONG {
+            get {
+                return ResourceManager.GetString("SCHOOL_ADDRESS_TOOLONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The school city must not exceed 30 characters..
+        /// </summary>
+        public static string SCHOOL_CITY_TOOLONG {
+            get {
+                return ResourceManager.GetString("SCHOOL_CITY_TOOLONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to School INEP already exists.
+        /// </summary>
+        public static string SCHOOL_INEP_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("SCHOOL_INEP_ALREADY_EXISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The school INEP must not exceed 20 characters..
+        /// </summary>
+        public static string SCHOOL_INEP_TOOLONG {
+            get {
+                return ResourceManager.GetString("SCHOOL_INEP_TOOLONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to School name already exists.
+        /// </summary>
+        public static string SCHOOL_NAME_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("SCHOOL_NAME_ALREADY_EXISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The school name must not exceed 100 characters..
+        /// </summary>
+        public static string SCHOOL_NAME_TOOLONG {
+            get {
+                return ResourceManager.GetString("SCHOOL_NAME_TOOLONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The school name must be at least 2 characters long..
+        /// </summary>
+        public static string SCHOOL_NAME_TOOSHORT {
+            get {
+                return ResourceManager.GetString("SCHOOL_NAME_TOOSHORT", resourceCulture);
             }
         }
         

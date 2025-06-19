@@ -121,7 +121,7 @@
     <value>Descrição invalida. A descrição pode ter no máximo 200 caracteres.</value>
   </data>
   <data name="INVALID_NUMBER_NAME" xml:space="preserve">
-    <value>Nome inválido. O nome deve ter entre 3 e 100 caracteres.</value>
+    <value>Nome inválido. O nome deve conter entre 3 e 100 caracteres.</value>
   </data>
   <data name="NAME_EMPTY" xml:space="preserve">
     <value>O nome não pode estar vazio.</value>
@@ -150,7 +150,58 @@
   <data name="ASSET_NOT_FOUND" xml:space="preserve">
     <value>Patrimônio não encontrado</value>
   </data>
-  <data name="PATRIMONYCODE_ALREADY_EXISTS " xml:space="preserve">
+  <data name="PATRIMONY_CODE_ALREADY_EXISTS " xml:space="preserve">
     <value>O código de patrimônio já existe</value>
+  </data>
+  <data name="ROOMLOCATION_NAME_ALREADY_EXISTS" xml:space="preserve">
+    <value>Já existe uma localização de sala com este nome.</value>
+  </data>
+  <data name="ROOMLOCATION_NAME_TOOSHORT" xml:space="preserve">
+    <value>O nome da sala deve ter pelo menos 2 caracteres.</value>
+  </data>
+  <data name="ROOMLOCATION_NAME_TOOLONG" xml:space="preserve">
+    <value>O nome da sala não deve exceder 100 caracteres.</value>
+  </data>
+  <data name="ROOMLOCATION_DESCRIPTION_TOOLONG" xml:space="preserve">
+    <value>A descricão da sala não deve exceder 100 caracteres.</value>
+  </data>
+  <data name="ROOMLOCATION_BUILDING_TOOLONG" xml:space="preserve">
+    <value>O nome do edifício de localização da sala não deve exceder 50 caracteres.</value>
+  </data>
+  <data name="SCHOOL_NAME_ALREADY_EXISTS" xml:space="preserve">
+    <value>Já existe uma escola com este nome.</value>
+  </data>
+  <data name="SCHOOL_NAME_TOOLONG" xml:space="preserve">
+    <value>O nome da escola deve exceder 100 caracteres.</value>
+  </data>
+  <data name="SCHOOL_NAME_TOOSHORT" xml:space="preserve">
+    <value>O nome da escola deve ter pelo menos 2 caracteres.</value>
+  </data>
+  <data name="SCHOOL_INEP_TOOLONG" xml:space="preserve">
+    <value>O INEP da escola deve exceder 20 caracteres.</value>
+  </data>
+  <data name="SCHOOL_ADDRESS_TOOLONG" xml:space="preserve">
+    <value>O Endereço da escola deve exceder 100 caracteres.</value>
+  </data>
+  <data name="SCHOOL_CITY_TOOLONG" xml:space="preserve">
+    <value>O nome da cidade da escola deve exceder 30 caracteres.</value>
+  </data>
+  <data name="SCHOOL_INEP_ALREADY_EXISTS" xml:space="preserve">
+    <value>Já existe uma escola com este INEP.</value>
+  </data>
+  <data name="SCHOOL_ADDRESS_ALREADY_EXISTS" xml:space="preserve">
+    <value>Já existe uma escola com este endereço.</value>
+  </data>
+  <data name="CATEGORY_NAME_TOOLONG" xml:space="preserve">
+    <value>O nome da category deve exceder 100 caracteres.</value>
+  </data>
+  <data name="CATEGORY_NAME_TOOSHORT" xml:space="preserve">
+    <value>O nome da categoria deve ter pelo menos 2 caracteres.</value>
+  </data>
+  <data name="CATEGORY_DESCRIPTION_TOOLONG" xml:space="preserve">
+    <value>A descricão da categoria não deve exceder 100 caracteres.</value>
+  </data>
+  <data name="CATEGORY_NAME_ALREADY_EXISTS" xml:space="preserve">
+    <value>Já existe uma categoria com este nome.</value>
   </data>
 </root>

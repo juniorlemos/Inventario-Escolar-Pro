@@ -1,6 +1,6 @@
 ﻿namespace InventarioEscolar.Communication.Response
 {
-    public class ResponseErrorJson
+    public record ResponseErrorJson
     {
         public IList<string> Errors { get; set; }
         public ResponseErrorJson(IList<string> errors) => Errors = errors;

@@ -2,7 +2,7 @@
 
 namespace InventarioEscolar.Communication.Response
 {
-    public class ResponseAssetJson <T> 
+    public record ResponseAssetJson <T> 
     {
        public T Data {  get; set; }
         

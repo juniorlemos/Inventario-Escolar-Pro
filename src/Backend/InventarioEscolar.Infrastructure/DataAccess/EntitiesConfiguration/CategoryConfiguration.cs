@@ -8,7 +8,12 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
-            builder.ToTable("Categories");
+
+            builder.ToTable("Categories", tb =>
+            {
+                tb.HasCheckConstraint("CK_Category_Name_MinLength", "LEN(Name) >= 2");
+            });
+
 
             builder.HasKey(x => x.Id);
             builder.Property(e => e.Id).ValueGeneratedOnAdd();
@@ -19,6 +24,8 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
 
             builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
             builder.Property(x => x.Description).HasMaxLength(200);
+
+            builder.HasIndex(x => x.Name).IsUnique();
 
             builder.HasMany(c => c.Assets)
              .WithOne(a => a.Category)

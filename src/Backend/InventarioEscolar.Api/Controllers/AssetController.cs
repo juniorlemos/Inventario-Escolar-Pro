@@ -1,20 +1,18 @@
 ﻿using InventarioEscolar.Application.Dtos;
-using InventarioEscolar.Application.UsesCases.Asset.Delete;
-using InventarioEscolar.Application.UsesCases.Asset.GetAll;
-using InventarioEscolar.Application.UsesCases.Asset.GetById;
-using InventarioEscolar.Application.UsesCases.Asset.Register;
-using InventarioEscolar.Application.UsesCases.Asset.Update;
+using InventarioEscolar.Application.UsesCases.AssetCase.Delete;
+using InventarioEscolar.Application.UsesCases.AssetCase.GetAll;
+using InventarioEscolar.Application.UsesCases.AssetCase.GetById;
+using InventarioEscolar.Application.UsesCases.AssetCase.Register;
+using InventarioEscolar.Application.UsesCases.AssetCase.Update;
 using InventarioEscolar.Communication.Request;
 using InventarioEscolar.Communication.Response;
-using InventarioEscolar.Domain.Pagination;
 using InventarioEscolar.Domain.ValueObjects;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventarioEscolar.Api.Controllers
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class AssetController : ControllerBase
+    public class AssetController : InventarioApiBaseController
     {
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -36,9 +34,11 @@ namespace InventarioEscolar.Api.Controllers
              [FromServices] IGetByIdAssetUseCase useCase,
              [FromRoute] long id)
         {
-            var response = await useCase.Execute(id);
+            //var response = await useCase.Execute(id);
 
-            return Ok(response);
+            //return Ok(response);
+            return Ok();
+
         }
 
         [HttpPut]
@@ -61,9 +61,13 @@ namespace InventarioEscolar.Api.Controllers
         [FromServices] IRegisterAssetUseCase useCase,
         [FromBody] RequestRegisterAssetJson request)
         {
-            var result = await useCase.Execute(request);
+            var assetDto = request.Adapt<AssetDto>();
 
-            return Created(string.Empty, result);
+            var result = await useCase.Execute(assetDto);
+
+            var response = result.Adapt<ResponseRegisterAssetJson>();
+
+            return Created(string.Empty, response);
         }
 
         [HttpDelete]

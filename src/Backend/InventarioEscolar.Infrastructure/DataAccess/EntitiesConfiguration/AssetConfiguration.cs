@@ -9,7 +9,10 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
     {
         public void Configure(EntityTypeBuilder<Asset> builder)
         {
-            builder.ToTable("Assets");
+            builder.ToTable("Assets", tb =>
+            {
+                tb.HasCheckConstraint("CK_Asset_Name_MinLength", "LEN(Name) >= 2");
+            });
 
             builder.HasKey(x => x.Id);
             builder.Property(e => e.Id).ValueGeneratedOnAdd();
@@ -35,6 +38,12 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
                .WithMany(c => c.Assets)
                .HasForeignKey(r => r.RoomLocationId)
                .IsRequired(false);
+
+            builder.HasOne(a => a.School)
+               .WithMany(s => s.Assets)
+               .HasForeignKey(a => a.SchoolId)
+               .IsRequired()
+               .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -1,9 +1,15 @@
-﻿using InventarioEscolar.Application.Services.AutoMapper;
-using InventarioEscolar.Application.UsesCases.Asset.Delete;
-using InventarioEscolar.Application.UsesCases.Asset.GetAll;
-using InventarioEscolar.Application.UsesCases.Asset.GetById;
-using InventarioEscolar.Application.UsesCases.Asset.Register;
-using InventarioEscolar.Application.UsesCases.Asset.Update;
+﻿using FluentValidation;
+using InventarioEscolar.Application.Services.Mapster;
+using InventarioEscolar.Application.UsesCases.AssetCase.Delete;
+using InventarioEscolar.Application.UsesCases.AssetCase.GetAll;
+using InventarioEscolar.Application.UsesCases.AssetCase.GetById;
+using InventarioEscolar.Application.UsesCases.AssetCase.Register;
+using InventarioEscolar.Application.UsesCases.AssetCase.Update;
+using InventarioEscolar.Application.UsesCases.CategoryCase.Register;
+using InventarioEscolar.Application.UsesCases.RoomLocationCase.Register;
+using InventarioEscolar.Application.UsesCases.SchoolCase.Register;
+using Mapster;
+using MapsterMapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,8 +19,11 @@ namespace InventarioEscolar.Application
     {
         public static void AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
-            AddAutoMapper(services);
             AddUseCases(services);
+            AddValidators(services);
+            AddMapsterConfiguration(services);
+
+            AutoMapping.RegisterMappings();
         }
         private static void AddUseCases(IServiceCollection services)
         {
@@ -23,17 +32,22 @@ namespace InventarioEscolar.Application
             services.AddScoped<IRegisterAssetUseCase, RegisterAssetUseCase>();
             services.AddScoped<IUpdateAssetUseCase, UpdateAssetUseCase>();
             services.AddScoped<IDeleteAssetUseCase, DeleteAssetUseCase>();
+            
+            services.AddScoped<IRegisterRoomLocationUseCase, RegisterRoomLocationUseCase>();
+
+            services.AddScoped<IRegisterSchoolUseCase, RegisterSchoolUseCase>();
+
+            services.AddScoped<IRegisterCategoryUseCase, RegisterCategoryUseCase>();
+
         }
-        private static void AddAutoMapper(IServiceCollection services)
+        private static void AddValidators(IServiceCollection services)
         {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                Console.WriteLine($"Assembly: {assembly.FullName} - Location: {assembly.Location}");
-            }
-            services.AddAutoMapper(cfg =>
-            {
-                cfg.AddProfile<AutoMapping>();
-            }, AppDomain.CurrentDomain.GetAssemblies()); 
+            services.AddValidatorsFromAssembly(typeof(DependencyInjectionExtension).Assembly);
+        }
+        private static void AddMapsterConfiguration(IServiceCollection services)
+        {
+            
+            AutoMapping.RegisterMappings();
         }
     }
 

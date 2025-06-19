@@ -1,8 +1,14 @@
-﻿using InventarioEscolar.Domain.Repositories;
-using InventarioEscolar.Domain.Repositories.Asset;
+﻿using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Domain.Repositories;
+using InventarioEscolar.Domain.Repositories.Assets;
+using InventarioEscolar.Domain.Repositories.Categories;
+using InventarioEscolar.Domain.Repositories.RoomLocations;
+using InventarioEscolar.Domain.Repositories.Schools;
+using InventarioEscolar.Exceptions.ExceptionsBase.Identity;
 using InventarioEscolar.Infrastructure.DataAccess;
 using InventarioEscolar.Infrastructure.DataAccess.Repositories;
 using InventarioEscolar.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,12 +21,30 @@ namespace InventarioEscolar.Infrastructure
         {
             AddDbContext_SqlServer(services, configuration);
             AddRepositories(services);
+            AddIdentity(services);
         }
+
+        private static void AddIdentity( IServiceCollection services)
+        {
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            {
+                options.Password.RequiredLength = 5;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredUniqueChars = 1;
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+            })
+                    .AddEntityFrameworkStores<InventarioEscolarProDBContext>()
+                     .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
+                    .AddDefaultTokenProviders();
+        }
+        
         private static void AddDbContext_SqlServer(IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.ConnectionString();
 
-            services.AddDbContext<InventárioEscolarProDBContext>(dbContextOptions =>
+            services.AddDbContext<InventarioEscolarProDBContext>(dbContextOptions =>
             {
                 dbContextOptions.UseSqlServer(connectionString);
             });
@@ -32,6 +56,16 @@ namespace InventarioEscolar.Infrastructure
             services.AddScoped<IAssetWriteOnlyRepository, AssetRepository>();
             services.AddScoped<IAssetReadOnlyRepository, AssetRepository>();
             services.AddScoped<IAssetUpdateOnlyRepository, AssetRepository>();
+
+            services.AddScoped<IRoomLocationWriteOnlyRepository, RoomLocationRepository>();
+            services.AddScoped<IRoomLocationReadOnlyRepository, RoomLocationRepository>();
+            
+            services.AddScoped<ISchoolWriteOnlyRepository, SchoolRepository>();
+            services.AddScoped<ISchoolReadOnlyRepository, SchoolRepository>();
+
+            services.AddScoped<ICategoryWriteOnlyRepository, CategoryRepository>();
+            services.AddScoped<ICategoryReadOnlyRepository, CategoryRepository>();
+
         }
     }
 }

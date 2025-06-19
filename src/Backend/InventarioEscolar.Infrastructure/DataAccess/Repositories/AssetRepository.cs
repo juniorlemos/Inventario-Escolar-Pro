@@ -1,17 +1,17 @@
 ﻿using Azure;
 using InventarioEscolar.Domain.Pagination;
 using InventarioEscolar.Domain.Entities;
-using InventarioEscolar.Domain.Repositories.Asset;
 using Microsoft.EntityFrameworkCore;
+using InventarioEscolar.Domain.Repositories.Assets;
 
 namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
 {
     public class AssetRepository : IAssetReadOnlyRepository, IAssetWriteOnlyRepository, IAssetUpdateOnlyRepository
     {
-        private readonly InventárioEscolarProDBContext _dbContext;
-        public AssetRepository(InventárioEscolarProDBContext dbContext) => _dbContext = dbContext;
+        private readonly InventarioEscolarProDBContext _dbContext;
+        public AssetRepository(InventarioEscolarProDBContext dbContext) => _dbContext = dbContext;
 
-        public async Task Add(Asset asset) => await _dbContext.Assets.AddAsync(asset);
+        public async Task Insert(Asset asset) => await _dbContext.Assets.AddAsync(asset);
 
         public async Task Delete(long assetId)
         {
