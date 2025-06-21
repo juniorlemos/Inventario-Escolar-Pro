@@ -5,6 +5,6 @@ namespace InventarioEscolar.Application.UsesCases.AssetCase.GetAll
 {
     public interface IGetAllAssetUseCase
     {
-        Task <PagedResult<AssetDto>> Execute(int page, int pagesize);
+        Task<PagedResult<AssetDto>> Execute(int page, int pagesize);
     }
 }

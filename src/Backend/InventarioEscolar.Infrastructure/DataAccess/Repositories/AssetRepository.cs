@@ -1,96 +1,58 @@
-﻿using Azure;
+﻿using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Pagination;
-using InventarioEscolar.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 using InventarioEscolar.Domain.Repositories.Assets;
+using Microsoft.EntityFrameworkCore;
 
 namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
 {
-    public class AssetRepository : IAssetReadOnlyRepository, IAssetWriteOnlyRepository, IAssetUpdateOnlyRepository
+    public class AssetRepository(InventarioEscolarProDBContext dbContext) : IAssetReadOnlyRepository, IAssetWriteOnlyRepository, IAssetUpdateOnlyRepository, IAssetDeleteOnlyRepository
     {
-        private readonly InventarioEscolarProDBContext _dbContext;
-        public AssetRepository(InventarioEscolarProDBContext dbContext) => _dbContext = dbContext;
-
-        public async Task Insert(Asset asset) => await _dbContext.Assets.AddAsync(asset);
-
-        public async Task Delete(long assetId)
-        {
-            var asset = await _dbContext.Assets.FindAsync(assetId);
-
-            _dbContext.Assets.Remove(asset!);
-        }
+        public async Task Insert(Asset asset) => await dbContext.Assets.AddAsync(asset);
 
         public async Task<bool> ExistPatrimonyCode(long? patromonyCode)
         {
-            return await _dbContext.Assets.AnyAsync(p => p.PatrimonyCode.Equals(patromonyCode));
+            return await dbContext.Assets.AnyAsync(p => p.PatrimonyCode.Equals(patromonyCode));
         }
 
-        public async Task<PagedResult<Asset>> GetAllAssets(int page, int pageSize)
+        public async Task<PagedResult<Asset>> GetAll(int page, int pageSize)
         {
-            var query = _dbContext.Assets
-                .AsNoTracking()
-                 .Select(a => new Asset
-                 {
-                     Id = a.Id,
-                     Name = a.Name,
-                     Description = a.Description,
-                     PatrimonyCode = a.PatrimonyCode,
-                     AcquisitionValue = a.AcquisitionValue,
-                     ConservationState = a.ConservationState,
-                     SerieNumber = a.SerieNumber,
-                     Category = new Category
-                     {
-                         Id = a.Category.Id,
-                         Name = a.Category.Name,
-                         Description = a.Category.Description
-                     },
-                     RoomLocation = new RoomLocation
-                     {
-                         Id = a.RoomLocation.Id,
-                         Name = a.RoomLocation.Name,
-                         Description = a.RoomLocation.Description,
-                         Building = a.RoomLocation.Building
-                     }
-                 });
+            var query = dbContext.Assets.AsNoTracking();
 
             var totalCount = await query.CountAsync();
-            var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            var items = new List<Asset>();
+
+            if (page > 0 && pageSize > 0)
+            {
+                items = await query
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+            }
+            else
+            {
+                items = await query.ToListAsync();
+            }
 
             return new PagedResult<Asset>(items, totalCount, page, pageSize);
         }
+
         public async Task<Asset?> GetById(long assetId)
         {
 
-            var asset = await _dbContext.Assets.AsNoTracking()
-        .Where(a => a.Id == assetId)
-        .Select(a => new Asset
-        {
-            Id = a.Id,
-            Name = a.Name,
-            Description = a.Description,
-            PatrimonyCode = a.PatrimonyCode,
-            AcquisitionValue = a.AcquisitionValue,
-            ConservationState = a.ConservationState,
-            SerieNumber = a.SerieNumber,
-            Category = new Category
-            {
-                Id = a.Category.Id,
-                Name = a.Category.Name,
-                Description = a.Category.Description
-            },
-            RoomLocation = new RoomLocation
-            {
-                Id = a.RoomLocation.Id,
-                Name = a.RoomLocation.Name,
-                Description = a.RoomLocation.Description,
-                Building = a.RoomLocation.Building
-            }
-        })
-        .FirstOrDefaultAsync();
-
-            return asset;
+            return await dbContext.Assets.FirstOrDefaultAsync(asset => asset.Id == assetId);
         }
-        public void Update(Asset user) => _dbContext.Assets.Update(user);
+        public void Update(Asset asset) => dbContext.Assets.Update(asset);
+      
+        public async Task<bool> Delete(long assetId)
+        {
+            var assets = await dbContext.Assets.FindAsync(assetId);
 
+            if (assets == null)
+                return false;
+
+            dbContext.Assets.Remove(assets);
+            return true;
+        }
     }
 }

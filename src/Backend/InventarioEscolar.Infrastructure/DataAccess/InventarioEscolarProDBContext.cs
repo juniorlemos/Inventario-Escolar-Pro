@@ -5,13 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InventarioEscolar.Infrastructure.DataAccess
 {
-    public class InventarioEscolarProDBContext : IdentityDbContext<ApplicationUser, ApplicationRole, long>
+    public class InventarioEscolarProDBContext(DbContextOptions<InventarioEscolarProDBContext> options) : IdentityDbContext<ApplicationUser, ApplicationRole, long>(options)
     {
-        public InventarioEscolarProDBContext(DbContextOptions<InventarioEscolarProDBContext> options)
-            : base(options)
-        {
-        }
-
         public DbSet<Asset> Assets { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<RoomLocation> RoomLocations { get; set; }

@@ -6,7 +6,6 @@ using InventarioEscolar.Application.UsesCases.AssetCase.Register;
 using InventarioEscolar.Application.UsesCases.AssetCase.Update;
 using InventarioEscolar.Communication.Request;
 using InventarioEscolar.Communication.Response;
-using InventarioEscolar.Domain.ValueObjects;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,47 +14,57 @@ namespace InventarioEscolar.Api.Controllers
     public class AssetController : InventarioApiBaseController
     {
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllAssets(
-             [FromServices] IGetAllAssetUseCase useCase,
-             [FromQuery] int page = InventarioEscolarRuleConstants.PAGE,
-             [FromQuery] int pageSize = InventarioEscolarRuleConstants.PAGESIZE)
+        [ProducesResponseType(typeof(ResponsePagedJson<AssetDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> GetAll(
+          [FromServices] IGetAllAssetUseCase useCase,
+          [FromQuery] int page = 0,
+          [FromQuery] int pageSize = 0)
         {
-            var response = await useCase.Execute(page, pageSize);
+            var result = await useCase.Execute(page, pageSize);
 
-            return Ok(response);
+            var response = result.Adapt<ResponsePagedJson<AssetDto>>();
+
+            if (response.Items.Count != 0)
+                return Ok(response);
+
+            return NoContent();
         }
 
         [HttpGet]
         [Route("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseAssetJson), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetByIdAssets(
-             [FromServices] IGetByIdAssetUseCase useCase,
-             [FromRoute] long id)
+        public async Task<IActionResult> GetByIdAsset(
+               [FromServices] IGetByIdAssetUseCase useCase,
+               [FromRoute] long id)
         {
-            //var response = await useCase.Execute(id);
+            var asset = await useCase.Execute(id);
 
-            //return Ok(response);
-            return Ok();
-
+            var response = asset.Adapt<ResponseAssetJson>();
+            return Ok(response);
         }
 
+
         [HttpPut]
+        [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(
         [FromServices] IUpdateAssetUseCase useCase,
+        [FromRoute] int id,
         [FromBody] RequestUpdateAssetJson request)
         {
-            await useCase.Execute(request);
+            var assetDto = request.Adapt<AssetDto>();
+
+            await useCase.Execute(id, assetDto);
 
             return NoContent();
         }
 
 
         [HttpPost]
-        [ProducesResponseType(typeof(ResponseRegisterAssetJson), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ResponseAssetJson), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register(
         [FromServices] IRegisterAssetUseCase useCase,
@@ -65,7 +74,7 @@ namespace InventarioEscolar.Api.Controllers
 
             var result = await useCase.Execute(assetDto);
 
-            var response = result.Adapt<ResponseRegisterAssetJson>();
+            var response = result.Adapt<ResponseAssetJson>();
 
             return Created(string.Empty, response);
         }

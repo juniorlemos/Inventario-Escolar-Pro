@@ -1,27 +1,28 @@
 ﻿
 using InventarioEscolar.Application.Dtos;
+using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Pagination;
-using InventarioEscolar.Communication.Response;
 using InventarioEscolar.Domain.Repositories.Assets;
+using Mapster;
 
 namespace InventarioEscolar.Application.UsesCases.AssetCase.GetAll
 {
-    public class GetAllAssetUseCase : IGetAllAssetUseCase
+    public class GetAllAssetUseCase(IAssetReadOnlyRepository assetReadOnlyRepository)
+        : IGetAllAssetUseCase
     {
-        private readonly IAssetReadOnlyRepository _readOnlyRepository;
-
-        public GetAllAssetUseCase(IAssetReadOnlyRepository readOnlyRepository
-                                  )
-        {
-            _readOnlyRepository = readOnlyRepository;
-        }
         public async Task<PagedResult<AssetDto>> Execute(int page, int pageSize)
         {
-            var pagedResultAssets = await _readOnlyRepository.GetAllAssets( page,pageSize);
+            var pagedAssets = await assetReadOnlyRepository.GetAll(page, pageSize)
+                         ?? PagedResult<Asset>.Empty(page, pageSize);
 
-            var itemsDto = new List<AssetDto> { };
+            var dtoItems = pagedAssets.Items.Adapt<List<AssetDto>>();
 
-            return new PagedResult<AssetDto>(itemsDto, pagedResultAssets.TotalCount, page, pageSize);
+            return new PagedResult<AssetDto>(
+                dtoItems,
+                pagedAssets.TotalCount,
+                pagedAssets.Page,
+                pagedAssets.PageSize
+            );
         }
     }
 }

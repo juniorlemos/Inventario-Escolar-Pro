@@ -70,6 +70,15 @@ namespace InventarioEscolar.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Asset id invalid.
+        /// </summary>
+        public static string ASSET_ID_INVALID {
+            get {
+                return ResourceManager.GetString("ASSET_ID_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Asset not found.
         /// </summary>
         public static string ASSET_NOT_FOUND {
@@ -84,6 +93,15 @@ namespace InventarioEscolar.Exceptions {
         public static string CATEGORY_DESCRIPTION_TOOLONG {
             get {
                 return ResourceManager.GetString("CATEGORY_DESCRIPTION_TOOLONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Category id invalid.
+        /// </summary>
+        public static string CATEGORY_ID_INVALID {
+            get {
+                return ResourceManager.GetString("CATEGORY_ID_INVALID", resourceCulture);
             }
         }
         
@@ -111,6 +129,15 @@ namespace InventarioEscolar.Exceptions {
         public static string CATEGORY_NAME_TOOSHORT {
             get {
                 return ResourceManager.GetString("CATEGORY_NAME_TOOSHORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Category not found.
+        /// </summary>
+        public static string CATEGORY_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("CATEGORY_NOT_FOUND", resourceCulture);
             }
         }
         
@@ -215,6 +242,15 @@ namespace InventarioEscolar.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Room location id invalid.
+        /// </summary>
+        public static string ROOMLOCATION_ID_INVALID {
+            get {
+                return ResourceManager.GetString("ROOMLOCATION_ID_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Room location name already exists.
         /// </summary>
         public static string ROOMLOCATION_NAME_ALREADY_EXISTS {
@@ -242,6 +278,15 @@ namespace InventarioEscolar.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Room Location not found.
+        /// </summary>
+        public static string ROOMLOCATION_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("ROOMLOCATION_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to School address already exists.
         /// </summary>
         public static string SCHOOL_ADDRESS_ALREADY_EXISTS {
@@ -265,6 +310,15 @@ namespace InventarioEscolar.Exceptions {
         public static string SCHOOL_CITY_TOOLONG {
             get {
                 return ResourceManager.GetString("SCHOOL_CITY_TOOLONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to School id invalid.
+        /// </summary>
+        public static string SCHOOL_ID_INVALID {
+            get {
+                return ResourceManager.GetString("SCHOOL_ID_INVALID", resourceCulture);
             }
         }
         
@@ -310,6 +364,15 @@ namespace InventarioEscolar.Exceptions {
         public static string SCHOOL_NAME_TOOSHORT {
             get {
                 return ResourceManager.GetString("SCHOOL_NAME_TOOSHORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to School not found.
+        /// </summary>
+        public static string SCHOOL_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("SCHOOL_NOT_FOUND", resourceCulture);
             }
         }
         

@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Api.Extension;
 using InventarioEscolar.Application.Dtos;
+using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Repositories;
 using InventarioEscolar.Domain.Repositories.Categories;
@@ -30,11 +31,8 @@ namespace InventarioEscolar.Application.UsesCases.CategoryCase.Register
             await categoryWriteOnlyRepository.Insert(category);
             await unitOfWork.Commit();
 
-            return new CategoryDto
-            {
-                Name = category.Name,
-                Description = categoryDto.Description,
-            };
+            return category.Adapt<CategoryDto>();
+
         }
         private async Task Validate(CategoryDto dto)
         {

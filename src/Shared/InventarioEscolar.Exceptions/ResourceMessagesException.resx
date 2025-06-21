@@ -205,4 +205,25 @@ ve number</value>
   <data name="CATEGORY_NAME_ALREADY_EXISTS" xml:space="preserve">
     <value>Category name already exists</value>
   </data>
+  <data name="SCHOOL_NOT_FOUND" xml:space="preserve">
+    <value>School not found</value>
+  </data>
+  <data name="ROOMLOCATION_NOT_FOUND" xml:space="preserve">
+    <value>Room Location not found</value>
+  </data>
+  <data name="CATEGORY_NOT_FOUND" xml:space="preserve">
+    <value>Category not found</value>
+  </data>
+  <data name="SCHOOL_ID_INVALID" xml:space="preserve">
+    <value>School id invalid</value>
+  </data>
+  <data name="ROOMLOCATION_ID_INVALID" xml:space="preserve">
+    <value>Room location id invalid</value>
+  </data>
+  <data name="CATEGORY_ID_INVALID" xml:space="preserve">
+    <value>Category id invalid</value>
+  </data>
+  <data name="ASSET_ID_INVALID" xml:space="preserve">
+    <value>Asset id invalid</value>
+  </data>
 </root>

@@ -5,8 +5,8 @@ namespace InventarioEscolar.Domain.Repositories.Assets
 {
     public interface IAssetReadOnlyRepository
     {
-        Task<PagedResult<Asset>> GetAllAssets(int page, int pageSize);
-        Task<Entities.Asset?> GetById(long assetId);
+        Task<PagedResult<Asset>> GetAll(int page, int pageSize);
+        Task<Asset?> GetById(long assetId);
         Task<bool> ExistPatrimonyCode(long? patromonyCode);
     }
 }

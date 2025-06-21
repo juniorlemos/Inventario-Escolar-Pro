@@ -1,29 +1,22 @@
 ﻿using InventarioEscolar.Application.Dtos;
-using InventarioEscolar.Communication.Response;
 using InventarioEscolar.Domain.Repositories.Assets;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
+using Mapster;
 
 namespace InventarioEscolar.Application.UsesCases.AssetCase.GetById
 {
-    public class GetByIdAssetUseCase : IGetByIdAssetUseCase
+    public class GetByIdAssetUseCase(
+            IAssetReadOnlyRepository assetReadOnlyRepository) : IGetByIdAssetUseCase
     {
-        private readonly IAssetReadOnlyRepository _readOnlyRepository;
-        
-
-        public GetByIdAssetUseCase(IAssetReadOnlyRepository readOnlyRepository
-                                 )
+        public async Task<AssetDto> Execute(long assetId)
         {
-            _readOnlyRepository = readOnlyRepository;
-           
-        }
+            var asset = await assetReadOnlyRepository.GetById(assetId);
 
-        public async Task Execute(long id)
-        {
-            var asset = await _readOnlyRepository.GetById(id) ?? throw new NotFoundException(ResourceMessagesException.ASSET_NOT_FOUND);
-           
+            if (asset is null)
+                throw new NotFoundException(ResourceMessagesException.ASSET_NOT_FOUND);
 
-            return ;
+            return asset.Adapt<AssetDto>();
         }
     }
 }

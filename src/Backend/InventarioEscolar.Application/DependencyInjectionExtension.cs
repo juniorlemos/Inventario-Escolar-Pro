@@ -5,11 +5,18 @@ using InventarioEscolar.Application.UsesCases.AssetCase.GetAll;
 using InventarioEscolar.Application.UsesCases.AssetCase.GetById;
 using InventarioEscolar.Application.UsesCases.AssetCase.Register;
 using InventarioEscolar.Application.UsesCases.AssetCase.Update;
+using InventarioEscolar.Application.UsesCases.CategoryCase.GetAll;
+using InventarioEscolar.Application.UsesCases.CategoryCase.GetById;
 using InventarioEscolar.Application.UsesCases.CategoryCase.Register;
+using InventarioEscolar.Application.UsesCases.CategoryCase.Update;
+using InventarioEscolar.Application.UsesCases.RoomLocationCase.GetAll;
+using InventarioEscolar.Application.UsesCases.RoomLocationCase.GetById;
 using InventarioEscolar.Application.UsesCases.RoomLocationCase.Register;
+using InventarioEscolar.Application.UsesCases.RoomLocationCase.Update;
+using InventarioEscolar.Application.UsesCases.SchoolCase.GetAll;
+using InventarioEscolar.Application.UsesCases.SchoolCase.GetById;
 using InventarioEscolar.Application.UsesCases.SchoolCase.Register;
-using Mapster;
-using MapsterMapper;
+using InventarioEscolar.Application.UsesCases.SchoolCase.Update;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -34,10 +41,19 @@ namespace InventarioEscolar.Application
             services.AddScoped<IDeleteAssetUseCase, DeleteAssetUseCase>();
             
             services.AddScoped<IRegisterRoomLocationUseCase, RegisterRoomLocationUseCase>();
+            services.AddScoped<IGetByIdRoomLocationUseCase, GetByIdRoomLocationUseCase>();
+            services.AddScoped<IGetAllRoomLocationUseCase, GetAllRoomLocationUseCase>();
+            services.AddScoped<IUpdateRoomLocationUseCase, UpdateRoomLocationUseCase>();
 
             services.AddScoped<IRegisterSchoolUseCase, RegisterSchoolUseCase>();
+            services.AddScoped<IGetByIdSchoolUseCase, GetByIdSchoolUseCase>();
+            services.AddScoped<IGetAllSchoolUseCase, GetAllSchoolUseCase>();
+            services.AddScoped<IUpdateSchoolUseCase, UpdateSchoolUseCase>();
 
             services.AddScoped<IRegisterCategoryUseCase, RegisterCategoryUseCase>();
+            services.AddScoped<IGetByIdCategoryUseCase, GetByIdCategoryUseCase>();
+            services.AddScoped<IGetAllCategoryUseCase, GetAllCategoryUseCase>();
+            services.AddScoped<IUpdateCategoryUseCase, UpdateCategoryUseCase>();
 
         }
         private static void AddValidators(IServiceCollection services)

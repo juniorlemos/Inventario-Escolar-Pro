@@ -5,6 +5,6 @@ namespace InventarioEscolar.Domain.Repositories.Assets
 {
     public interface IAssetUpdateOnlyRepository
     {
-        public void Update(Asset asset);
+     void Update(Asset asset);
     }
 }

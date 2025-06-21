@@ -31,10 +31,8 @@ namespace InventarioEscolar.Application.UsesCases.AssetCase.Register
             await assetWriteOnlyRepository.Insert(asset);
             await unitOfWork.Commit();
 
-            return new AssetDto
-            {
-                Name = assetDto.Name
-            };
+            return asset.Adapt<AssetDto>();
+
         }
 
         private async Task Validate(AssetDto dto)

@@ -36,7 +36,7 @@ namespace InventarioEscolar.Infrastructure
                 options.Password.RequireNonAlphanumeric = false;
             })
                     .AddEntityFrameworkStores<InventarioEscolarProDBContext>()
-                     .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
+                    .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
                     .AddDefaultTokenProviders();
         }
         
@@ -53,19 +53,27 @@ namespace InventarioEscolar.Infrastructure
         private static void AddRepositories(IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             services.AddScoped<IAssetWriteOnlyRepository, AssetRepository>();
             services.AddScoped<IAssetReadOnlyRepository, AssetRepository>();
             services.AddScoped<IAssetUpdateOnlyRepository, AssetRepository>();
+            services.AddScoped<IAssetDeleteOnlyRepository, AssetRepository>();
 
             services.AddScoped<IRoomLocationWriteOnlyRepository, RoomLocationRepository>();
             services.AddScoped<IRoomLocationReadOnlyRepository, RoomLocationRepository>();
-            
+            services.AddScoped<IRoomLocationUpdateOnlyRepository, RoomLocationRepository>();
+            services.AddScoped<IRoomLocationDeleteOnlyRepository, RoomLocationRepository>();
+
             services.AddScoped<ISchoolWriteOnlyRepository, SchoolRepository>();
             services.AddScoped<ISchoolReadOnlyRepository, SchoolRepository>();
+            services.AddScoped<ISchoolUpdateOnlyRepository, SchoolRepository>();
+            services.AddScoped<ISchoolDeleteOnlyRepository, SchoolRepository>();
+
 
             services.AddScoped<ICategoryWriteOnlyRepository, CategoryRepository>();
             services.AddScoped<ICategoryReadOnlyRepository, CategoryRepository>();
-
+            services.AddScoped<ICategoryUpdateOnlyRepository, CategoryRepository>();
+            services.AddScoped<ICategoryDeleteOnlyRepository, CategoryRepository>();
         }
     }
 }

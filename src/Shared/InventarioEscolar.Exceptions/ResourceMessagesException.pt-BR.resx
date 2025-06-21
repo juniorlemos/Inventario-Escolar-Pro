@@ -204,4 +204,25 @@
   <data name="CATEGORY_NAME_ALREADY_EXISTS" xml:space="preserve">
     <value>Já existe uma categoria com este nome.</value>
   </data>
+  <data name="SCHOOL_NOT_FOUND" xml:space="preserve">
+    <value>Escola não encontrada</value>
+  </data>
+  <data name="ROOMLOCATION_NOT_FOUND" xml:space="preserve">
+    <value>Sala não encontrada</value>
+  </data>
+  <data name="CATEGORY_NOT_FOUND" xml:space="preserve">
+    <value>Categoria não encontrada</value>
+  </data>
+  <data name="SCHOOL_ID_INVALID" xml:space="preserve">
+    <value>O id da escola está inválido</value>
+  </data>
+  <data name="ROOMLOCATION_ID_INVALID" xml:space="preserve">
+    <value>O id da sala está inválido</value>
+  </data>
+  <data name="CATEGORY_ID_INVALID" xml:space="preserve">
+    <value>O id da categoria está inválido</value>
+  </data>
+  <data name="ASSET_ID_INVALID" xml:space="preserve">
+    <value>O id do patrimônio está inválido</value>
+  </data>
 </root>

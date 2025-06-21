@@ -1,19 +1,16 @@
 ﻿namespace InventarioEscolar.Domain.Pagination
 {
-    public class PagedResult<T>
+    public class PagedResult<T>(List<T> items, int totalCount, int page, int pageSize)
     {
-        public List<T> Items { get; set; } = [];
-        public int TotalCount { get; set; }
-        public int Page { get; set; }
-        public int PageSize { get; set; }
+        public List<T> Items { get; set; } = items;
+        public int TotalCount { get; set; } = totalCount;
+        public int Page { get; set; } = page;
+        public int PageSize { get; set; } = pageSize;
 
-        public PagedResult(List<T> items, int totalCount, int page, int pageSize)
+
+        public static PagedResult<T> Empty(int page, int pageSize)
         {
-            Items = items;
-            TotalCount = totalCount;
-            Page = page;
-            PageSize = pageSize;
+            return new PagedResult<T>([], 0, page, pageSize);
         }
     }
-
 }

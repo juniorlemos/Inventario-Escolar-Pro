@@ -31,10 +31,7 @@ namespace InventarioEscolar.Application.UsesCases.RoomLocationCase.Register
             await roomLocationWriteOnlyRepository.Insert(roomLocation);
             await unitOfWork.Commit();
 
-            return new RoomLocationDto
-            {
-                Name = roomLocation.Name,
-            };
+            return roomLocation.Adapt<RoomLocationDto>();
         }
         private async Task Validate(RoomLocationDto dto)
         {

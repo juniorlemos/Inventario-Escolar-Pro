@@ -40,13 +40,7 @@ namespace InventarioEscolar.Application.UsesCases.SchoolCase.Register
             await schoolWriteOnlyRepository.Insert(school);
             await unitOfWork.Commit();
 
-            return new SchoolDto
-            {
-                Name = school.Name,
-                Inep = schoolDto.Inep,
-                Address = schoolDto.Address,
-                City = schoolDto.City,
-            };
+            return school.Adapt<SchoolDto>();
         }
            private async Task Validate(SchoolDto dto)
           {

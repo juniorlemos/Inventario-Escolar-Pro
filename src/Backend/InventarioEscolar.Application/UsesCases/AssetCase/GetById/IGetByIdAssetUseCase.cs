@@ -5,8 +5,6 @@ namespace InventarioEscolar.Application.UsesCases.AssetCase.GetById
 {
     public interface IGetByIdAssetUseCase
     {
-        //Task<ResponseAssetJson<AssetDto>> Execute(long id);
-        Task Execute(long id);
-
+        Task<AssetDto> Execute(long assetId);
     }
 }
