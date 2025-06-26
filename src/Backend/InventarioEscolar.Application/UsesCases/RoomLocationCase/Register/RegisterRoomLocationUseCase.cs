@@ -7,7 +7,6 @@ using InventarioEscolar.Domain.Repositories.RoomLocations;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
 using Mapster;
-using MapsterMapper;
 
 namespace InventarioEscolar.Application.UsesCases.RoomLocationCase.Register
 {

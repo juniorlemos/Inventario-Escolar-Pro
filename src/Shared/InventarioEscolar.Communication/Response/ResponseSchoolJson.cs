@@ -11,7 +11,9 @@ namespace InventarioEscolar.Communication.Response
         public string? Address { get; set; }
         public string? City { get; set; }
 
-        public ICollection<RoomLocationDto> RoomLocations { get; set; } = [];
-        public ICollection<AssetDto> Assets { get; set; } = [];
+        public ICollection<RoomLocationSummaryDto> RoomLocations { get; set; } = [];
+        public ICollection<AssetSummaryDto> Assets { get; set; } = [];
+        public ICollection<CategorySummaryDto> Categories { get; set; } = [];
+
     }
 }

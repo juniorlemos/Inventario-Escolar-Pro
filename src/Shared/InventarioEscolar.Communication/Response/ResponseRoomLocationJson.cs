@@ -1,4 +1,5 @@
 ﻿using InventarioEscolar.Application.Dtos;
+using InventarioEscolar.Communication.Dtos;
 
 namespace InventarioEscolar.Communication.Response
 {
@@ -8,7 +9,7 @@ namespace InventarioEscolar.Communication.Response
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string? Building { get; set; }
-        public ICollection<AssetDto> Assets { get; set; } = [];
+        public ICollection<AssetSummaryDto> Assets { get; set; } = [];
 
     }
 }

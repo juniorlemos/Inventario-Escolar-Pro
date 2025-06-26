@@ -16,7 +16,27 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
 
         public async Task<PagedResult<Asset>> GetAll(int page, int pageSize)
         {
-            var query = dbContext.Assets.AsNoTracking();
+            var query = dbContext.Assets
+                .Select(a => new Asset
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Description = a.Description,
+                    PatrimonyCode = a.PatrimonyCode,
+                    AcquisitionValue = a.AcquisitionValue,
+                    ConservationState = a.ConservationState,
+                    SerieNumber = a.SerieNumber,
+                    RoomLocation = new RoomLocation
+                    {
+                        Id = a.Category.Id,
+                        Name = a.Category.Name
+                    },
+                    Category = new Category
+                    {
+                        Id = a.Category.Id,
+                        Name = a.Category.Name
+                    },
+                }).AsNoTracking();
 
             var totalCount = await query.CountAsync();
 
@@ -40,18 +60,42 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
         public async Task<Asset?> GetById(long assetId)
         {
 
-            return await dbContext.Assets.FirstOrDefaultAsync(asset => asset.Id == assetId);
+            return await dbContext.Assets
+                 .Where(a => a.Id == assetId)
+                 .Select(a => new Asset
+                 {
+                     Id = a.Id,
+                     Name = a.Name,
+                     Description = a.Description,
+                     PatrimonyCode = a.PatrimonyCode,
+                     AcquisitionValue = a.AcquisitionValue,
+                     ConservationState = a.ConservationState,
+                     SerieNumber = a.SerieNumber,
+                     RoomLocation = new RoomLocation
+                     {
+                         Id = a.Category.Id,
+                         Name = a.Category.Name
+                     },
+                     Category = new Category
+                     {
+                         Id = a.Category.Id,
+                         Name = a.Category.Name
+                     },
+                 })
+                 .FirstOrDefaultAsync(asset => asset.Id == assetId);
         }
         public void Update(Asset asset) => dbContext.Assets.Update(asset);
       
         public async Task<bool> Delete(long assetId)
         {
-            var assets = await dbContext.Assets.FindAsync(assetId);
+            var asset = await dbContext.Assets.FindAsync(assetId);
 
-            if (assets == null)
+            if (asset == null)
                 return false;
 
-            dbContext.Assets.Remove(assets);
+            asset.Active = false;
+
+            await dbContext.SaveChangesAsync();
             return true;
         }
     }

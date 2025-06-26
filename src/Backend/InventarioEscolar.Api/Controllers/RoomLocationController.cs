@@ -1,10 +1,9 @@
-﻿using InventarioEscolar.Application.UsesCases.RoomLocationCase.GetAll;
+﻿using InventarioEscolar.Application.UsesCases.RoomLocationCase.Delete;
+using InventarioEscolar.Application.UsesCases.RoomLocationCase.GetAll;
 using InventarioEscolar.Application.UsesCases.RoomLocationCase.GetById;
 using InventarioEscolar.Application.UsesCases.RoomLocationCase.Register;
 using InventarioEscolar.Application.UsesCases.RoomLocationCase.Update;
-using InventarioEscolar.Application.UsesCases.SchoolCase.GetAll;
-using InventarioEscolar.Application.UsesCases.SchoolCase.GetById;
-using InventarioEscolar.Application.UsesCases.SchoolCase.Update;
+using InventarioEscolar.Application.UsesCases.SchoolCase.Delete;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Communication.Request;
 using InventarioEscolar.Communication.Response;
@@ -46,7 +45,7 @@ namespace InventarioEscolar.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(ResponsePagedJson<RoomLocationDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponsePagedJson<ResponseRoomLocationJson>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAll(
            [FromServices] IGetAllRoomLocationUseCase useCase,
@@ -55,7 +54,7 @@ namespace InventarioEscolar.Api.Controllers
         {
             var result = await useCase.Execute(page, pageSize);
 
-            var response = result.Adapt<ResponsePagedJson<RoomLocationDto>>();
+            var response = result.Adapt<ResponsePagedJson<ResponseRoomLocationJson>>();
 
             if (response.Items.Count != 0)
                 return Ok(response);
@@ -69,12 +68,25 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(
         [FromServices] IUpdateRoomLocationUseCase useCase,
-        [FromRoute] int id,
+        [FromRoute] long id,
         [FromBody] RequestUpdateRoomLocationJson request)
         {
-            var roomLocationDto = request.Adapt<RoomLocationDto>();
+            var roomLocationDto = request.Adapt<UpdateRoomLocationDto>();
 
             await useCase.Execute(id, roomLocationDto);
+
+            return NoContent();
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Delete(
+        [FromServices] IDeleteRoomLocationUseCase useCase,
+        [FromRoute] long id)
+        {
+            await useCase.Execute(id);
 
             return NoContent();
         }

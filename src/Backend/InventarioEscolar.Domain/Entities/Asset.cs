@@ -11,6 +11,7 @@ namespace InventarioEscolar.Domain.Entities
         public ConservationState ConservationState { get; set; }
         public string? SerieNumber { get; set; }
 
+
         public long CategoryId { get; set; }
         public Category Category { get; set; } = null!;
 

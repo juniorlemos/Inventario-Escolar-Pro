@@ -1,4 +1,5 @@
-﻿using InventarioEscolar.Application.UsesCases.SchoolCase.GetAll;
+﻿using InventarioEscolar.Application.UsesCases.SchoolCase.Delete;
+using InventarioEscolar.Application.UsesCases.SchoolCase.GetAll;
 using InventarioEscolar.Application.UsesCases.SchoolCase.GetById;
 using InventarioEscolar.Application.UsesCases.SchoolCase.Register;
 using InventarioEscolar.Application.UsesCases.SchoolCase.Update;
@@ -43,7 +44,7 @@ namespace InventarioEscolar.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(ResponsePagedJson<SchoolDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponsePagedJson<ResponseSchoolJson>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAll(
            [FromServices] IGetAllSchoolUseCase useCase,
@@ -52,7 +53,7 @@ namespace InventarioEscolar.Api.Controllers
         {
             var result = await useCase.Execute(page, pageSize);
 
-            var response = result.Adapt<ResponsePagedJson<SchoolDto>>();
+            var response = result.Adapt<ResponsePagedJson<ResponseSchoolJson>>();
 
             if (response.Items.Count != 0)
                 return Ok(response);
@@ -66,14 +67,28 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(
           [FromServices] IUpdateSchoolUseCase useCase,
-          [FromRoute] int id,
+          [FromRoute] long id,
           [FromBody] RequestUpdateSchoolJson request)
         {
-            var schoolDto = request.Adapt<SchoolDto>();
+            var schoolDto = request.Adapt<UpdateSchoolDto>();
 
             await useCase.Execute(id, schoolDto);
 
             return NoContent();
         }
+
+        [HttpDelete]
+        [Route("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Delete(
+        [FromServices] IDeleteSchoolUseCase useCase,
+        [FromRoute] long id)
+        {
+            await useCase.Execute(id);
+
+            return NoContent();
+        }
+
     }
 }

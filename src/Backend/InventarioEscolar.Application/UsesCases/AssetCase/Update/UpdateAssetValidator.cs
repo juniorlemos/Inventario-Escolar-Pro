@@ -1,18 +1,17 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Application.Dtos;
+using InventarioEscolar.Application.Services.Validators.Rules;
 using InventarioEscolar.Application.UsesCases.AssetCase.Register;
+using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Exceptions;
 
 namespace InventarioEscolar.Application.UsesCases.AssetCase.Update
 {
-    public class UpdateAssetValidator : AbstractValidator<AssetDto>
+    public class UpdateAssetValidator : AbstractValidator<UpdateAssetDto>
     {
         public UpdateAssetValidator()
         {
-            RuleFor(x => x.Id)
-                .GreaterThan(0).WithMessage(ResourceMessagesException.ASSET_ID_INVALID);
-
-            Include(new RegisterAssetValidator());
+            AssetValidationRules.Apply(this);
         }
     }
 }

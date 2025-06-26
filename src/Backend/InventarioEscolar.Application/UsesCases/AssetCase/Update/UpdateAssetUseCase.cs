@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Api.Extension;
 using InventarioEscolar.Application.Dtos;
+using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Repositories;
 using InventarioEscolar.Domain.Repositories.Assets;
 using InventarioEscolar.Exceptions;
@@ -11,11 +12,11 @@ namespace InventarioEscolar.Application.UsesCases.AssetCase.Update
 {
     public class UpdateAssetUseCase(
        IUnitOfWork unitOfWork,
-       IValidator<AssetDto> validator,
+       IValidator<UpdateAssetDto> validator,
        IAssetReadOnlyRepository assetReadOnlyRepository,
        IAssetUpdateOnlyRepository assetUpdateOnlyRepository) : IUpdateAssetUseCase
     {
-        public async Task Execute(long id, AssetDto assetDto)
+        public async Task Execute(long id, UpdateAssetDto assetDto)
         {
             await Validate(assetDto);
 
@@ -29,7 +30,7 @@ namespace InventarioEscolar.Application.UsesCases.AssetCase.Update
             assetUpdateOnlyRepository.Update(asset);
             await unitOfWork.Commit();
         }
-        private async Task Validate(AssetDto dto)
+        private async Task Validate(UpdateAssetDto dto)
         {
             var result = await validator.ValidateAsync(dto);
 

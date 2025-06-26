@@ -1,5 +1,4 @@
-﻿using InventarioEscolar.Application.Dtos;
-using InventarioEscolar.Communication.Dtos;
+﻿using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Communication.Enum;
 
 namespace InventarioEscolar.Communication.Response
@@ -13,7 +12,7 @@ namespace InventarioEscolar.Communication.Response
         public decimal? AcquisitionValue { get; set; }
         public ConservationState ConservationState { get; set; }
         public string? SerieNumber { get; set; }
-        public CategoryDto Category { get; set; } = null!;
-        public RoomLocationDto? RoomLocation { get; set; }
+        public CategorySummaryDto Category { get; set; } = null!;
+        public RoomLocationSummaryDto? RoomLocation { get; set; }
     }
 }

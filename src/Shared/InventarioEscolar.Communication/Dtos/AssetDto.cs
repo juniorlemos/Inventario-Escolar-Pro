@@ -1,8 +1,9 @@
-﻿using InventarioEscolar.Communication.Enum;
+﻿using InventarioEscolar.Communication.Dtos.Interfaces;
+using InventarioEscolar.Communication.Enum;
 
 namespace InventarioEscolar.Application.Dtos
 {
-    public record AssetDto
+    public record AssetDto : IAssetBaseDto
     {
         public long Id { get; set; }
         public string Name { get; set; } = string.Empty;

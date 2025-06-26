@@ -12,7 +12,21 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
 
         public async Task<PagedResult<RoomLocation>> GetAll(int page, int pageSize)
         {
-            var query = dbContext.RoomLocations.AsNoTracking();
+            var query = dbContext.RoomLocations
+               .Select(r => new RoomLocation
+               {
+                   Id = r.Id,
+                   Name = r.Name,
+                   Description = r.Description,
+                   Building = r.Building,
+                   Assets = r.Assets
+                         .Select(a => new Asset
+                         {
+                             Id = a.Id,
+                             Name = a.Name
+                         }).ToList()
+               })
+                .AsNoTracking();
 
             var totalCount = await query.CountAsync();
 
@@ -39,19 +53,35 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
 
         public async Task<RoomLocation?> GetById(long roomlocationId)
         {
-            return await dbContext.RoomLocations.FirstOrDefaultAsync(roomlocation => roomlocation.Id == roomlocationId);
+            return await dbContext.RoomLocations.Where(r => r.Id == roomlocationId)
+                 .Select(r => new RoomLocation
+                 {
+                     Id = r.Id,
+                     Name = r.Name,
+                     Description = r.Description,
+                     Building = r.Building,                      
+                     Assets = r.Assets
+                         .Select(a => new Asset
+                         {
+                             Id = a.Id,
+                             Name = a.Name
+                         }).ToList()
+                 })
+                 .FirstOrDefaultAsync(roomlocation => roomlocation.Id == roomlocationId);
         }
 
         public async Task Insert(RoomLocation roomLocation) => await dbContext.RoomLocations.AddAsync(roomLocation);
 
         public async Task<bool> Delete(long roomLocationId)
         {
-            var roomLocations = await dbContext.RoomLocations.FindAsync(roomLocationId);
+            var roomLocation = await dbContext.RoomLocations.FindAsync(roomLocationId);
 
-            if (roomLocations == null)
+            if (roomLocation == null)
                 return false;
 
-            dbContext.RoomLocations.Remove(roomLocations);
+            roomLocation.Active = false;
+
+            await dbContext.SaveChangesAsync();
             return true;
         }
     }

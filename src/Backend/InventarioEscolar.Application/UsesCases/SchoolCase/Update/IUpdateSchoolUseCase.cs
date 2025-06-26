@@ -5,6 +5,6 @@ namespace InventarioEscolar.Application.UsesCases.SchoolCase.Update
 {
     public interface IUpdateSchoolUseCase
     {
-      Task Execute(long id, SchoolDto schooDto);
+      Task Execute(long id, UpdateSchoolDto schooDto);
     }
 }

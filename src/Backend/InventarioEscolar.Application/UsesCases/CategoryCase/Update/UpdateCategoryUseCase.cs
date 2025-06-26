@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Api.Extension;
-using InventarioEscolar.Application.Dtos;
+using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Repositories;
 using InventarioEscolar.Domain.Repositories.Categories;
 using InventarioEscolar.Exceptions;
@@ -11,11 +11,11 @@ namespace InventarioEscolar.Application.UsesCases.CategoryCase.Update
 {
     public class UpdateCategoryUseCase(
        IUnitOfWork unitOfWork,
-       IValidator<CategoryDto> validator,
+       IValidator<UploadCategoryDto> validator,
        ICategoryReadOnlyRepository categoryReadOnlyRepository,
        ICategoryUpdateOnlyRepository categoryUpdateOnlyRepository) : IUpdateCategoryUseCase
     {
-        public async Task Execute(long id, CategoryDto categoryDto)
+        public async Task Execute(long id, UploadCategoryDto categoryDto)
         {
             await Validate(categoryDto);
 
@@ -30,7 +30,7 @@ namespace InventarioEscolar.Application.UsesCases.CategoryCase.Update
             await unitOfWork.Commit();
 
         }
-        private async Task Validate(CategoryDto dto)
+        private async Task Validate(UploadCategoryDto dto)
         {
             var result = await validator.ValidateAsync(dto);
 

@@ -12,11 +12,11 @@ namespace InventarioEscolar.Application.UsesCases.RoomLocationCase.Update
 {
     public class UpdateRoomLocationUseCase(
        IUnitOfWork unitOfWork,
-       IValidator<RoomLocationDto> validator,
+       IValidator<UpdateRoomLocationDto> validator,
        IRoomLocationReadOnlyRepository roomLocationReadOnlyRepository,
        IRoomLocationUpdateOnlyRepository roomLocationUpdateOnlyRepository) : IUpdateRoomLocationUseCase
     {
-        public async Task Execute(long id, RoomLocationDto roomLocationDto)
+        public async Task Execute(long id, UpdateRoomLocationDto roomLocationDto)
         {
             await Validate(roomLocationDto);
 
@@ -31,7 +31,7 @@ namespace InventarioEscolar.Application.UsesCases.RoomLocationCase.Update
             await unitOfWork.Commit();
 
         }
-        private async Task Validate(RoomLocationDto dto)
+        private async Task Validate(UpdateRoomLocationDto dto)
         {
             var result = await validator.ValidateAsync(dto);
 

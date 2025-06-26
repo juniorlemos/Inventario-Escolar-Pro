@@ -1,6 +1,8 @@
-﻿namespace InventarioEscolar.Application.Dtos
+﻿using InventarioEscolar.Communication.Dtos.Interfaces;
+
+namespace InventarioEscolar.Application.Dtos
 {
-    public record CategoryDto
+    public record CategoryDto : ICategoryBaseDto
     {
         public long Id { get; set; }
         public string Name { get; set; }

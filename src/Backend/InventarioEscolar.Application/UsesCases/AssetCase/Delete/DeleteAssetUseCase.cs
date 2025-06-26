@@ -1,37 +1,26 @@
 ﻿
 using InventarioEscolar.Domain.Repositories;
-using InventarioEscolar.Exceptions.ExceptionsBase;
-using InventarioEscolar.Exceptions;
 using InventarioEscolar.Domain.Repositories.Assets;
+using InventarioEscolar.Exceptions;
+using InventarioEscolar.Exceptions.ExceptionsBase;
 
 namespace InventarioEscolar.Application.UsesCases.AssetCase.Delete
 {
-    public class DeleteAssetUseCase : IDeleteAssetUseCase
+    public class DeleteAssetUseCase(
+        IAssetDeleteOnlyRepository assetDeleteOnlyRepository,
+        IAssetReadOnlyRepository assetReadOnlyRepository,
+        IUnitOfWork unitOfWork) : IDeleteAssetUseCase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IAssetWriteOnlyRepository _repositoryWrite;
-        private readonly IAssetReadOnlyRepository _repositoryRead;
-
-
-        public DeleteAssetUseCase(
-                         IUnitOfWork unitOfWork,
-                         IAssetWriteOnlyRepository repositoryWrite,
-                         IAssetReadOnlyRepository repositoryRead)
-        { 
-            _unitOfWork = unitOfWork;
-            _repositoryWrite = repositoryWrite;
-            _repositoryRead = repositoryRead;
-        }
         public async Task Execute(long assetId)
         {
-            var asset = await _repositoryRead.GetById(assetId);
+            var asset = await assetReadOnlyRepository.GetById(assetId);
 
-            if (asset == null)
+            if (asset is null)
                 throw new NotFoundException(ResourceMessagesException.ASSET_NOT_FOUND);
 
-            await _repositoryWrite.Delete(assetId);
+            await assetDeleteOnlyRepository.Delete(asset.Id);
 
-            await _unitOfWork.Commit();
+            await unitOfWork.Commit();
         }
     }
 }

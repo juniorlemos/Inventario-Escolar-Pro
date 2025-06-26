@@ -12,7 +12,20 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
 
         public async Task<PagedResult<Category>> GetAll(int page, int pageSize)
         {
-            var query = dbContext.Categories.AsNoTracking();
+            var query = dbContext.Categories
+                 .Select(c => new Category
+                 {
+                     Id = c.Id,
+                     Name = c.Name,
+                     Description= c.Description,
+                     Assets = c.Assets
+                         .Select(a => new Asset
+                         {
+                             Id = a.Id,
+                             Name = a.Name
+                         }).ToList()
+                 })
+                .AsNoTracking();
 
             var totalCount = await query.CountAsync();
 
@@ -39,18 +52,33 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
 
         public async Task<Category?> GetById(long categoryId)
         {
-            return await dbContext.Categories.FirstOrDefaultAsync(category => category.Id == categoryId);
+            return await dbContext.Categories.Where(c => c.Id == categoryId)
+                 .Select(r => new Category
+                 {
+                     Id = r.Id,
+                     Name = r.Name,
+                     Description = r.Description,
+                     Assets = r.Assets
+                         .Select(a => new Asset
+                         {
+                             Id = a.Id,
+                             Name = a.Name
+                         }).ToList()
+                 })
+                 .FirstOrDefaultAsync(category => category.Id == categoryId);
         }
 
         public async Task Insert(Category category) => await dbContext.Categories.AddAsync(category);
         public async Task<bool> Delete(long categoryId)
         {
-            var categories = await dbContext.Categories.FindAsync(categoryId);
+            var category = await dbContext.Categories.FindAsync(categoryId);
 
-            if (categories == null)
+            if (category == null)
                 return false;
 
-            dbContext.Categories.Remove(categories);
+            category.Active = false;
+
+            await dbContext.SaveChangesAsync(); 
             return true;
         }
     }

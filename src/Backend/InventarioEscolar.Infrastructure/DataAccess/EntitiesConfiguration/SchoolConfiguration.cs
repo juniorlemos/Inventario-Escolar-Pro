@@ -53,6 +53,11 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
                    .WithOne(a => a.School)
                    .HasForeignKey(a => a.SchoolId)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(s => s.Categories)
+                   .WithOne(a => a.School)
+                   .HasForeignKey(a => a.SchoolId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

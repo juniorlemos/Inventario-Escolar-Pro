@@ -1,10 +1,10 @@
 ﻿using InventarioEscolar.Application.Dtos;
+using InventarioEscolar.Application.UsesCases.CategoryCase.Delete;
 using InventarioEscolar.Application.UsesCases.CategoryCase.GetAll;
 using InventarioEscolar.Application.UsesCases.CategoryCase.GetById;
 using InventarioEscolar.Application.UsesCases.CategoryCase.Register;
-using InventarioEscolar.Application.UsesCases.RoomLocationCase.GetById;
-using InventarioEscolar.Application.UsesCases.CategoryCase.GetAll;
 using InventarioEscolar.Application.UsesCases.CategoryCase.Update;
+using InventarioEscolar.Application.UsesCases.RoomLocationCase.Delete;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Communication.Request;
 using InventarioEscolar.Communication.Response;
@@ -46,7 +46,7 @@ namespace InventarioEscolar.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(ResponsePagedJson<CategoryDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponsePagedJson<ResponseCategoryJson>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAll(
           [FromServices] IGetAllCategoryUseCase useCase,
@@ -55,7 +55,7 @@ namespace InventarioEscolar.Api.Controllers
         {
             var result = await useCase.Execute(page, pageSize);
 
-            var response = result.Adapt<ResponsePagedJson<CategoryDto>>();
+            var response = result.Adapt<ResponsePagedJson<ResponseCategoryJson>>();
 
             if (response.Items.Count != 0)
                 return Ok(response);
@@ -69,12 +69,25 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(
          [FromServices] IUpdateCategoryUseCase useCase,
-         [FromRoute] int id,
+         [FromRoute] long id,
          [FromBody] RequestUpdateCategoryJson request)
         {
-            var categoryDto = request.Adapt<CategoryDto>();
+            var categoryDto = request.Adapt<UploadCategoryDto>();
 
             await useCase.Execute(id, categoryDto);
+
+            return NoContent();
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Delete(
+        [FromServices] IDeleteCategoryUseCase useCase,
+        [FromRoute] long id)
+        {
+            await useCase.Execute(id);
 
             return NoContent();
         }

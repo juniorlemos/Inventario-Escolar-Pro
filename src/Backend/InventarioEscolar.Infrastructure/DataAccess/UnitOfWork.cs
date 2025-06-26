@@ -3,12 +3,8 @@
 namespace InventarioEscolar.Infrastructure.DataAccess
 {
 
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork(InventarioEscolarProDBContext dbContext) : IUnitOfWork
     {
-        private readonly InventarioEscolarProDBContext _dbContext;
-
-        public UnitOfWork(InventarioEscolarProDBContext dbContext) => _dbContext = dbContext;
-
-        public async Task Commit() => await _dbContext.SaveChangesAsync();
+        public async Task Commit() => await dbContext.SaveChangesAsync();
     }
 }

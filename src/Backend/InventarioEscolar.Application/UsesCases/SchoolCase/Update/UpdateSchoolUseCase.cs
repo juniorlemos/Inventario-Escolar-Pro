@@ -11,11 +11,11 @@ namespace InventarioEscolar.Application.UsesCases.SchoolCase.Update
 {
     public class UpdateSchoolUseCase(
        IUnitOfWork unitOfWork,
-       IValidator<SchoolDto> validator,
+       IValidator<UpdateSchoolDto> validator,
        ISchoolReadOnlyRepository schoolReadOnlyRepository,
        ISchoolUpdateOnlyRepository schoolUpdateOnlyRepository) : IUpdateSchoolUseCase
     {
-        public async Task Execute(long id,SchoolDto schoolDto)
+        public async Task Execute(long id, UpdateSchoolDto schoolDto)
         {
             await Validate(schoolDto);
 
@@ -28,9 +28,8 @@ namespace InventarioEscolar.Application.UsesCases.SchoolCase.Update
 
             schoolUpdateOnlyRepository.Update(school);
             await unitOfWork.Commit();
-
         }
-        private async Task Validate(SchoolDto dto)
+        private async Task Validate(UpdateSchoolDto dto)
         {
             var result = await validator.ValidateAsync(dto);
 
