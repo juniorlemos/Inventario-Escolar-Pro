@@ -71,15 +71,20 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
                      AcquisitionValue = a.AcquisitionValue,
                      ConservationState = a.ConservationState,
                      SerieNumber = a.SerieNumber,
+                     SchoolId = a.SchoolId,
+                     CategoryId = a.CategoryId,
+                     RoomLocationId = a.RoomLocationId,
                      RoomLocation = new RoomLocation
                      {
                          Id = a.Category.Id,
-                         Name = a.Category.Name
+                         Name = a.Category.Name,
+                         SchoolId = a.SchoolId,
                      },
                      Category = new Category
                      {
                          Id = a.Category.Id,
-                         Name = a.Category.Name
+                         Name = a.Category.Name,
+                         SchoolId=a.SchoolId,
                      },
                  })
                  .FirstOrDefaultAsync(asset => asset.Id == assetId);

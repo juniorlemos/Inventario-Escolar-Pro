@@ -10,7 +10,5 @@ namespace InventarioEscolar.Communication.Request
         public decimal? AcquisitionValue { get; set; }
         public ConservationState ConservationState { get; set; }
         public string? SerieNumber { get; set; }
-        public long CategoryId { get; set; }
-        public long? RoomLocationId { get; set; }
     }
 }

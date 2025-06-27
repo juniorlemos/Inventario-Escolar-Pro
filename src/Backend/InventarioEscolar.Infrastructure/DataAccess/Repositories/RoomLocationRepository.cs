@@ -59,7 +59,8 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
                      Id = r.Id,
                      Name = r.Name,
                      Description = r.Description,
-                     Building = r.Building,                      
+                     Building = r.Building,
+                     SchoolId = r.SchoolId,
                      Assets = r.Assets
                          .Select(a => new Asset
                          {

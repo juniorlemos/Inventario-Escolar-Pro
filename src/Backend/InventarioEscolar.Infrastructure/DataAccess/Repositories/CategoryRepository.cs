@@ -53,17 +53,19 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
         public async Task<Category?> GetById(long categoryId)
         {
             return await dbContext.Categories.Where(c => c.Id == categoryId)
-                 .Select(r => new Category
+                 .Select(c => new Category
                  {
-                     Id = r.Id,
-                     Name = r.Name,
-                     Description = r.Description,
-                     Assets = r.Assets
+                     Id = c.Id,
+                     Name = c.Name,
+                     Description = c.Description,
+                     SchoolId = c.SchoolId,
+                     Assets = c.Assets
                          .Select(a => new Asset
                          {
                              Id = a.Id,
                              Name = a.Name
                          }).ToList()
+                    
                  })
                  .FirstOrDefaultAsync(category => category.Id == categoryId);
         }
