@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Api.Extension;
-using InventarioEscolar.Application.Dtos;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Repositories;
 using InventarioEscolar.Domain.Repositories.Assets;
@@ -20,11 +19,9 @@ namespace InventarioEscolar.Application.UsesCases.AssetCase.Update
         {
             await Validate(assetDto);
 
-            var asset = await assetReadOnlyRepository.GetById(id);
-
-            if (asset is null)
+            var asset = await assetReadOnlyRepository.GetById(id) ??
                 throw new NotFoundException(ResourceMessagesException.ASSET_NOT_FOUND);
-
+            
             assetDto.Adapt(asset);
 
             assetUpdateOnlyRepository.Update(asset);

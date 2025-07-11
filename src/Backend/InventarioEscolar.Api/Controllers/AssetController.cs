@@ -4,7 +4,6 @@ using InventarioEscolar.Application.UsesCases.AssetCase.GetAll;
 using InventarioEscolar.Application.UsesCases.AssetCase.GetById;
 using InventarioEscolar.Application.UsesCases.AssetCase.Register;
 using InventarioEscolar.Application.UsesCases.AssetCase.Update;
-using InventarioEscolar.Application.UsesCases.RoomLocationCase.Delete;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Communication.Request;
 using InventarioEscolar.Communication.Response;

@@ -28,8 +28,8 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
                     SerieNumber = a.SerieNumber,
                     RoomLocation = new RoomLocation
                     {
-                        Id = a.Category.Id,
-                        Name = a.Category.Name
+                        Id = a.RoomLocation.Id,
+                        Name = a.RoomLocation.Name
                     },
                     Category = new Category
                     {
@@ -76,8 +76,8 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
                      RoomLocationId = a.RoomLocationId,
                      RoomLocation = new RoomLocation
                      {
-                         Id = a.Category.Id,
-                         Name = a.Category.Name,
+                         Id = a.RoomLocation.Id,
+                         Name = a.RoomLocation.Name,
                          SchoolId = a.SchoolId,
                      },
                      Category = new Category

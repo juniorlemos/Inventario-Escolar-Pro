@@ -5,6 +5,9 @@ using InventarioEscolar.Application.UsesCases.AssetCase.GetAll;
 using InventarioEscolar.Application.UsesCases.AssetCase.GetById;
 using InventarioEscolar.Application.UsesCases.AssetCase.Register;
 using InventarioEscolar.Application.UsesCases.AssetCase.Update;
+using InventarioEscolar.Application.UsesCases.AssetMovementCase.GetAll;
+using InventarioEscolar.Application.UsesCases.AssetMovementCase.Register;
+using InventarioEscolar.Application.UsesCases.AssetMovementCase.Update;
 using InventarioEscolar.Application.UsesCases.CategoryCase.Delete;
 using InventarioEscolar.Application.UsesCases.CategoryCase.GetAll;
 using InventarioEscolar.Application.UsesCases.CategoryCase.GetById;
@@ -41,7 +44,12 @@ namespace InventarioEscolar.Application
             services.AddScoped<IRegisterAssetUseCase, RegisterAssetUseCase>();
             services.AddScoped<IUpdateAssetUseCase, UpdateAssetUseCase>();
             services.AddScoped<IDeleteAssetUseCase, DeleteAssetUseCase>();
-            
+
+            services.AddScoped<IGetAllAssetMovementUseCase, GetAllAssetMovementUseCase>();
+            services.AddScoped<IRegisterAssetMovementUseCase, RegisterAssetMovementUseCase>();
+            services.AddScoped<IUpdateAssetMovementUseCase, UpdateAssetMovementUseCase>();
+
+
             services.AddScoped<IRegisterRoomLocationUseCase, RegisterRoomLocationUseCase>();
             services.AddScoped<IGetByIdRoomLocationUseCase, GetByIdRoomLocationUseCase>();
             services.AddScoped<IGetAllRoomLocationUseCase, GetAllRoomLocationUseCase>();

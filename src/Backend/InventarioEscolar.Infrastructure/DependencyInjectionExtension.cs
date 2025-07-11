@@ -1,5 +1,6 @@
 ﻿using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Repositories;
+using InventarioEscolar.Domain.Repositories.AssetMovements;
 using InventarioEscolar.Domain.Repositories.Assets;
 using InventarioEscolar.Domain.Repositories.Categories;
 using InventarioEscolar.Domain.Repositories.RoomLocations;
@@ -58,6 +59,10 @@ namespace InventarioEscolar.Infrastructure
             services.AddScoped<IAssetReadOnlyRepository, AssetRepository>();
             services.AddScoped<IAssetUpdateOnlyRepository, AssetRepository>();
             services.AddScoped<IAssetDeleteOnlyRepository, AssetRepository>();
+
+            services.AddScoped<IAssetMovementWriteOnlyRepository, AssetMovementRepository>();
+            services.AddScoped<IAssetMovementReadOnlyRepository, AssetMovementRepository>();
+            services.AddScoped<IAssetMovementUpdateOnlyRepository, AssetMovementRepository>();
 
             services.AddScoped<IRoomLocationWriteOnlyRepository, RoomLocationRepository>();
             services.AddScoped<IRoomLocationReadOnlyRepository, RoomLocationRepository>();

@@ -1,11 +1,6 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Communication.Dtos.Interfaces;
 using InventarioEscolar.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InventarioEscolar.Application.Services.Validators.Rules
 {

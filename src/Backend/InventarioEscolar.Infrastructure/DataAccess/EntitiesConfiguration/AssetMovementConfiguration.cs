@@ -14,6 +14,8 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
             builder.Property(am => am.Id).ValueGeneratedOnAdd();
 
             builder.Property(am => am.MovedAt).IsRequired();
+            builder.Property(am => am.IsCanceled).IsRequired();
+
 
             builder.HasOne(am => am.Asset)
                    .WithMany()
@@ -31,6 +33,7 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
                    .OnDelete(DeleteBehavior.Restrict); 
 
             builder.Property(am => am.Responsible).HasMaxLength(100);
+            builder.Property(am => am.CancelReason).HasMaxLength(200);
         }
     }
 }

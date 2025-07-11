@@ -12,10 +12,11 @@ namespace InventarioEscolar.Application.UsesCases.RoomLocationCase.Delete
     {
         public async Task Execute(long roomLocationId)
         {
-            var roomLocation = await roomLocationReadOnlyRepository.GetById(roomLocationId);
-
-            if (roomLocation is null)
+            var roomLocation = await roomLocationReadOnlyRepository.GetById(roomLocationId) ??
                 throw new NotFoundException(ResourceMessagesException.ROOMLOCATION_NOT_FOUND);
+           
+            if (roomLocation.Assets.Any())
+                throw new BusinessException(ResourceMessagesException.ROOMLOCATION_HAS_ASSETS);
 
             await roomLocationDeleteOnlyRepository.Delete(roomLocation.Id);
 

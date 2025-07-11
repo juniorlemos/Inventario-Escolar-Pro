@@ -14,6 +14,7 @@ namespace InventarioEscolar.Application.Services.Mapster
             SchoolMappings();
             CategoryMappings();
             AssetMappings();
+            AssetMovementMappings();
 
             TypeAdapterConfig.GlobalSettings.Compile();
         }
@@ -45,6 +46,13 @@ namespace InventarioEscolar.Application.Services.Mapster
             TypeAdapterConfig<AssetDto, Asset>.NewConfig();
             TypeAdapterConfig<Asset, AssetDto>.NewConfig();
             TypeAdapterConfig<RequestRegisterAssetJson, AssetDto>.NewConfig();
+        }
+
+        public static void AssetMovementMappings()
+        {
+            TypeAdapterConfig<AssetMovementDto, AssetMovement>.NewConfig();
+            TypeAdapterConfig<AssetMovement, AssetMovementDto>.NewConfig();
+            TypeAdapterConfig<RequestRegisterAssetMovementJson, AssetMovementDto>.NewConfig();
         }
     }
 }

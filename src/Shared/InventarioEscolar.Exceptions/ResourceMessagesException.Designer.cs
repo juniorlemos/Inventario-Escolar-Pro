@@ -88,11 +88,92 @@ namespace InventarioEscolar.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Asset ID must be greater than 0..
+        /// </summary>
+        public static string ASSETMOVEMENT_ASSET_ID_INVALID {
+            get {
+                return ResourceManager.GetString("ASSETMOVEMENT_ASSET_ID_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Asset movement cancel reason cannot exceed 200 characters..
+        /// </summary>
+        public static string ASSETMOVEMENT_CANCELREASON_TOO_LONG {
+            get {
+                return ResourceManager.GetString("ASSETMOVEMENT_CANCELREASON_TOO_LONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to From Room ID must be greater than 0..
+        /// </summary>
+        public static string ASSETMOVEMENT_FROM_ROOM_ID_INVALID {
+            get {
+                return ResourceManager.GetString("ASSETMOVEMENT_FROM_ROOM_ID_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Moved At date cannot be in the future..
+        /// </summary>
+        public static string ASSETMOVEMENT_MOVED_AT_INVALID {
+            get {
+                return ResourceManager.GetString("ASSETMOVEMENT_MOVED_AT_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Asset movement not found..
+        /// </summary>
+        public static string ASSETMOVEMENT_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("ASSETMOVEMENT_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Asset movement responsible name cannot exceed 100 characters..
+        /// </summary>
+        public static string ASSETMOVEMENT_RESPONSIBLE_NAME_TOO_LONG {
+            get {
+                return ResourceManager.GetString("ASSETMOVEMENT_RESPONSIBLE_NAME_TOO_LONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Asset movement same room..
+        /// </summary>
+        public static string ASSETMOVEMENT_SAME_ROOM {
+            get {
+                return ResourceManager.GetString("ASSETMOVEMENT_SAME_ROOM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To Room ID must be greater than 0..
+        /// </summary>
+        public static string ASSETMOVEMENT_TO_ROOM_ID_INVALID {
+            get {
+                return ResourceManager.GetString("ASSETMOVEMENT_TO_ROOM_ID_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The category description must not exceed 200 characters..
         /// </summary>
         public static string CATEGORY_DESCRIPTION_TOOLONG {
             get {
                 return ResourceManager.GetString("CATEGORY_DESCRIPTION_TOOLONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot delete category because it still has assets assigned..
+        /// </summary>
+        public static string CATEGORY_HAS_ASSETS {
+            get {
+                return ResourceManager.GetString("CATEGORY_HAS_ASSETS", resourceCulture);
             }
         }
         
@@ -242,6 +323,15 @@ namespace InventarioEscolar.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot delete room location because it still has assets assigned..
+        /// </summary>
+        public static string ROOMLOCATION_HAS_ASSETS {
+            get {
+                return ResourceManager.GetString("ROOMLOCATION_HAS_ASSETS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Room location id invalid.
         /// </summary>
         public static string ROOMLOCATION_ID_INVALID {
@@ -278,11 +368,29 @@ namespace InventarioEscolar.Exceptions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Room Location not found.
+        ///   Looks up a localized string similar to Room location not found..
         /// </summary>
         public static string ROOMLOCATION_NOT_FOUND {
             get {
                 return ResourceManager.GetString("ROOMLOCATION_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Room location destination not found..
+        /// </summary>
+        public static string ROOMLOCATION_NOT_FOUND_DESTINATION {
+            get {
+                return ResourceManager.GetString("ROOMLOCATION_NOT_FOUND_DESTINATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Room location origin not found..
+        /// </summary>
+        public static string ROOMLOCATION_NOT_FOUND_ORIGIN {
+            get {
+                return ResourceManager.GetString("ROOMLOCATION_NOT_FOUND_ORIGIN", resourceCulture);
             }
         }
         
@@ -310,6 +418,15 @@ namespace InventarioEscolar.Exceptions {
         public static string SCHOOL_CITY_TOOLONG {
             get {
                 return ResourceManager.GetString("SCHOOL_CITY_TOOLONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot delete the school because it still has associated rooms, assets, or categories..
+        /// </summary>
+        public static string SCHOOL_HAS_DEPENDENCIES {
+            get {
+                return ResourceManager.GetString("SCHOOL_HAS_DEPENDENCIES", resourceCulture);
             }
         }
         

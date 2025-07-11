@@ -225,4 +225,43 @@
   <data name="ASSET_ID_INVALID" xml:space="preserve">
     <value>O id do patrimônio está inválido</value>
   </data>
+  <data name="ASSETMOVEMENT_ASSET_ID_INVALID" xml:space="preserve">
+    <value>O ID do ativo deve ser maior que 0.</value>
+  </data>
+  <data name="ASSETMOVEMENT_FROM_ROOM_ID_INVALID" xml:space="preserve">
+    <value>O ID da sala de origem deve ser maior que 0.</value>
+  </data>
+  <data name="ASSETMOVEMENT_TO_ROOM_ID_INVALID" xml:space="preserve">
+    <value>O ID da sala de destino deve ser maior que 0.</value>
+  </data>
+  <data name="ASSETMOVEMENT_MOVED_AT_INVALID" xml:space="preserve">
+    <value>A data da movimentação não pode estar no futuro.</value>
+  </data>
+  <data name="ASSETMOVEMENT_RESPONSIBLE_NAME_TOO_LONG" xml:space="preserve">
+    <value>O nome do responsável pela movimentação do patrimonio não pode exceder 100 caracteres.</value>
+  </data>
+  <data name="ASSETMOVEMENT_NOT_FOUND" xml:space="preserve">
+    <value>Movimentação de patrimônio não encontrado.</value>
+  </data>
+  <data name="ROOMLOCATION_NOT_FOUND_ORIGIN" xml:space="preserve">
+    <value>Sala de origem não encontrada</value>
+  </data>
+  <data name="ROOMLOCATION_NOT_FOUND_DESTINATION" xml:space="preserve">
+    <value>Sala de destino não encontrada</value>
+  </data>
+  <data name="ASSETMOVEMENT_SAME_ROOM" xml:space="preserve">
+    <value>Movimentação de patrimono na mesma sala.</value>
+  </data>
+  <data name="ASSETMOVEMENT_CANCELREASON_TOO_LONG" xml:space="preserve">
+    <value>O motivo do cancelamento da movimentação do patrimônio não pode exceder 200 caracteres.</value>
+  </data>
+  <data name="ROOMLOCATION_HAS_ASSETS" xml:space="preserve">
+    <value>Não é possível excluir a sala porque ela ainda possui ativos vinculados.</value>
+  </data>
+  <data name="CATEGORY_HAS_ASSETS" xml:space="preserve">
+    <value>Não é possível excluir a categoria porque ela ainda possui ativos vinculados.</value>
+  </data>
+  <data name="SCHOOL_HAS_DEPENDENCIES" xml:space="preserve">
+    <value>Não é possível excluir a escola porque ela ainda possui salas, ativos ou categorias vinculadas.</value>
+  </data>
 </root>
