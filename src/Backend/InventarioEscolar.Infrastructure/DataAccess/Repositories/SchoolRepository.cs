@@ -1,8 +1,8 @@
 ﻿using InventarioEscolar.Application.Dtos;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
 using InventarioEscolar.Domain.Pagination;
-using InventarioEscolar.Domain.Repositories.Schools;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventarioEscolar.Infrastructure.DataAccess.Repositories

@@ -1,6 +1,6 @@
 ﻿using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Domain.Interfaces.Repositories.AssetMovements;
 using InventarioEscolar.Domain.Pagination;
-using InventarioEscolar.Domain.Repositories.AssetMovements;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
@@ -9,7 +9,16 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
     {
         public async Task Insert(AssetMovement assetMovement) => await dbContext.AssetMovements.AddAsync(assetMovement);
         public void Update(AssetMovement assetMovement) => dbContext.AssetMovements.Update(assetMovement);
-
+        public async Task<List<AssetMovement>> GetAllWithDetailsAsync()
+        {
+            return await dbContext.AssetMovements
+                .Include(m => m.Asset)
+                .Include(m => m.FromRoom)
+                .Include(m => m.ToRoom)
+                .Where(m => !m.IsCanceled) // se houver soft delete ou cancelamento
+                .OrderByDescending(m => m.CanceledAt)
+                .ToListAsync();
+        }
         public async Task<PagedResult<AssetMovement>> GetAll(int page, int pageSize, bool? isCanceled = null)
         {
             var query = dbContext.AssetMovements.AsQueryable();

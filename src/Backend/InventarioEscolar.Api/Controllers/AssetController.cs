@@ -8,22 +8,28 @@ using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Communication.Request;
 using InventarioEscolar.Communication.Response;
 using Mapster;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventarioEscolar.Api.Controllers
 {
     public class AssetController : InventarioApiBaseController
     {
+        private readonly IMediator _mediator;
+
+        public AssetController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
         [HttpGet]
         [ProducesResponseType(typeof(ResponsePagedJson<ResponseAssetJson>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAll(
-          [FromServices] IGetAllAssetUseCase useCase,
           [FromQuery] int page = 0,
           [FromQuery] int pageSize = 0)
-        {
-            var result = await useCase.Execute(page, pageSize);
-
+        {           
+            var result = await _mediator.Send(new GetAllAssetQuery(page, pageSize));
             var response = result.Adapt<ResponsePagedJson<ResponseAssetJson>>();
 
             if (response.Items.Count != 0)
@@ -37,12 +43,12 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(typeof(ResponseAssetJson), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetByIdAsset(
-               [FromServices] IGetByIdAssetUseCase useCase,
                [FromRoute] long id)
         {
-            var asset = await useCase.Execute(id);
 
-            var response = asset.Adapt<ResponseAssetJson>();
+            var result = await _mediator.Send(new GetByIdAssetQuery(42));
+
+            var response = result.Adapt<ResponseAssetJson>();
             return Ok(response);
         }
 
@@ -52,13 +58,12 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(
-        [FromServices] IUpdateAssetUseCase useCase,
         [FromRoute] long id,
         [FromBody] RequestUpdateAssetJson request)
         {
             var assetDto = request.Adapt<UpdateAssetDto>();
 
-            await useCase.Execute(id, assetDto);
+            await _mediator.Send(new UpdateAssetCommand(id, assetDto));
 
             return NoContent();
         }
@@ -68,12 +73,11 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(typeof(ResponseAssetJson), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register(
-        [FromServices] IRegisterAssetUseCase useCase,
         [FromBody] RequestRegisterAssetJson request)
         {
             var assetDto = request.Adapt<AssetDto>();
 
-            var result = await useCase.Execute(assetDto);
+            var result = await _mediator.Send(new RegisterAssetCommand(assetDto));
 
             var response = result.Adapt<ResponseAssetJson>();
 
@@ -85,10 +89,9 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(
-        [FromServices] IDeleteAssetUseCase useCase,
         [FromRoute] long id)
         {
-            await useCase.Execute(id);
+            await _mediator.Send( new DeleteAssetCommand(id));
 
             return NoContent();
         }

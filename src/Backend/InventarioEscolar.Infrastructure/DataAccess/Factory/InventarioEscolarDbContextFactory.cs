@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using InventarioEscolar.Application.Services.Interfaces;
 using InventarioEscolar.Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 
 namespace InventarioEscolar.Infrastructure.DataAccess.Factory
@@ -21,7 +22,16 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Factory
             var optionsBuilder = new DbContextOptionsBuilder<InventarioEscolarProDBContext>();
             optionsBuilder.UseSqlServer(configuration.ConnectionString());
 
-            return new InventarioEscolarProDBContext(optionsBuilder.Options);
+            // Usando uma implementação fake de ICurrentUserService
+            var fakeCurrentUserService = new FakeCurrentUserService();
+
+            return new InventarioEscolarProDBContext(optionsBuilder.Options, fakeCurrentUserService);
+        }
+
+        // Fake usada apenas para DesignTime/Migrations
+        private class FakeCurrentUserService : ICurrentUserService
+        {
+            public long? SchoolId => null; // ou um valor fixo como 1
         }
     }
 }

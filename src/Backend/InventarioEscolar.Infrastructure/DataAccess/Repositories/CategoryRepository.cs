@@ -1,7 +1,6 @@
 ﻿using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Domain.Interfaces.Repositories.Categories;
 using InventarioEscolar.Domain.Pagination;
-using InventarioEscolar.Domain.Repositories.Categories;
-using InventarioEscolar.Domain.Repositories.Schools;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
@@ -45,9 +44,9 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
 
             return new PagedResult<Category>(items, totalCount, page, pageSize);
         }
-        public async Task<bool> ExistCategoryName(string category)
+        public async Task<bool> ExistCategoryName(string category, long? schoolId)
         {
-            return await dbContext.Categories.AnyAsync(s => s.Name.ToUpper() == category.ToUpper());
+            return await dbContext.Categories.AnyAsync(s => s.Name.ToUpper() == category.ToUpper() && s.SchoolId == schoolId);
         }
 
         public async Task<Category?> GetById(long categoryId)

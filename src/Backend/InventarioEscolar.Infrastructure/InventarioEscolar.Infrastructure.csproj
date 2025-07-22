@@ -22,12 +22,14 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.5" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.5" />
+    <PackageReference Include="QuestPDF" Version="2025.7.0" />
     <PackageReference Include="System.IO" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\InventarioEscolar.Communication\InventarioEscolar.Communication.csproj" />
     <ProjectReference Include="..\..\Shared\InventarioEscolar.Exceptions\InventarioEscolar.Exceptions.csproj" />
+    <ProjectReference Include="..\InventarioEscolar.Application\InventarioEscolar.Application.csproj" />
     <ProjectReference Include="..\InventarioEscolar.Domain\InventarioEscolar.Domain.csproj" />
   </ItemGroup>
 

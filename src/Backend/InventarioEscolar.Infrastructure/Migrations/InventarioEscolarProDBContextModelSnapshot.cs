@@ -205,11 +205,21 @@ namespace InventarioEscolar.Infrastructure.Migrations
                     b.Property<long>("AssetId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("CancelReason")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("CanceledAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<long>("FromRoomId")
                         .HasColumnType("bigint");
+
+                    b.Property<bool>("IsCanceled")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("MovedAt")
                         .HasColumnType("datetime2");
@@ -217,6 +227,9 @@ namespace InventarioEscolar.Infrastructure.Migrations
                     b.Property<string>("Responsible")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<long>("SchoolId")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("ToRoomId")
                         .HasColumnType("bigint");
@@ -226,6 +239,8 @@ namespace InventarioEscolar.Infrastructure.Migrations
                     b.HasIndex("AssetId");
 
                     b.HasIndex("FromRoomId");
+
+                    b.HasIndex("SchoolId");
 
                     b.HasIndex("ToRoomId");
 
@@ -521,6 +536,12 @@ namespace InventarioEscolar.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("InventarioEscolar.Domain.Entities.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("InventarioEscolar.Domain.Entities.RoomLocation", "ToRoom")
                         .WithMany()
                         .HasForeignKey("ToRoomId")
@@ -531,15 +552,17 @@ namespace InventarioEscolar.Infrastructure.Migrations
 
                     b.Navigation("FromRoom");
 
+                    b.Navigation("School");
+
                     b.Navigation("ToRoom");
                 });
 
             modelBuilder.Entity("InventarioEscolar.Domain.Entities.Category", b =>
                 {
                     b.HasOne("InventarioEscolar.Domain.Entities.School", "School")
-                        .WithMany()
+                        .WithMany("Categories")
                         .HasForeignKey("SchoolId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("School");
@@ -620,6 +643,8 @@ namespace InventarioEscolar.Infrastructure.Migrations
             modelBuilder.Entity("InventarioEscolar.Domain.Entities.School", b =>
                 {
                     b.Navigation("Assets");
+
+                    b.Navigation("Categories");
 
                     b.Navigation("RoomLocations");
 

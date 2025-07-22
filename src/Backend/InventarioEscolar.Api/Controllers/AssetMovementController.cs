@@ -5,22 +5,29 @@ using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Communication.Request;
 using InventarioEscolar.Communication.Response;
 using Mapster;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventarioEscolar.Api.Controllers
 {
     public class AssetMovementController : InventarioApiBaseController
     {
+        private readonly IMediator _mediator;
+
+        public AssetMovementController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
         [HttpGet]
         [ProducesResponseType(typeof(ResponsePagedJson<ResponseAssetMovementJson>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAll(
-           [FromServices] IGetAllAssetMovementUseCase useCase,
            [FromQuery] int page = 0,
            [FromQuery] int pageSize = 0,
            [FromQuery] bool? isCanceled = null)
         {
-            var result = await useCase.Execute(page, pageSize, isCanceled);
+            var result = await _mediator.Send(new GetAllAssetMovementsQuery(page, pageSize, isCanceled));
 
             var response = result.Adapt<ResponsePagedJson<ResponseAssetMovementJson>>();
 
@@ -35,11 +42,10 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(
-         [FromServices] IUpdateAssetMovementUseCase useCase,
          [FromRoute] long id,
          [FromQuery] string cancelReason)
         {
-            await useCase.Execute(id, cancelReason);
+            await _mediator.Send(new UpdateAssetMovementCommand(id, cancelReason));
 
             return NoContent();
         }
@@ -48,12 +54,11 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(typeof(ResponseAssetMovementJson), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register(
-         [FromServices] IRegisterAssetMovementUseCase useCase,
          [FromBody] RequestRegisterAssetMovementJson request)
         {
             var assetMovementDto = request.Adapt<AssetMovementDto>();
 
-            var result = await useCase.Execute(assetMovementDto);
+            var result = await _mediator.Send(new RegisterAssetMovementCommand(assetMovementDto));
 
             var response = result.Adapt<ResponseAssetMovementJson>();
 

@@ -1,14 +1,26 @@
-﻿using InventarioEscolar.Domain.Entities;
-using InventarioEscolar.Domain.Repositories;
-using InventarioEscolar.Domain.Repositories.AssetMovements;
-using InventarioEscolar.Domain.Repositories.Assets;
-using InventarioEscolar.Domain.Repositories.Categories;
-using InventarioEscolar.Domain.Repositories.RoomLocations;
-using InventarioEscolar.Domain.Repositories.Schools;
+﻿using InventarioEscolar.Application.Services.Interfaces;
+using InventarioEscolar.Application.UsesCases.ReportsCase.AssetConservationCase;
+using InventarioEscolar.Application.UsesCases.ReportsCase.AssetMovementsCase;
+using InventarioEscolar.Application.UsesCases.ReportsCase.AssetsByCategoryCase;
+using InventarioEscolar.Application.UsesCases.ReportsCase.AssetsByLocationCase;
+using InventarioEscolar.Application.UsesCases.ReportsCase.InventoryCase;
+using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Domain.Interfaces;
+using InventarioEscolar.Domain.Interfaces.Repositories.AssetMovements;
+using InventarioEscolar.Domain.Interfaces.Repositories.Assets;
+using InventarioEscolar.Domain.Interfaces.Repositories.Categories;
+using InventarioEscolar.Domain.Interfaces.Repositories.RoomLocations;
+using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
 using InventarioEscolar.Exceptions.ExceptionsBase.Identity;
 using InventarioEscolar.Infrastructure.DataAccess;
 using InventarioEscolar.Infrastructure.DataAccess.Repositories;
 using InventarioEscolar.Infrastructure.Extensions;
+using InventarioEscolar.Infrastructure.Reports.AssetByCategoryCase;
+using InventarioEscolar.Infrastructure.Reports.AssetByLocationCase;
+using InventarioEscolar.Infrastructure.Reports.AssetConservation;
+using InventarioEscolar.Infrastructure.Reports.AssetMovementsCase;
+using InventarioEscolar.Infrastructure.Security.Token;
+using InventarioEscolar.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +35,9 @@ namespace InventarioEscolar.Infrastructure
             AddDbContext_SqlServer(services, configuration);
             AddRepositories(services);
             AddIdentity(services);
+            addReports(services);
+            AddServices(services);
+
         }
 
         private static void AddIdentity( IServiceCollection services)
@@ -35,6 +50,8 @@ namespace InventarioEscolar.Infrastructure
                 options.Password.RequiredUniqueChars = 1;
                 options.Password.RequireDigit = false;
                 options.Password.RequireNonAlphanumeric = false;
+
+
             })
                     .AddEntityFrameworkStores<InventarioEscolarProDBContext>()
                     .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
@@ -79,6 +96,23 @@ namespace InventarioEscolar.Infrastructure
             services.AddScoped<ICategoryReadOnlyRepository, CategoryRepository>();
             services.AddScoped<ICategoryUpdateOnlyRepository, CategoryRepository>();
             services.AddScoped<ICategoryDeleteOnlyRepository, CategoryRepository>();
+
         }
+
+        private static void addReports( IServiceCollection services)
+        {
+            services.AddScoped<IInventoryReportGenerator, InventoryReportGenerator>();
+            services.AddScoped<IAssetConservationStateReportGenerator, AssetConservationStateReportGenerator>();
+            services.AddScoped<IAssetByLocationReportGenerator, AssetByLocationReportGenerator>();
+            services.AddScoped<IAssetMovementsReportGenerator, AssetMovementsReportGenerator>();
+            services.AddScoped<IAssetByCategoryReportGenerator, AssetByCategoryReportGenerator>();
+        }
+        public static void AddServices( IServiceCollection services)
+        {
+            services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddHttpContextAccessor();
+        }
+       
     }
 }

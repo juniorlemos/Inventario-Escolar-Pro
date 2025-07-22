@@ -265,4 +265,13 @@ ve number</value>
   <data name="SCHOOL_HAS_DEPENDENCIES" xml:space="preserve">
     <value>Cannot delete the school because it still has associated rooms, assets, or categories.</value>
   </data>
+  <data name="ASSET_NOT_BELONG_TO_SCHOOL" xml:space="preserve">
+    <value>The asset does not belong to the user's school.</value>
+  </data>
+  <data name="CATEGORY_NOT_BELONG_TO_SCHOOL" xml:space="preserve">
+    <value>The category does not belong to the user's school.</value>
+  </data>
+  <data name="ROOMLOCATION_NOT_BELONG_TO_SCHOOL" xml:space="preserve">
+    <value>The room location does not belong to the user's school.</value>
+  </data>
 </root>

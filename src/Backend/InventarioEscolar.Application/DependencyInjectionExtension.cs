@@ -1,4 +1,7 @@
 ﻿using FluentValidation;
+using InventarioEscolar.Application.Services.AuthService;
+using InventarioEscolar.Application.Services.Email;
+using InventarioEscolar.Application.Services.Interfaces;
 using InventarioEscolar.Application.Services.Mapster;
 using InventarioEscolar.Application.UsesCases.AssetCase.Delete;
 using InventarioEscolar.Application.UsesCases.AssetCase.GetAll;
@@ -13,6 +16,11 @@ using InventarioEscolar.Application.UsesCases.CategoryCase.GetAll;
 using InventarioEscolar.Application.UsesCases.CategoryCase.GetById;
 using InventarioEscolar.Application.UsesCases.CategoryCase.Register;
 using InventarioEscolar.Application.UsesCases.CategoryCase.Update;
+using InventarioEscolar.Application.UsesCases.ReportsCase.AssetConservationCase;
+using InventarioEscolar.Application.UsesCases.ReportsCase.AssetMovementsCase;
+using InventarioEscolar.Application.UsesCases.ReportsCase.AssetsByCategoryCase;
+using InventarioEscolar.Application.UsesCases.ReportsCase.AssetsByLocationCase;
+using InventarioEscolar.Application.UsesCases.ReportsCase.InventoryCase;
 using InventarioEscolar.Application.UsesCases.RoomLocationCase.Delete;
 using InventarioEscolar.Application.UsesCases.RoomLocationCase.GetAll;
 using InventarioEscolar.Application.UsesCases.RoomLocationCase.GetById;
@@ -23,6 +31,7 @@ using InventarioEscolar.Application.UsesCases.SchoolCase.GetAll;
 using InventarioEscolar.Application.UsesCases.SchoolCase.GetById;
 using InventarioEscolar.Application.UsesCases.SchoolCase.Register;
 using InventarioEscolar.Application.UsesCases.SchoolCase.Update;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,48 +41,43 @@ namespace InventarioEscolar.Application
     {
         public static void AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
-            AddUseCases(services);
+            AddUseServices(services);
             AddValidators(services);
 
             AutoMapping.RegisterMappings();
+
+            ConfigureIdentityTokens(services);
+
+            addMediatr(services);
         }
-        private static void AddUseCases(IServiceCollection services)
+        private static void AddUseServices(IServiceCollection services)
         {
-            services.AddScoped<IGetAllAssetUseCase, GetAllAssetUseCase>();
-            services.AddScoped<IGetByIdAssetUseCase, GetByIdAssetUseCase>();
-            services.AddScoped<IRegisterAssetUseCase, RegisterAssetUseCase>();
-            services.AddScoped<IUpdateAssetUseCase, UpdateAssetUseCase>();
-            services.AddScoped<IDeleteAssetUseCase, DeleteAssetUseCase>();
+            services.AddScoped<IAuthService, AuthService>();
 
-            services.AddScoped<IGetAllAssetMovementUseCase, GetAllAssetMovementUseCase>();
-            services.AddScoped<IRegisterAssetMovementUseCase, RegisterAssetMovementUseCase>();
-            services.AddScoped<IUpdateAssetMovementUseCase, UpdateAssetMovementUseCase>();
-
-
-            services.AddScoped<IRegisterRoomLocationUseCase, RegisterRoomLocationUseCase>();
-            services.AddScoped<IGetByIdRoomLocationUseCase, GetByIdRoomLocationUseCase>();
-            services.AddScoped<IGetAllRoomLocationUseCase, GetAllRoomLocationUseCase>();
-            services.AddScoped<IUpdateRoomLocationUseCase, UpdateRoomLocationUseCase>();
-            services.AddScoped<IDeleteRoomLocationUseCase, DeleteRoomLocationUseCase>();
-
-            services.AddScoped<IRegisterSchoolUseCase, RegisterSchoolUseCase>();
-            services.AddScoped<IGetByIdSchoolUseCase, GetByIdSchoolUseCase>();
-            services.AddScoped<IGetAllSchoolUseCase, GetAllSchoolUseCase>();
-            services.AddScoped<IUpdateSchoolUseCase, UpdateSchoolUseCase>();
-            services.AddScoped<IDeleteSchoolUseCase, DeleteSchoolUseCase>();
-
-            services.AddScoped<IRegisterCategoryUseCase, RegisterCategoryUseCase>();
-            services.AddScoped<IGetByIdCategoryUseCase, GetByIdCategoryUseCase>();
-            services.AddScoped<IGetAllCategoryUseCase, GetAllCategoryUseCase>();
-            services.AddScoped<IUpdateCategoryUseCase, UpdateCategoryUseCase>();
-            services.AddScoped<IDeleteCategoryUseCase, DeleteCategoryUseCase>();
-
+            services.AddScoped<IEmailService, BrevoEmailService>();
         }
         private static void AddValidators(IServiceCollection services)
         {
             services.AddValidatorsFromAssembly(typeof(DependencyInjectionExtension).Assembly);
         }
-        
+        private static void ConfigureIdentityTokens(IServiceCollection services)
+        {
+            services.Configure<DataProtectionTokenProviderOptions>(opt =>
+            {
+                opt.TokenLifespan = TimeSpan.FromMinutes(30);
+            });
+        }
+        private static void addMediatr(IServiceCollection services)
+        {
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(typeof(DependencyInjectionExtension).Assembly);
+            });
+            //services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            //services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            //services.AddScoped(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
+        }
+
     }
 
 }

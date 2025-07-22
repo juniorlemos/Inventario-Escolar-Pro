@@ -1,7 +1,6 @@
 ﻿using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Domain.Interfaces.Repositories.RoomLocations;
 using InventarioEscolar.Domain.Pagination;
-using InventarioEscolar.Domain.Repositories.RoomLocations;
-using InventarioEscolar.Domain.Repositories.Schools;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
@@ -46,9 +45,9 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
 
             return new PagedResult<RoomLocation>(items, totalCount, page, pageSize);
         }
-        public async Task<bool> ExistRoomLocationName(string roomLocation)
+        public async Task<bool> ExistRoomLocationName(string roomLocation, long? schoolId)
         {
-            return await dbContext.RoomLocations.AnyAsync(s => s.Name.ToUpper() == roomLocation.ToUpper());
+            return await dbContext.RoomLocations.AnyAsync(s => s.Name.ToUpper() == roomLocation.ToUpper() && s.SchoolId == schoolId );
         }
 
         public async Task<RoomLocation?> GetById(long roomlocationId)

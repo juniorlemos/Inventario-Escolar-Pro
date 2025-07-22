@@ -1,6 +1,6 @@
 ﻿using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Domain.Interfaces.Repositories.Assets;
 using InventarioEscolar.Domain.Pagination;
-using InventarioEscolar.Domain.Repositories.Assets;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
@@ -9,9 +9,34 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
     {
         public async Task Insert(Asset asset) => await dbContext.Assets.AddAsync(asset);
 
-        public async Task<bool> ExistPatrimonyCode(long? patromonyCode)
+        public async Task<bool> ExistPatrimonyCode(long? patrimonyCode, long? schoolId)
         {
-            return await dbContext.Assets.AnyAsync(p => p.PatrimonyCode.Equals(patromonyCode));
+            return await dbContext.Assets
+                .AnyAsync(p => p.PatrimonyCode == patrimonyCode && p.SchoolId == schoolId);
+        }
+        public async Task<List<Asset>> GetAllAssetsAsync()
+        {
+            return await dbContext.Assets
+                .Include(a => a.Category)
+                .Include(a => a.RoomLocation)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        public async Task<List<Asset>> GetAllWithConservationStateAsync()
+        {
+            return await dbContext.Assets
+                .Include(a => a.RoomLocation)
+                .Include(a => a.Category)
+                .Where(a => !a.Active) 
+                .ToListAsync();
+        }
+        public async Task<List<Asset>> GetAllWithCategoryAsync()
+        {
+            return await dbContext.Assets
+                .Include(a => a.Category)
+                .Include(a => a.RoomLocation)
+                .Where(a => !a.Active)
+                .ToListAsync();
         }
 
         public async Task<PagedResult<Asset>> GetAll(int page, int pageSize)
@@ -103,5 +128,28 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
             await dbContext.SaveChangesAsync();
             return true;
         }
+
+        public async Task<List<Asset>> GetAllWithConservationStateBySchoolAsync()
+        {
+            return await dbContext.Assets
+        .Include(a => a.School) // inclui dados da escola (opcional)
+        .Where(a => a.ConservationState != null) // garante que o estado está definido
+        .OrderBy(a => a.School.Name)             // opcional: organiza por escola
+        .ThenBy(a => a.ConservationState)        // opcional: organiza por estado
+        .ToListAsync();
+        }
+
+        public async Task<List<Asset>> GetAllAssetsWithLocationAsync()
+        {
+            return await dbContext.Assets
+                .Include(a => a.RoomLocation)  // inclui a localização do bem
+                .Include(a => a.School)        // opcional: útil se quiser saber de qual escola é o bem
+                .Where(a => a.RoomLocationId != null) // somente os que têm localização definida
+                .OrderBy(a => a.School.Name)
+                .ThenBy(a => a.RoomLocation.Name)
+                .ThenBy(a => a.Name)
+                .ToListAsync();
+        }
+
     }
 }

@@ -1,3 +1,4 @@
+using InventarioEscolar.Api.Configurations;
 using InventarioEscolar.Api.Filters;
 using InventarioEscolar.Application;
 using InventarioEscolar.Infrastructure;
@@ -15,7 +16,7 @@ builder.Services.AddCors(options =>
                   .AllowCredentials();
         });
 });
-// Add services to the container.
+// 
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<TrimStringsFilter>(); 
@@ -31,6 +32,7 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddSwaggerGen();
 builder.Services.AddMvc(options => options.Filters.Add(typeof(ExceptionFilter)));
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 
 

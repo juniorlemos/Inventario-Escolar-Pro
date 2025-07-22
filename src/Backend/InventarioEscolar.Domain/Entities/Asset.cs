@@ -1,4 +1,5 @@
 ﻿using InventarioEscolar.Domain.Enums;
+using InventarioEscolar.Domain.Interfaces;
 
 namespace InventarioEscolar.Domain.Entities
 {

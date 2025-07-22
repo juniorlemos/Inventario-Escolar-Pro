@@ -79,6 +79,15 @@ namespace InventarioEscolar.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The asset does not belong to the user&apos;s school..
+        /// </summary>
+        public static string ASSET_NOT_BELONG_TO_SCHOOL {
+            get {
+                return ResourceManager.GetString("ASSET_NOT_BELONG_TO_SCHOOL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Asset not found.
         /// </summary>
         public static string ASSET_NOT_FOUND {
@@ -210,6 +219,15 @@ namespace InventarioEscolar.Exceptions {
         public static string CATEGORY_NAME_TOOSHORT {
             get {
                 return ResourceManager.GetString("CATEGORY_NAME_TOOSHORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The category does not belong to the user&apos;s school..
+        /// </summary>
+        public static string CATEGORY_NOT_BELONG_TO_SCHOOL {
+            get {
+                return ResourceManager.GetString("CATEGORY_NOT_BELONG_TO_SCHOOL", resourceCulture);
             }
         }
         
@@ -364,6 +382,15 @@ namespace InventarioEscolar.Exceptions {
         public static string ROOMLOCATION_NAME_TOOSHORT {
             get {
                 return ResourceManager.GetString("ROOMLOCATION_NAME_TOOSHORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The room location does not belong to the user&apos;s school..
+        /// </summary>
+        public static string ROOMLOCATION_NOT_BELONG_TO_SCHOOL {
+            get {
+                return ResourceManager.GetString("ROOMLOCATION_NOT_BELONG_TO_SCHOOL", resourceCulture);
             }
         }
         

@@ -7,23 +7,31 @@ using InventarioEscolar.Application.UsesCases.SchoolCase.Delete;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Communication.Request;
 using InventarioEscolar.Communication.Response;
+using InventarioEscolar.Domain.Entities;
 using Mapster;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventarioEscolar.Api.Controllers
 {
     public class RoomLocationController : InventarioApiBaseController
     {
+        private readonly IMediator _mediator;
+
+        public RoomLocationController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(ResponseRoomLocationJson), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register(
-            [FromServices] IRegisterRoomLocationUseCase useCase,
             [FromBody] RequestRegisterRoomLocationJson request)
         {
             var roomLocationDto = request.Adapt<RoomLocationDto>();
 
-            var result = await useCase.Execute(roomLocationDto);
+            var result = await _mediator.Send(new RegisterRoomLocationCommand(roomLocationDto));
 
             var response = result.Adapt<ResponseRoomLocationJson>();
 
@@ -35,10 +43,9 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(typeof(ResponseRoomLocationJson), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetByIdRoomLocation(
-              [FromServices] IGetByIdRoomLocationUseCase useCase,
               [FromRoute] long id)
         {
-            var roomLocation = await useCase.Execute(id);
+            var roomLocation = await _mediator.Send(new GetRoomLocationByIdQuery(id));
 
             var response = roomLocation.Adapt<ResponseRoomLocationJson>();
             return Ok(response);
@@ -48,11 +55,10 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(typeof(ResponsePagedJson<ResponseRoomLocationJson>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAll(
-           [FromServices] IGetAllRoomLocationUseCase useCase,
            [FromQuery] int page = 0,
            [FromQuery] int pageSize = 0)
         {
-            var result = await useCase.Execute(page, pageSize);
+            var result = await _mediator.Send(new GetAllRoomLocationsQuery(page, pageSize));
 
             var response = result.Adapt<ResponsePagedJson<ResponseRoomLocationJson>>();
 
@@ -67,13 +73,12 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(
-        [FromServices] IUpdateRoomLocationUseCase useCase,
         [FromRoute] long id,
         [FromBody] RequestUpdateRoomLocationJson request)
         {
             var roomLocationDto = request.Adapt<UpdateRoomLocationDto>();
 
-            await useCase.Execute(id, roomLocationDto);
+            await _mediator.Send(new UpdateRoomLocationCommand(id, roomLocationDto));
 
             return NoContent();
         }
@@ -83,10 +88,9 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(
-        [FromServices] IDeleteRoomLocationUseCase useCase,
         [FromRoute] long id)
         {
-            await useCase.Execute(id);
+            await _mediator.Send(new DeleteRoomLocationCommand(id));
 
             return NoContent();
         }
