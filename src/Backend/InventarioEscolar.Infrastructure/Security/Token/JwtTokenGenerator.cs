@@ -23,6 +23,7 @@ namespace InventarioEscolar.Infrastructure.Security.Token
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
+                new Claim(JwtRegisteredClaimNames.Name, user.UserName ?? ""),
                 new Claim("schoolId", user.SchoolId.ToString())
             };
 

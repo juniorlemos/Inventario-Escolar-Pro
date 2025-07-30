@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Application.Dtos;
 using InventarioEscolar.Application.Services.Interfaces;
+using InventarioEscolar.Application.Services.Validators;
 using InventarioEscolar.Application.UsesCases.CategoryCase.Register;
 using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces;
@@ -34,30 +35,23 @@ public class RegisterCategoryCommandHandler : IRequestHandler<RegisterCategoryCo
 
     public async Task<CategoryDto> Handle(RegisterCategoryCommand request, CancellationToken cancellationToken)
     {
-        await Validate(request.CategoryDto);
+        await _validator.ValidateAndThrowIfInvalid(request.CategoryDto);
 
-        var schoolId = _currentUser.SchoolId
-            ?? throw new BusinessException(ResourceMessagesException.SCHOOL_NOT_FOUND);
+        if (!_currentUser.IsAuthenticated)
+             throw new BusinessException(ResourceMessagesException.SCHOOL_NOT_FOUND);
 
         var exists = await _categoryReadOnlyRepository
-            .ExistCategoryName(request.CategoryDto.Name, schoolId);
+            .ExistCategoryName(request.CategoryDto.Name, _currentUser.SchoolId);
 
         if (exists)
             throw new DuplicateEntityException(ResourceMessagesException.CATEGORY_NAME_ALREADY_EXISTS);
 
         var category = request.CategoryDto.Adapt<Category>();
-        category.SchoolId = schoolId;
+        category.SchoolId = _currentUser.SchoolId;
 
         await _categoryWriteOnlyRepository.Insert(category);
         await _unitOfWork.Commit();
 
         return category.Adapt<CategoryDto>();
-    }
-
-    private async Task Validate(CategoryDto dto)
-    {
-        var result = await _validator.ValidateAsync(dto);
-        if (!result.IsValid)
-            throw new ErrorOnValidationException(result.Errors.Select(e => e.ErrorMessage).ToList());
     }
 }

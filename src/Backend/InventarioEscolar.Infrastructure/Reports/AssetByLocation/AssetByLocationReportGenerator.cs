@@ -7,7 +7,7 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetByLocationCase
 {
     public class AssetByLocationReportGenerator : IAssetByLocationReportGenerator
     {
-        public byte[] Generate(string schoolName, List<Asset> assets, DateTime generatedAt)
+        public byte[] Generate(string schoolName, IEnumerable<Asset> assets, DateTime generatedAt)
         {
             QuestPDF.Settings.License = LicenseType.Community;
 

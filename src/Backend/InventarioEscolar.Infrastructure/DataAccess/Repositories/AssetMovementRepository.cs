@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
 {
-    public class AssetMovementRepository(InventarioEscolarProDBContext dbContext) : IAssetMovementReadOnlyRepository, IAssetMovementWriteOnlyRepository, IAssetMovementUpdateOnlyRepository
+    public sealed class AssetMovementRepository(InventarioEscolarProDBContext dbContext) : IAssetMovementReadOnlyRepository, IAssetMovementWriteOnlyRepository, IAssetMovementUpdateOnlyRepository
     {
         public async Task Insert(AssetMovement assetMovement) => await dbContext.AssetMovements.AddAsync(assetMovement);
         public void Update(AssetMovement assetMovement) => dbContext.AssetMovements.Update(assetMovement);

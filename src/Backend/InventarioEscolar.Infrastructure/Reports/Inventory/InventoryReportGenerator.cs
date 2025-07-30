@@ -7,7 +7,7 @@ using QuestPDF.Infrastructure;
 
 public class InventoryReportGenerator : IInventoryReportGenerator
     {
-        public byte[] Generate(string schoolName, List<Asset> assets, DateTime generatedAt)
+        public byte[] Generate(string schoolName, IEnumerable<Asset> assets, DateTime generatedAt)
         {
 
         QuestPDF.Settings.License = LicenseType.Community;

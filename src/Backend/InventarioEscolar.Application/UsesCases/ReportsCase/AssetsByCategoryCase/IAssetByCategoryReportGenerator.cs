@@ -4,6 +4,6 @@ namespace InventarioEscolar.Application.UsesCases.ReportsCase.AssetsByCategoryCa
 {
     public interface IAssetByCategoryReportGenerator
     {
-        byte[] Generate(string schoolName, List<Asset> assets, DateTime generatedAt);
+        byte[] Generate(string schoolName, IEnumerable<Asset> assets, DateTime generatedAt);
     }
 }

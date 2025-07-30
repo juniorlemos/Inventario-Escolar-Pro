@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using InventarioEscolar.Application.Services.Validators;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Interfaces;
 using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
@@ -35,7 +36,7 @@ namespace InventarioEscolar.Application.UsesCases.SchoolCase.Update
 
         public async Task<Unit> Handle(UpdateSchoolCommand request, CancellationToken cancellationToken)
         {
-            await Validate(request.SchoolDto);
+            await _validator.ValidateAndThrowIfInvalid(request.SchoolDto);
 
             var school = await _schoolReadOnlyRepository.GetById(request.Id);
 
@@ -48,16 +49,6 @@ namespace InventarioEscolar.Application.UsesCases.SchoolCase.Update
             await _unitOfWork.Commit();
 
             return Unit.Value;
-        }
-
-        private async Task Validate(UpdateSchoolDto dto)
-        {
-            var result = await _validator.ValidateAsync(dto);
-
-            if (!result.IsValid)
-            {
-                throw new ErrorOnValidationException(result.Errors.Select(e => e.ErrorMessage).ToList());
-            }
         }
     }
 }

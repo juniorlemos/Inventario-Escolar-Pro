@@ -1,4 +1,7 @@
-﻿using InventarioEscolar.Domain.Interfaces.Repositories.AssetMovements;
+﻿using InventarioEscolar.Application.Services.Interfaces;
+using InventarioEscolar.Domain.Interfaces.Repositories.AssetMovements;
+using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
+using InventarioEscolar.Domain.Interfaces.RepositoriesReports;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -10,23 +13,33 @@ namespace InventarioEscolar.Application.UsesCases.ReportsCase.AssetMovementsCase
 {
     public class GenerateAssetMovementsReportHandler : IRequestHandler<GenerateAssetMovementsReportQuery, byte[]>
     {
-        private readonly IAssetMovementReadOnlyRepository _repository;
+        private readonly IAssetMovementReportReadOnlyRepository _repository;
         private readonly IAssetMovementsReportGenerator _reportGenerator;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly ISchoolReadOnlyRepository _schoolReadOnlyRepository;
+
 
         public GenerateAssetMovementsReportHandler(
-            IAssetMovementReadOnlyRepository repository,
-            IAssetMovementsReportGenerator reportGenerator)
+            IAssetMovementReportReadOnlyRepository repository,
+            IAssetMovementsReportGenerator reportGenerator,
+            ICurrentUserService currentUser,
+            ISchoolReadOnlyRepository schoolReadOnlyRepository)
         {
             _repository = repository;
             _reportGenerator = reportGenerator;
+            _currentUserService = currentUser;
+            _schoolReadOnlyRepository = schoolReadOnlyRepository;
         }
 
         public async Task<byte[]> Handle(GenerateAssetMovementsReportQuery request, CancellationToken cancellationToken)
         {
-            var movements = await _repository.GetAllWithDetailsAsync();
+            var movements = await _repository.GetAllAssetMovementsReport();
 
-            var schoolName = "Escola Vinculada"; // você pode substituir isso por algo dinâmico futuramente
-            return _reportGenerator.Generate(schoolName, movements, DateTime.Now);
+            var schoolId = _currentUserService.SchoolId;
+
+            var schoolName = await _schoolReadOnlyRepository.GetById(schoolId);
+
+            return _reportGenerator.Generate(schoolName.Name, movements, DateTime.Now);
         }
     }
 }

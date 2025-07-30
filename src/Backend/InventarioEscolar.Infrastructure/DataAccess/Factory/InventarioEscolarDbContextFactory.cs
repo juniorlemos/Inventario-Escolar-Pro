@@ -31,7 +31,12 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Factory
         // Fake usada apenas para DesignTime/Migrations
         private class FakeCurrentUserService : ICurrentUserService
         {
-            public long? SchoolId => null; // ou um valor fixo como 1
+            public long SchoolId => -1;
+            public long? UserId => null;
+            public string UserName => string.Empty;
+            public bool IsAuthenticated => true;
+
+             
         }
     }
 }

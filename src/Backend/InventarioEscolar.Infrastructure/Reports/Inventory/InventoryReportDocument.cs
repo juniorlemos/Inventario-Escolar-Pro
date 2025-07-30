@@ -1,4 +1,5 @@
 ﻿using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Domain.Enums;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -9,7 +10,7 @@ namespace InventarioEscolar.Infrastructure.Reports.Inventory
     {
         public string SchoolName { get; set; } = string.Empty;
         public DateTime GeneratedAt { get; set; }
-        public List<Asset> Assets { get; set; } = new();
+        public IEnumerable<Asset> Assets { get; set; } 
 
         public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
 
@@ -17,12 +18,12 @@ namespace InventarioEscolar.Infrastructure.Reports.Inventory
         {
             container.Page(page =>
             {
-                page.Margin(40);
+                page.Margin(20);
                 page.Size(PageSizes.A4);
                 page.PageColor(Colors.White);
                 page.DefaultTextStyle(x => x.FontFamily(Fonts.Calibri).FontSize(10).FontColor(Colors.Grey.Darken2));
 
-                page.Header().Element(ComposeHeader);
+                page.Header().ShowOnce().Element(ComposeHeader);
                 page.Content().PaddingVertical(10).Element(ComposeContent);
                 page.Footer().Element(ComposeFooter);
             });
@@ -42,19 +43,20 @@ namespace InventarioEscolar.Infrastructure.Reports.Inventory
                 .Distinct()
                 .Count();
 
-            var totalDanificados = Assets
-                .Count(a => a.Description?.ToLower().Contains("danificado") == true);
+            var totalDanificados = Assets.Count(a => a.ConservationState == ConservationState.Danificado);
+
+            var totalIrrecuperavel = Assets.Count(a => a.ConservationState == ConservationState.Irrecuperável);
 
             var itensNovos = Assets
                 .Count(a => a.CreatedOn >= DateTime.Today.AddDays(-30));
 
             container.Column(column =>
             {
-                column.Item().Text("📘 Relatório de Inventário Patrimonial")
+                column.Item().Text("📘 Relatório Patrimonial")
                     .FontSize(20)
                     .Bold()
                     .AlignCenter()
-                    .FontColor(Colors.Blue.Darken2);
+                    .FontColor(Colors.Green.Darken2);
 
                 column.Item().PaddingVertical(5);
 
@@ -67,34 +69,46 @@ namespace InventarioEscolar.Infrastructure.Reports.Inventory
                     {
                         col.Item().Text($"🏫 Escola: {SchoolName}")
                             .FontSize(12)
-                            .FontColor(Colors.Grey.Darken2);
+                            .FontColor(Colors.Grey.Darken2)
+                            .Bold();
 
-                        col.Item().Text($"🗓️ Gerado em: {GeneratedAt:dd/MM/yyyy HH:mm}")
+                        col.Item().Text($"🗓️ Gerado em: {GeneratedAt:dd/MM/yyyy - HH:mm}")
                             .FontSize(10)
-                            .FontColor(Colors.Grey.Medium);
+                            .FontColor(Colors.Grey.Darken2)
+                            .Bold();
 
-                        col.Item().Text($"📦 Total de Itens: {Assets.Count}")
+                        col.Item().Text($"📦 Total de Bens: {Assets.Count()}")
                             .FontSize(10)
-                            .FontColor(Colors.Grey.Medium);
+                            .FontColor(Colors.Grey.Darken2)
+                            .Bold();
 
                         col.Item().Text($"📍 Locais: {totalLocais}")
                             .FontSize(10)
-                            .FontColor(Colors.Grey.Medium);
+                            .FontColor(Colors.Grey.Darken2)
+                            .Bold();
                     });
 
                     row.RelativeItem(1).Column(col =>
                     {
                         col.Item().Text($"🗂️ Categorias: {totalCategorias}")
                             .FontSize(10)
-                            .FontColor(Colors.Grey.Medium);
+                            .FontColor(Colors.Grey.Darken2)
+                            .Bold();
 
                         col.Item().Text($"🆕 Novos (últimos 30 dias): {itensNovos}")
                             .FontSize(10)
-                            .FontColor(Colors.Grey.Medium);
+                            .FontColor(Colors.Grey.Darken2)
+                            .Bold();
 
                         col.Item().Text($"⚠️ Danificados: {totalDanificados}")
                             .FontSize(10)
-                            .FontColor(Colors.Grey.Medium);
+                            .FontColor(Colors.Yellow.Darken1)
+                            .Bold();
+
+                        col.Item().Text($"❌ Irrecuperáveis: {totalIrrecuperavel}")
+                            .FontSize(10)
+                            .FontColor(Colors.Red.Darken1)
+                            .Bold();
                     });
                 });
             });
@@ -102,44 +116,49 @@ namespace InventarioEscolar.Infrastructure.Reports.Inventory
 
         void ComposeContent(IContainer container)
         {
+            var padding = 2;
+
             container.Table(table =>
             {
                 table.ColumnsDefinition(columns =>
                 {
-                    columns.RelativeColumn(3);  // Nome
                     columns.ConstantColumn(50); // Código
+                    columns.RelativeColumn(3);  // Patrimônio
                     columns.RelativeColumn(2);  // Local
                     columns.RelativeColumn(2);  // Categoria
                     columns.RelativeColumn(2);  // Status
-                    columns.RelativeColumn(2);  // Entrada
+                    columns.RelativeColumn(2);  // Preço
                     columns.RelativeColumn(2);  // Descrição
+                    columns.RelativeColumn(2);  // Entrada
                 });
 
                 table.Header(header =>
                 {
-                    header.Cell().Background(Colors.Blue.Lighten4).Padding(5).Text("Nome").SemiBold().FontColor(Colors.Black);
-                    header.Cell().Background(Colors.Blue.Lighten4).Padding(5).Text("Código").SemiBold().FontColor(Colors.Black);
-                    header.Cell().Background(Colors.Blue.Lighten4).Padding(5).Text("Local").SemiBold().FontColor(Colors.Black);
-                    header.Cell().Background(Colors.Blue.Lighten4).Padding(5).Text("Categoria").SemiBold().FontColor(Colors.Black);
-                    header.Cell().Background(Colors.Blue.Lighten4).Padding(5).AlignCenter().Text("Status").SemiBold().FontColor(Colors.Black);
-                    header.Cell().Background(Colors.Blue.Lighten4).Padding(5).AlignCenter().Text("Entrada").SemiBold().FontColor(Colors.Black);
-                    header.Cell().Background(Colors.Blue.Lighten4).Padding(5).Text("Descrição").SemiBold().FontColor(Colors.Black);
+                    header.Cell().Background(Colors.Green.Lighten3).Padding(padding).Text("Código").SemiBold().FontColor(Colors.Black);
+                    header.Cell().Background(Colors.Green.Lighten3).Padding(padding).Text("Patrimônio").SemiBold().FontColor(Colors.Black);
+                    header.Cell().Background(Colors.Green.Lighten3).Padding(padding).Text("Local").SemiBold().FontColor(Colors.Black);
+                    header.Cell().Background(Colors.Green.Lighten3).Padding(padding).Text("Categoria").SemiBold().FontColor(Colors.Black);
+                    header.Cell().Background(Colors.Green.Lighten3).Padding(padding).Text("Estado").SemiBold().FontColor(Colors.Black);
+                    header.Cell().Background(Colors.Green.Lighten3).Padding(padding).Text("Preço").SemiBold().FontColor(Colors.Black);
+                    header.Cell().Background(Colors.Green.Lighten3).Padding(padding).Text("Descrição").SemiBold().FontColor(Colors.Black);
+                    header.Cell().Background(Colors.Green.Lighten3).Padding(padding).Text("Data de Cadastro").SemiBold().FontColor(Colors.Black);
 
                 });
 
                 bool isEven = false;
                 foreach (var asset in Assets)
                 {
-                    var background = isEven ? Colors.Grey.Lighten4 : Colors.White;
+                    var background = isEven ? Colors.Green.Lighten5 : Colors.White;
                     isEven = !isEven;
 
-                    table.Cell().Background(background).Padding(5).Text(asset.Name ?? "-");
-                    table.Cell().Background(background).Padding(5).Text(asset.PatrimonyCode.ToString());
-                    table.Cell().Background(background).Padding(5).Text(asset.RoomLocation?.Name ?? "-");
-                    table.Cell().Background(background).Padding(5).Text(asset.Category?.Name ?? "-");
-                    table.Cell().Background(background).Padding(5).AlignCenter().Text(asset.Description ?? "-");
-                    table.Cell().Background(background).Padding(5).AlignCenter().Text(asset.CreatedOn.ToString("dd/MM/yyyy"));
-                    table.Cell().Background(background).Padding(5).Text(asset.Description ?? "-");
+                    table.Cell().Background(background).Padding(padding).Text(asset.PatrimonyCode.ToString());
+                    table.Cell().Background(background).Padding(padding).Text(asset.Name ?? "-");
+                    table.Cell().Background(background).Padding(padding).Text(asset.RoomLocation?.Name ?? "-");
+                    table.Cell().Background(background).Padding(padding).Text(asset.Category?.Name ?? "-");
+                    table.Cell().Background(background).Padding(padding).Text(asset.ConservationState.ToString() ?? "-");
+                    table.Cell().Background(background).Padding(padding).Text(asset.AcquisitionValue.HasValue ? asset.AcquisitionValue.Value.ToString("C2") : "-");
+                    table.Cell().Background(background).Padding(padding).Text(asset.Description ?? "-");
+                    table.Cell().Background(background).Padding(padding).Text(asset.CreatedOn.ToString("dd/MM/yyyy"));
                 }
             });
         }
@@ -148,10 +167,10 @@ namespace InventarioEscolar.Infrastructure.Reports.Inventory
         {
             container.AlignCenter().Text(text =>
             {
-                text.Span("Página ").FontSize(9).FontColor(Colors.Blue.Darken2);
-                text.CurrentPageNumber().FontSize(9).FontColor(Colors.Blue.Darken2);
-                text.Span(" de ").FontSize(9).FontColor(Colors.Blue.Darken2);
-                text.TotalPages().FontSize(9).FontColor(Colors.Blue.Darken2);
+                text.Span("Página ").FontSize(9).FontColor(Colors.Green.Darken2);
+                text.CurrentPageNumber().FontSize(9).FontColor(Colors.Green.Darken2);
+                text.Span(" de ").FontSize(9).FontColor(Colors.Green.Darken2);
+                text.TotalPages().FontSize(9).FontColor(Colors.Green.Darken2);
             });
         }
     }

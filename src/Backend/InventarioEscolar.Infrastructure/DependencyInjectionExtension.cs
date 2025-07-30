@@ -1,4 +1,5 @@
 ﻿using InventarioEscolar.Application.Services.Interfaces;
+using InventarioEscolar.Application.UsesCases.ReportsCase.AssetCanceledMovementsCase;
 using InventarioEscolar.Application.UsesCases.ReportsCase.AssetConservationCase;
 using InventarioEscolar.Application.UsesCases.ReportsCase.AssetMovementsCase;
 using InventarioEscolar.Application.UsesCases.ReportsCase.AssetsByCategoryCase;
@@ -11,12 +12,15 @@ using InventarioEscolar.Domain.Interfaces.Repositories.Assets;
 using InventarioEscolar.Domain.Interfaces.Repositories.Categories;
 using InventarioEscolar.Domain.Interfaces.Repositories.RoomLocations;
 using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
+using InventarioEscolar.Domain.Interfaces.RepositoriesReports;
 using InventarioEscolar.Exceptions.ExceptionsBase.Identity;
 using InventarioEscolar.Infrastructure.DataAccess;
 using InventarioEscolar.Infrastructure.DataAccess.Repositories;
+using InventarioEscolar.Infrastructure.DataAccess.Repositories.ReportsRepository;
 using InventarioEscolar.Infrastructure.Extensions;
 using InventarioEscolar.Infrastructure.Reports.AssetByCategoryCase;
 using InventarioEscolar.Infrastructure.Reports.AssetByLocationCase;
+using InventarioEscolar.Infrastructure.Reports.AssetCanceledMovements;
 using InventarioEscolar.Infrastructure.Reports.AssetConservation;
 using InventarioEscolar.Infrastructure.Reports.AssetMovementsCase;
 using InventarioEscolar.Infrastructure.Security.Token;
@@ -97,6 +101,9 @@ namespace InventarioEscolar.Infrastructure
             services.AddScoped<ICategoryUpdateOnlyRepository, CategoryRepository>();
             services.AddScoped<ICategoryDeleteOnlyRepository, CategoryRepository>();
 
+            services.AddScoped<IAssetMovementReportReadOnlyRepository, AssetMovementReportRepository>();
+            services.AddScoped<IAssetReportReadOnlyRepository, AssetReportRepository>();
+
         }
 
         private static void addReports( IServiceCollection services)
@@ -106,6 +113,7 @@ namespace InventarioEscolar.Infrastructure
             services.AddScoped<IAssetByLocationReportGenerator, AssetByLocationReportGenerator>();
             services.AddScoped<IAssetMovementsReportGenerator, AssetMovementsReportGenerator>();
             services.AddScoped<IAssetByCategoryReportGenerator, AssetByCategoryReportGenerator>();
+            services.AddScoped<IAssetCanceledMovementsReportGenerator, AssetCanceledMovementsReportGenerator>();
         }
         public static void AddServices( IServiceCollection services)
         {

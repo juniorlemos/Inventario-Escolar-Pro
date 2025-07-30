@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using InventarioEscolar.Application.Decorators;
 using InventarioEscolar.Application.Services.AuthService;
 using InventarioEscolar.Application.Services.Email;
 using InventarioEscolar.Application.Services.Interfaces;
@@ -31,6 +32,7 @@ using InventarioEscolar.Application.UsesCases.SchoolCase.GetAll;
 using InventarioEscolar.Application.UsesCases.SchoolCase.GetById;
 using InventarioEscolar.Application.UsesCases.SchoolCase.Register;
 using InventarioEscolar.Application.UsesCases.SchoolCase.Update;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,11 +51,10 @@ namespace InventarioEscolar.Application
             ConfigureIdentityTokens(services);
 
             addMediatr(services);
+            addScrutor(services);
         }
         private static void AddUseServices(IServiceCollection services)
         {
-            services.AddScoped<IAuthService, AuthService>();
-
             services.AddScoped<IEmailService, BrevoEmailService>();
         }
         private static void AddValidators(IServiceCollection services)
@@ -73,11 +74,17 @@ namespace InventarioEscolar.Application
             {
                 cfg.RegisterServicesFromAssembly(typeof(DependencyInjectionExtension).Assembly);
             });
-            //services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-            //services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-            //services.AddScoped(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
         }
+        private static void addScrutor(IServiceCollection services)
+        {
+            services.Scan(scan => scan
+                .FromAssemblyOf<RegisterAssetCommandHandler>()
+                .AddClasses(classes => classes.AssignableTo(typeof(IRequestHandler<,>)))
+                .AsImplementedInterfaces()
+                .WithTransientLifetime());
 
+            services.Decorate(typeof(IRequestHandler<,>), typeof(LoggingHandlerDecorator<,>));
+        }
     }
 
 }

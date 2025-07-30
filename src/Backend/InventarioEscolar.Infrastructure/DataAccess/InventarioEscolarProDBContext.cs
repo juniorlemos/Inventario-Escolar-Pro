@@ -69,15 +69,11 @@ namespace InventarioEscolar.Infrastructure.DataAccess
                         nameof(ICurrentUserService.SchoolId)
                     );
 
-                    var hasValue = Expression.Property(currentSchoolId, "HasValue");
-                    var schoolIdValue = Expression.Property(currentSchoolId, "Value");
-
-                    var schoolComparison = Expression.Equal(schoolIdProperty, schoolIdValue);
-                    var schoolFilter = Expression.OrElse(Expression.IsFalse(hasValue), schoolComparison);
+                    var schoolComparison = Expression.Equal(schoolIdProperty, currentSchoolId);
 
                     filter = filter is not null
-                        ? Expression.AndAlso(filter, schoolFilter)
-                        : schoolFilter;
+                        ? Expression.AndAlso(filter, schoolComparison)
+                        : schoolComparison;
                 }
 
                 // Se tiver algum filtro, aplica

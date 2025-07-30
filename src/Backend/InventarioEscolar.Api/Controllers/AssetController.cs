@@ -46,7 +46,7 @@ namespace InventarioEscolar.Api.Controllers
                [FromRoute] long id)
         {
 
-            var result = await _mediator.Send(new GetByIdAssetQuery(42));
+            var result = await _mediator.Send(new GetByIdAssetQuery(id));
 
             var response = result.Adapt<ResponseAssetJson>();
             return Ok(response);

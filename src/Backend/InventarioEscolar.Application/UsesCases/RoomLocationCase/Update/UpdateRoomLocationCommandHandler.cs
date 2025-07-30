@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Application.Services.Interfaces;
+using InventarioEscolar.Application.Services.Validators;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Interfaces;
 using InventarioEscolar.Domain.Interfaces.Repositories.RoomLocations;
@@ -39,7 +40,7 @@ namespace InventarioEscolar.Application.UsesCases.RoomLocationCase.Update
 
         public async Task<Unit> Handle(UpdateRoomLocationCommand request, CancellationToken cancellationToken)
         {
-            await Validate(request.RoomLocationDto);
+            await _validator.ValidateAndThrowIfInvalid(request.RoomLocationDto);
 
             var roomLocation = await _roomLocationReadOnlyRepository.GetById(request.Id);
 
@@ -55,16 +56,6 @@ namespace InventarioEscolar.Application.UsesCases.RoomLocationCase.Update
             await _unitOfWork.Commit();
 
             return Unit.Value;
-        }
-
-        private async Task Validate(UpdateRoomLocationDto dto)
-        {
-            var result = await _validator.ValidateAsync(dto);
-
-            if (!result.IsValid)
-            {
-                throw new ErrorOnValidationException(result.Errors.Select(e => e.ErrorMessage).ToList());
-            }
         }
     }
 }

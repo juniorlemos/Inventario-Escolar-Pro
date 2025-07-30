@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Application.Dtos;
 using InventarioEscolar.Application.Services.Interfaces;
+using InventarioEscolar.Application.Services.Validators;
 using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces;
 using InventarioEscolar.Domain.Interfaces.Repositories.Assets;
@@ -35,12 +36,12 @@ namespace InventarioEscolar.Application.UsesCases.AssetCase.Register
 
         public async Task<AssetDto> Handle(RegisterAssetCommand request, CancellationToken cancellationToken)
         {
-            await Validate(request.AssetDto);
+            await _validator.ValidateAndThrowIfInvalid(request.AssetDto);
 
-            var schoolId = _currentUser.SchoolId
-                          ?? throw new BusinessException(ResourceMessagesException.SCHOOL_NOT_FOUND);
+            if (!_currentUser.IsAuthenticated)
+                           throw new BusinessException(ResourceMessagesException.SCHOOL_NOT_FOUND);
 
-            var assetAlreadyExists = await _assetReadOnlyRepository.ExistPatrimonyCode(request.AssetDto.PatrimonyCode, schoolId);
+            var assetAlreadyExists = await _assetReadOnlyRepository.ExistPatrimonyCode(request.AssetDto.PatrimonyCode, _currentUser.SchoolId);
 
             if (assetAlreadyExists)
                 throw new DuplicateEntityException(ResourceMessagesException.PATRIMONY_CODE_ALREADY_EXISTS_);
@@ -53,15 +54,6 @@ namespace InventarioEscolar.Application.UsesCases.AssetCase.Register
             return asset.Adapt<AssetDto>();
         }
 
-        private async Task Validate(AssetDto dto)
-        {
-            var result = await _validator.ValidateAsync(dto);
-
-            if (!result.IsValid)
-            {
-                throw new ErrorOnValidationException(result.Errors.Select(e => e.ErrorMessage).ToList());
-            }
-        }
     }
 }
 

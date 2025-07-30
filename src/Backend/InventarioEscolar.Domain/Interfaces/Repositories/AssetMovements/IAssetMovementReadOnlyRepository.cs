@@ -7,6 +7,5 @@ namespace InventarioEscolar.Domain.Interfaces.Repositories.AssetMovements
     {
         Task<PagedResult<AssetMovement>> GetAll(int page, int pageSize, bool? isCanceled);
         Task<AssetMovement?> GetById(long assetMovementId);
-        Task<List<AssetMovement>> GetAllWithDetailsAsync();
     }
 }

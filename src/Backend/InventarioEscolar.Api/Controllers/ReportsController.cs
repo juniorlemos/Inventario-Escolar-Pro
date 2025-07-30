@@ -1,4 +1,5 @@
-﻿using InventarioEscolar.Application.UsesCases.ReportsCase.AssetConservationCase;
+﻿using InventarioEscolar.Application.UsesCases.ReportsCase.AssetCanceledMovementsCase;
+using InventarioEscolar.Application.UsesCases.ReportsCase.AssetConservationCase;
 using InventarioEscolar.Application.UsesCases.ReportsCase.AssetMovementsCase;
 using InventarioEscolar.Application.UsesCases.ReportsCase.AssetsByCategoryCase;
 using InventarioEscolar.Application.UsesCases.ReportsCase.AssetsByLocationCase;
@@ -36,6 +37,12 @@ namespace InventarioEscolar.Api.Controllers
         {
             var reportPdfBytes = await _mediator.Send(new GenerateAssetMovementsReportQuery());
             return File(reportPdfBytes, "application/pdf", "movimentacoes.pdf");
+        }
+        [HttpGet("canceled-movements")]
+        public async Task<IActionResult> GetAssetCanceledMovementsReport()
+        {
+            var reportPdfBytes = await _mediator.Send(new GenerateAssetCanceledMovementsReportQuery());
+            return File(reportPdfBytes, "application/pdf", "canceled-movimentacoes.pdf");
         }
 
         [HttpGet("by-conservation")]

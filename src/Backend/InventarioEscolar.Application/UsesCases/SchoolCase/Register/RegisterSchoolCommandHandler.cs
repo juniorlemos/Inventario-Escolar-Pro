@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using InventarioEscolar.Application.Services.Validators;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces;
@@ -36,7 +37,7 @@ namespace InventarioEscolar.Application.UsesCases.SchoolCase.Register
 
         public async Task<SchoolDto> Handle(RegisterSchoolCommand request, CancellationToken cancellationToken)
         {
-            await Validate(request.SchoolDto);
+            await _validator.ValidateAndThrowIfInvalid(request.SchoolDto);
 
             var schoolDuplicate = await _schoolReadOnlyRepository.GetDuplicateSchool(
                 request.SchoolDto.Name,
@@ -61,16 +62,6 @@ namespace InventarioEscolar.Application.UsesCases.SchoolCase.Register
             await _unitOfWork.Commit();
 
             return school.Adapt<SchoolDto>();
-        }
-
-        private async Task Validate(SchoolDto dto)
-        {
-            var result = await _validator.ValidateAsync(dto);
-
-            if (!result.IsValid)
-            {
-                throw new ErrorOnValidationException(result.Errors.Select(e => e.ErrorMessage).ToList());
-            }
         }
     }
 }

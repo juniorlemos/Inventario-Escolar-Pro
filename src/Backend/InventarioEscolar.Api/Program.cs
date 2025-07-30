@@ -2,8 +2,12 @@ using InventarioEscolar.Api.Configurations;
 using InventarioEscolar.Api.Filters;
 using InventarioEscolar.Application;
 using InventarioEscolar.Infrastructure;
+using Serilog;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+LoggerConfigurationFactory.ConfigureSerilog(builder);
 
 builder.Services.AddCors(options =>
 {
@@ -32,6 +36,7 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddSwaggerGen();
 builder.Services.AddMvc(options => options.Filters.Add(typeof(ExceptionFilter)));
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Host.UseSerilog();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 

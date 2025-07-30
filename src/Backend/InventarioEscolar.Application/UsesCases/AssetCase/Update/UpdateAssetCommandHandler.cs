@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Application.Services.Interfaces;
+using InventarioEscolar.Application.Services.Validators;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Interfaces;
 using InventarioEscolar.Domain.Interfaces.Repositories.Assets;
@@ -39,7 +40,7 @@ namespace InventarioEscolar.Application.UsesCases.AssetCase.Update
 
         public async Task<Unit> Handle(UpdateAssetCommand request, CancellationToken cancellationToken)
         {
-            await Validate(request.AssetDto);
+            await _validator.ValidateAndThrowIfInvalid(request.AssetDto);
 
             var asset = await _assetReadOnlyRepository.GetById(request.Id)
                 ?? throw new NotFoundException(ResourceMessagesException.ASSET_NOT_FOUND);
@@ -55,14 +56,5 @@ namespace InventarioEscolar.Application.UsesCases.AssetCase.Update
             return Unit.Value;
         }
 
-        private async Task Validate(UpdateAssetDto dto)
-        {
-            var result = await _validator.ValidateAsync(dto);
-
-            if (!result.IsValid)
-            {
-                throw new ErrorOnValidationException(result.Errors.Select(e => e.ErrorMessage).ToList());
-            }
-        }
     }
 }

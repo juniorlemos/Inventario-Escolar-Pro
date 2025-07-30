@@ -53,8 +53,8 @@ namespace InventarioEscolar.Application.UsesCases.AssetMovementCase.Register
         {
             await Validate(request.AssetMovementDto);
 
-            var schoolId = _currentUser.SchoolId
-                           ?? throw new BusinessException(ResourceMessagesException.SCHOOL_NOT_FOUND);
+            if (!_currentUser.IsAuthenticated)
+                   throw new BusinessException(ResourceMessagesException.SCHOOL_NOT_FOUND);
 
             if (request.AssetMovementDto.FromRoomId == request.AssetMovementDto.ToRoomId)
                 throw new BusinessException(ResourceMessagesException.ASSETMOVEMENT_SAME_ROOM);

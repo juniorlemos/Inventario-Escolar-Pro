@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Application.Services.Interfaces;
+using InventarioEscolar.Application.Services.Validators;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces;
@@ -40,12 +41,12 @@ namespace InventarioEscolar.Application.UsesCases.RoomLocationCase.Register
 
         public async Task<RoomLocationDto> Handle(RegisterRoomLocationCommand request, CancellationToken cancellationToken)
         {
-            await Validate(request.RoomLocationDto);
+            await _validator.ValidateAndThrowIfInvalid(request.RoomLocationDto);
 
-            var schoolId = _currentUser.SchoolId
-                           ?? throw new BusinessException(ResourceMessagesException.SCHOOL_NOT_FOUND);
+            if (!_currentUser.IsAuthenticated)
+            throw new BusinessException(ResourceMessagesException.SCHOOL_NOT_FOUND);
 
-            var alreadyExists = await _roomLocationReadOnlyRepository.ExistRoomLocationName(request.RoomLocationDto.Name, schoolId);
+            var alreadyExists = await _roomLocationReadOnlyRepository.ExistRoomLocationName(request.RoomLocationDto.Name, _currentUser.SchoolId);
 
             if (alreadyExists)
                 throw new DuplicateEntityException(ResourceMessagesException.ROOMLOCATION_NAME_ALREADY_EXISTS);
@@ -56,16 +57,6 @@ namespace InventarioEscolar.Application.UsesCases.RoomLocationCase.Register
             await _unitOfWork.Commit();
 
             return roomLocation.Adapt<RoomLocationDto>();
-        }
-
-        private async Task Validate(RoomLocationDto dto)
-        {
-            var result = await _validator.ValidateAsync(dto);
-
-            if (!result.IsValid)
-            {
-                throw new ErrorOnValidationException(result.Errors.Select(e => e.ErrorMessage).ToList());
-            }
         }
     }
 }
