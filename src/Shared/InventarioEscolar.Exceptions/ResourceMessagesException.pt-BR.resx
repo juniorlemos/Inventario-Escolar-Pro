@@ -273,4 +273,7 @@
   <data name="ROOMLOCATION_NOT_BELONG_TO_SCHOOL" xml:space="preserve">
     <value>Esta sala não pertence à sua escola.</value>
   </data>
+  <data name="USER_NOT_AUTHENTICATED" xml:space="preserve">
+    <value>Usuário não autenticado</value>
+  </data>
 </root>

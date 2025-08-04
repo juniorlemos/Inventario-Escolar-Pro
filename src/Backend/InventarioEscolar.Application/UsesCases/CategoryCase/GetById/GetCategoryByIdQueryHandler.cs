@@ -26,7 +26,7 @@ namespace InventarioEscolar.Application.UsesCases.CategoryCase.GetById
             var category = await _categoryReadOnlyRepository.GetById(request.CategoryId);
 
             if (category is null)
-                throw new NotFoundException(ResourceMessagesException.SCHOOL_NOT_FOUND); // Verifique se essa é mesmo a mensagem correta
+                throw new NotFoundException(ResourceMessagesException.CATEGORY_NOT_FOUND); 
 
             return category.Adapt<CategoryDto>();
         }

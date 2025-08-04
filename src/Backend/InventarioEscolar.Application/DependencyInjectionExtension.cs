@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Application.Decorators;
 using InventarioEscolar.Application.Services.AuthService;
+using InventarioEscolar.Application.Services.AuthService.LoginAuth;
 using InventarioEscolar.Application.Services.Email;
 using InventarioEscolar.Application.Services.Interfaces;
+using InventarioEscolar.Application.Services.Interfaces.Auth;
 using InventarioEscolar.Application.Services.Mapster;
 using InventarioEscolar.Application.UsesCases.AssetCase.Delete;
 using InventarioEscolar.Application.UsesCases.AssetCase.GetAll;
@@ -56,6 +58,8 @@ namespace InventarioEscolar.Application
         private static void AddUseServices(IServiceCollection services)
         {
             services.AddScoped<IEmailService, BrevoEmailService>();
+            services.AddScoped<ISignInManagerWrapper, SignInManagerWrapper>();
+
         }
         private static void AddValidators(IServiceCollection services)
         {
@@ -73,6 +77,7 @@ namespace InventarioEscolar.Application
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(typeof(DependencyInjectionExtension).Assembly);
+                cfg.LicenseKey = "Gere sua licença e aplique aqui";
             });
         }
         private static void addScrutor(IServiceCollection services)

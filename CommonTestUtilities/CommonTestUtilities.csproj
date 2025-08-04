@@ -8,9 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.3" />
+    <PackageReference Include="NSubstitute" Version="5.3.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\src\Backend\InventarioEscolar.Application\InventarioEscolar.Application.csproj" />
     <ProjectReference Include="..\src\Backend\InventarioEscolar.Domain\InventarioEscolar.Domain.csproj" />
     <ProjectReference Include="..\src\Shared\InventarioEscolar.Communication\InventarioEscolar.Communication.csproj" />
   </ItemGroup>

@@ -528,5 +528,14 @@ namespace InventarioEscolar.Exceptions {
                 return ResourceManager.GetString("UNKNOWN_ERROR", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User not Authenticated.
+        /// </summary>
+        public static string USER_NOT_AUTHENTICATED {
+            get {
+                return ResourceManager.GetString("USER_NOT_AUTHENTICATED", resourceCulture);
+            }
+        }
     }
 }

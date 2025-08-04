@@ -48,7 +48,7 @@ namespace InventarioEscolar.Application.UsesCases.RoomLocationCase.Update
                 throw new NotFoundException(ResourceMessagesException.ROOMLOCATION_NOT_FOUND);
 
             if (roomLocation.SchoolId != _currentUser.SchoolId)
-                throw new BusinessException(ResourceMessagesException.CATEGORY_NOT_BELONG_TO_SCHOOL);
+                throw new BusinessException(ResourceMessagesException.ROOMLOCATION_NOT_BELONG_TO_SCHOOL);
 
             request.RoomLocationDto.Adapt(roomLocation);
 

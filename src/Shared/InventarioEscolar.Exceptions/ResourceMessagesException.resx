@@ -274,4 +274,7 @@ ve number</value>
   <data name="ROOMLOCATION_NOT_BELONG_TO_SCHOOL" xml:space="preserve">
     <value>The room location does not belong to the user's school.</value>
   </data>
+  <data name="USER_NOT_AUTHENTICATED" xml:space="preserve">
+    <value>User not Authenticated</value>
+  </data>
 </root>

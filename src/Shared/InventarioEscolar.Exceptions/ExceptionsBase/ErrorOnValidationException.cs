@@ -6,7 +6,8 @@ namespace InventarioEscolar.Exceptions.ExceptionsBase
     {
         private readonly IList<string> _errorMessages;
 
-        public ErrorOnValidationException(IList<string> errorMessages) : base(string.Empty)
+        public ErrorOnValidationException(IList<string> errorMessages)
+            : base(string.Join(" | ", errorMessages)) 
         {
             _errorMessages = errorMessages;
         }

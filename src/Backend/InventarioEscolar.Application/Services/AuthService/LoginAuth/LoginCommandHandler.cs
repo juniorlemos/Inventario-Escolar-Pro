@@ -1,4 +1,5 @@
 ﻿using InventarioEscolar.Application.Services.Interfaces;
+using InventarioEscolar.Application.Services.Interfaces.Auth;
 using InventarioEscolar.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -13,16 +14,16 @@ namespace InventarioEscolar.Application.Services.AuthService.LoginAuth
     public class LoginCommandHandler : IRequestHandler<LoginCommand, string>
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ISignInManagerWrapper _signInManagerWrapper;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
         public LoginCommandHandler(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
+            ISignInManagerWrapper signInManagerWrapper,
             IJwtTokenGenerator jwtTokenGenerator)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
+            _signInManagerWrapper = signInManagerWrapper;
             _jwtTokenGenerator = jwtTokenGenerator;
         }
 
@@ -34,7 +35,7 @@ namespace InventarioEscolar.Application.Services.AuthService.LoginAuth
             if (user == null)
                 throw new Exception("Usuário não encontrado");
 
-            var result = await _signInManager.CheckPasswordSignInAsync(user, r.Password, false);
+            var result = await _signInManagerWrapper.CheckPasswordSignInAsync(user, r.Password, false);
             if (!result.Succeeded)
                 throw new Exception("Senha inválida");
 
@@ -42,4 +43,3 @@ namespace InventarioEscolar.Application.Services.AuthService.LoginAuth
         }
     }
 }
-

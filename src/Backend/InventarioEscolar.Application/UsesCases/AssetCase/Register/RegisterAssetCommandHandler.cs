@@ -39,7 +39,7 @@ namespace InventarioEscolar.Application.UsesCases.AssetCase.Register
             await _validator.ValidateAndThrowIfInvalid(request.AssetDto);
 
             if (!_currentUser.IsAuthenticated)
-                           throw new BusinessException(ResourceMessagesException.SCHOOL_NOT_FOUND);
+                           throw new BusinessException(ResourceMessagesException.USER_NOT_AUTHENTICATED);
 
             var assetAlreadyExists = await _assetReadOnlyRepository.ExistPatrimonyCode(request.AssetDto.PatrimonyCode, _currentUser.SchoolId);
 

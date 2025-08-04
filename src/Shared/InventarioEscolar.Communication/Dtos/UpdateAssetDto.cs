@@ -11,5 +11,6 @@ namespace InventarioEscolar.Communication.Dtos
         public decimal? AcquisitionValue { get; set; }
         public ConservationState ConservationState { get; set; }
         public string? SerieNumber { get; set; }
+        public long? CategoryId { get; set; }
     }
 }
