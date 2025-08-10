@@ -15,7 +15,7 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
                 .Include(m => m.Asset)
                 .Include(m => m.FromRoom)
                 .Include(m => m.ToRoom)
-                .Where(m => !m.IsCanceled) // se houver soft delete ou cancelamento
+                .Where(m => !m.IsCanceled) 
                 .OrderByDescending(m => m.CanceledAt)
                 .ToListAsync();
         }
@@ -71,7 +71,6 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
 
             return new PagedResult<AssetMovement>(items, totalCount, page, pageSize);
         }
-
         public async Task<AssetMovement?> GetById(long assetMovementId)
         {
             return await dbContext.AssetMovements

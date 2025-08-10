@@ -4,6 +4,6 @@ namespace InventarioEscolar.Application.UsesCases.ReportsCase.AssetConservationC
 {
     public interface IAssetConservationStateReportGenerator
     {
-        byte[] Generate(string schoolName, IEnumerable<Asset> assets, DateTime generatedAt);
+        byte[] Generate(string? schoolName, IEnumerable<Asset> assets, DateTime generatedAt);
     }
 }

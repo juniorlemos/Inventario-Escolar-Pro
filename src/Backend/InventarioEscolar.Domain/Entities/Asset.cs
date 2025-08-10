@@ -11,11 +11,8 @@ namespace InventarioEscolar.Domain.Entities
         public decimal? AcquisitionValue { get; set; }
         public ConservationState ConservationState { get; set; }
         public string? SerieNumber { get; set; }
-
-
         public long CategoryId { get; set; }
         public Category Category { get; set; } = null!;
-
         public long? RoomLocationId { get; set; }
         public RoomLocation? RoomLocation { get; set; }
 

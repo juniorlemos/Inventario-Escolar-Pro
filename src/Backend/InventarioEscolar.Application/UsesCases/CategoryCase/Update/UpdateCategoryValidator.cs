@@ -4,7 +4,7 @@ using InventarioEscolar.Communication.Dtos;
 
 namespace InventarioEscolar.Application.UsesCases.CategoryCase.Update
 {
-    public class UpdateCategoryValidator : AbstractValidator<UploadCategoryDto>
+    public class UpdateCategoryValidator : AbstractValidator<UpdateCategoryDto>
     {
         public UpdateCategoryValidator()
         {
@@ -12,4 +12,3 @@ namespace InventarioEscolar.Application.UsesCases.CategoryCase.Update
         }
     }
 }
-

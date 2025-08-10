@@ -1,5 +1,4 @@
-﻿using InventarioEscolar.Application.Dtos;
-using InventarioEscolar.Communication.Dtos;
+﻿using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Communication.Request;
 using InventarioEscolar.Domain.Entities;
 using Mapster;
@@ -18,14 +17,12 @@ namespace InventarioEscolar.Application.Services.Mapster
 
             TypeAdapterConfig.GlobalSettings.Compile();
         }
-
         public static void RoomLocationMappings() 
         {
             TypeAdapterConfig<RoomLocationDto,RoomLocation>.NewConfig();
             TypeAdapterConfig<RoomLocation, RoomLocationDto>.NewConfig();
             TypeAdapterConfig<RequestRegisterRoomLocationJson, RoomLocationDto>.NewConfig();
         }
-
         public static void SchoolMappings()
         {
             TypeAdapterConfig<SchoolDto, School>.NewConfig();
@@ -40,14 +37,12 @@ namespace InventarioEscolar.Application.Services.Mapster
             TypeAdapterConfig<Category, CategoryDto>.NewConfig();
             TypeAdapterConfig<RequestRegisterCategoryJson, CategoryDto>.NewConfig();
         }
-
         public static void AssetMappings()
         {
             TypeAdapterConfig<AssetDto, Asset>.NewConfig();
             TypeAdapterConfig<Asset, AssetDto>.NewConfig();
             TypeAdapterConfig<RequestRegisterAssetJson, AssetDto>.NewConfig();
         }
-
         public static void AssetMovementMappings()
         {
             TypeAdapterConfig<AssetMovementDto, AssetMovement>.NewConfig();

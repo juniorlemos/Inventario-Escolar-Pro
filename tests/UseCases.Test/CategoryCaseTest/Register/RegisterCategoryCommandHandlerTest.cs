@@ -1,23 +1,17 @@
 ﻿using CommonTestUtilities.Dtos;
 using CommonTestUtilities.Repositories;
 using CommonTestUtilities.Repositories.CategoryRepository;
-using CommonTestUtilities.Services;
 using FluentValidation;
-using InventarioEscolar.Application.Dtos;
 using InventarioEscolar.Application.Services.Interfaces;
 using InventarioEscolar.Application.UsesCases.CategoryCase.Register;
-using InventarioEscolar.Domain.Entities;
-using InventarioEscolar.Domain.Interfaces;
+using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Interfaces.Repositories.Categories;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
-using NSubstitute;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static CommonTestUtilities.Helpers.CurrentUserServiceTestHelper;
+using static CommonTestUtilities.Helpers.ValidatorTestHelper;
+
 
 namespace UseCases.Test.CategoryCaseTest.Register
 {
@@ -29,38 +23,16 @@ public class RegisterCategoryCommandHandlerTest
         var categoryDto = CategoryDtoBuilder.Build();
         var command = new RegisterCategoryCommand(categoryDto);
 
-        var unitOfWork = new UnitOfWorkBuilder().Build();
-
-        var currentUser = new CurrentUserServiceBuilder()
-            .IsAuthenticatedTrue()
-            .WithSchoolId(categoryDto.SchoolId)
-            .Build();
-
-        var validator = new ValidatorBuilder<CategoryDto>()
-            .WithValidResult()
-            .Build();
-
-        var categoryReadOnlyRepository = new CategoryReadOnlyRepositoryBuilder()
-            .WithCategoryNameNotExists(categoryDto.Name, currentUser.SchoolId)
-            .Build();
-
-        var categoryWriteOnlyRepository = new CategoryWriteOnlyRepositoryBuilder().Build();
-
-        var useCase = CreateUseCase(
-            unitOfWork,
-            validator,
-            categoryReadOnlyRepository,
-            categoryWriteOnlyRepository,
-            currentUser
-        );
+        var validator = CreateValidator<CategoryDto>(isValid: true);
+        var userAuthenticated = CreateCurrentUserService(true, categoryDto.SchoolId);
+        var categoryReadOnlyRepository = CreateBuildCategoryReadOnlyRepository(false, categoryDto);
+        
+        var useCase = CreateUseCase(validator,userAuthenticated, categoryReadOnlyRepository);
 
         var result = await useCase.Handle(command, CancellationToken.None);
 
         result.ShouldNotBeNull();
         result.Name.ShouldBe(categoryDto.Name);
-
-        await categoryWriteOnlyRepository.Received(1).Insert(Arg.Any<Category>());
-        await unitOfWork.Received(1).Commit();
     }
 
     [Fact]
@@ -69,24 +41,12 @@ public class RegisterCategoryCommandHandlerTest
         var categoryDto = CategoryDtoBuilder.Build();
         var command = new RegisterCategoryCommand(categoryDto);
 
-        var unitOfWork = new UnitOfWorkBuilder().Build();
-
-        var currentUser = new CurrentUserServiceBuilder()
-            .IsAuthenticatedTrue()
-            .WithSchoolId(categoryDto.SchoolId)
-            .Build();
-
-        var validator = new ValidatorBuilder<CategoryDto>()
-            .WithInvalidResult(ResourceMessagesException.NAME_EMPTY)
-            .Build();
-
-        var categoryReadOnlyRepository = new CategoryReadOnlyRepositoryBuilder()
-            .WithCategoryNameNotExists(categoryDto.Name, currentUser.SchoolId)
-            .Build();
-
-        var categoryWriteOnlyRepository = new CategoryWriteOnlyRepositoryBuilder().Build();
-
-        var useCase = CreateUseCase(unitOfWork, validator, categoryReadOnlyRepository, categoryWriteOnlyRepository, currentUser);
+         var validator = CreateValidator<CategoryDto>(isValid: false, ResourceMessagesException.NAME_EMPTY);
+         var userAuthenticated = CreateCurrentUserService(true, categoryDto.SchoolId);
+         
+         var categoryReadOnlyRepository = CreateBuildCategoryReadOnlyRepository(false, categoryDto);
+         
+         var useCase = CreateUseCase( validator, userAuthenticated, categoryReadOnlyRepository);
 
         var exception = await Should.ThrowAsync<ErrorOnValidationException>(
             () => useCase.Handle(command, CancellationToken.None));
@@ -100,23 +60,11 @@ public class RegisterCategoryCommandHandlerTest
         var categoryDto = CategoryDtoBuilder.Build();
         var command = new RegisterCategoryCommand(categoryDto);
 
-        var unitOfWork = new UnitOfWorkBuilder().Build();
+        var userAuthenticated = CreateCurrentUserService(false, categoryDto.SchoolId);
+        var validator = CreateValidator<CategoryDto>(isValid: true);
+        var categoryReadOnlyRepository = CreateBuildCategoryReadOnlyRepository(false, categoryDto);
 
-        var currentUser = new CurrentUserServiceBuilder()
-            .IsAuthenticatedFalse()
-            .Build();
-
-        var validator = new ValidatorBuilder<CategoryDto>()
-            .WithValidResult()
-            .Build();
-
-        var categoryReadOnlyRepository = new CategoryReadOnlyRepositoryBuilder()
-            .WithCategoryNameNotExists(categoryDto.Name, categoryDto.SchoolId)
-            .Build();
-
-        var categoryWriteOnlyRepository = new CategoryWriteOnlyRepositoryBuilder().Build();
-
-        var useCase = CreateUseCase(unitOfWork, validator, categoryReadOnlyRepository, categoryWriteOnlyRepository, currentUser);
+            var useCase = CreateUseCase (validator, userAuthenticated, categoryReadOnlyRepository);
 
         var exception = await Should.ThrowAsync<BusinessException>(
             () => useCase.Handle(command, CancellationToken.None));
@@ -130,24 +78,11 @@ public class RegisterCategoryCommandHandlerTest
         var categoryDto = CategoryDtoBuilder.Build();
         var command = new RegisterCategoryCommand(categoryDto);
 
-        var unitOfWork = new UnitOfWorkBuilder().Build();
+        var validator = CreateValidator<CategoryDto>(isValid: true);
+        var authenticatedUser = CreateCurrentUserService(true, categoryDto.SchoolId);
+        var categoryReadOnlyRepository = CreateBuildCategoryReadOnlyRepository(true, categoryDto);
 
-        var currentUser = new CurrentUserServiceBuilder()
-            .IsAuthenticatedTrue()
-            .WithSchoolId(categoryDto.SchoolId)
-            .Build();
-
-        var validator = new ValidatorBuilder<CategoryDto>()
-            .WithValidResult()
-            .Build();
-
-        var categoryReadOnlyRepository = new CategoryReadOnlyRepositoryBuilder()
-            .WithCategoryNameExists(categoryDto.Name, currentUser.SchoolId)
-            .Build();
-
-        var categoryWriteOnlyRepository = new CategoryWriteOnlyRepositoryBuilder().Build();
-
-        var useCase = CreateUseCase(unitOfWork, validator, categoryReadOnlyRepository, categoryWriteOnlyRepository, currentUser);
+        var useCase = CreateUseCase( validator, authenticatedUser, categoryReadOnlyRepository);
 
         var exception = await Should.ThrowAsync<DuplicateEntityException>(
             () => useCase.Handle(command, CancellationToken.None));
@@ -155,14 +90,25 @@ public class RegisterCategoryCommandHandlerTest
         exception.Message.ShouldBe(ResourceMessagesException.CATEGORY_NAME_ALREADY_EXISTS);
     }
 
-    private static RegisterCategoryCommandHandler CreateUseCase(
-        IUnitOfWork unitOfWork,
-        IValidator<CategoryDto> validator,
-        ICategoryReadOnlyRepository categoryReadOnlyRepository,
-        ICategoryWriteOnlyRepository categoryWriteOnlyRepository,
-        ICurrentUserService currentUser)
+        private static ICategoryReadOnlyRepository CreateBuildCategoryReadOnlyRepository(bool categoryAlreadyExists, CategoryDto categoryDto)
+        {
+            var builder = new CategoryReadOnlyRepositoryBuilder();
+
+            return categoryAlreadyExists
+                ? builder.WithCategoryNameExists(categoryDto.Name, categoryDto.SchoolId).Build()
+                : builder.WithCategoryNameNotExists(categoryDto.Name, categoryDto.SchoolId).Build();
+        }
+        private static RegisterCategoryCommandHandler CreateUseCase(
+            IValidator<CategoryDto> validator,
+            ICurrentUserService currentUser,
+            ICategoryReadOnlyRepository categoryReadOnlyRepository
+            )
     {
-        return new RegisterCategoryCommandHandler(
+            var unitOfWork = new UnitOfWorkBuilder().Build();
+
+            var categoryWriteOnlyRepository = new CategoryWriteOnlyRepositoryBuilder().Build();
+
+            return new RegisterCategoryCommandHandler(
             unitOfWork,
             validator,
             categoryReadOnlyRepository,

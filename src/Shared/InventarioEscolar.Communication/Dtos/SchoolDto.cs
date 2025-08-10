@@ -1,5 +1,4 @@
-﻿using InventarioEscolar.Application.Dtos;
-using InventarioEscolar.Communication.Dtos.Interfaces;
+﻿using InventarioEscolar.Communication.Dtos.Interfaces;
 
 namespace InventarioEscolar.Communication.Dtos
 {

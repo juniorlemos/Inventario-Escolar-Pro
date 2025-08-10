@@ -1,14 +1,7 @@
-﻿using CommonTestUtilities.Repositories.AssetRepository;
-using InventarioEscolar.Domain.Entities;
-using InventarioEscolar.Domain.Interfaces.Repositories.Assets;
+﻿using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces.Repositories.Categories;
 using InventarioEscolar.Domain.Pagination;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommonTestUtilities.Repositories.CategoryRepository
 {
@@ -24,9 +17,9 @@ namespace CommonTestUtilities.Repositories.CategoryRepository
             _repository.GetById(id).Returns(category);
             return this;
         }
-        public CategoryReadOnlyRepositoryBuilder WithCategoryNotFound(long id)
+        public CategoryReadOnlyRepositoryBuilder WithCategoryNotExist(long id)
         {
-            _repository.GetById(id).Returns((Category)null);
+            _repository.GetById(id).Returns((Category)null!);
             return this;
         }
         public CategoryReadOnlyRepositoryBuilder WithCategoriesExist(IEnumerable<Category> categories, int page = 1, int pageSize = 10)
@@ -48,7 +41,7 @@ namespace CommonTestUtilities.Repositories.CategoryRepository
         }
         public CategoryReadOnlyRepositoryBuilder WithGetAllReturningNull(int page, int pageSize)
         {
-            _repository.GetAll(page, pageSize).Returns((PagedResult<Category>?)null);
+            _repository.GetAll(page, pageSize)!.Returns((PagedResult<Category>?)null);
             return this;
         }
         public CategoryReadOnlyRepositoryBuilder WithCategoryNameNotExists(string name, long schoolId)
@@ -63,4 +56,4 @@ namespace CommonTestUtilities.Repositories.CategoryRepository
         }
         public ICategoryReadOnlyRepository Build() => _repository;
     }
-    }
+}

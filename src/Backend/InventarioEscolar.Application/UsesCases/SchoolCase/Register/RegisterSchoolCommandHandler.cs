@@ -8,38 +8,20 @@ using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
 using Mapster;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InventarioEscolar.Application.UsesCases.SchoolCase.Register
 {
-    public class RegisterSchoolCommandHandler : IRequestHandler<RegisterSchoolCommand, SchoolDto>
+    public class RegisterSchoolCommandHandler(
+        IUnitOfWork unitOfWork,
+        IValidator<SchoolDto> validator,
+        ISchoolReadOnlyRepository schoolReadOnlyRepository,
+        ISchoolWriteOnlyRepository schoolWriteOnlyRepository) : IRequestHandler<RegisterSchoolCommand, SchoolDto>
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IValidator<SchoolDto> _validator;
-        private readonly ISchoolReadOnlyRepository _schoolReadOnlyRepository;
-        private readonly ISchoolWriteOnlyRepository _schoolWriteOnlyRepository;
-
-        public RegisterSchoolCommandHandler(
-            IUnitOfWork unitOfWork,
-            IValidator<SchoolDto> validator,
-            ISchoolReadOnlyRepository schoolReadOnlyRepository,
-            ISchoolWriteOnlyRepository schoolWriteOnlyRepository)
-        {
-            _unitOfWork = unitOfWork;
-            _validator = validator;
-            _schoolReadOnlyRepository = schoolReadOnlyRepository;
-            _schoolWriteOnlyRepository = schoolWriteOnlyRepository;
-        }
-
         public async Task<SchoolDto> Handle(RegisterSchoolCommand request, CancellationToken cancellationToken)
         {
-            await _validator.ValidateAndThrowIfInvalid(request.SchoolDto);
+            await validator.ValidateAndThrowIfInvalid(request.SchoolDto);
 
-            var schoolDuplicate = await _schoolReadOnlyRepository.GetDuplicateSchool(
+            var schoolDuplicate = await schoolReadOnlyRepository.GetDuplicateSchool(
                 request.SchoolDto.Name,
                 request.SchoolDto.Inep,
                 request.SchoolDto.Address);
@@ -58,8 +40,8 @@ namespace InventarioEscolar.Application.UsesCases.SchoolCase.Register
 
             var school = request.SchoolDto.Adapt<School>();
 
-            await _schoolWriteOnlyRepository.Insert(school);
-            await _unitOfWork.Commit();
+            await schoolWriteOnlyRepository.Insert(school);
+            await unitOfWork.Commit();
 
             return school.Adapt<SchoolDto>();
         }

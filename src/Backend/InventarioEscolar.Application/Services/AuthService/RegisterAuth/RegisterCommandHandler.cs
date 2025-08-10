@@ -5,38 +5,21 @@ using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InventarioEscolar.Application.Services.AuthService.RegisterAuth
 {
-    public class RegisterCommandHandler : IRequestHandler<RegisterCommand,Unit>
+    public class RegisterCommandHandler(
+        UserManager<ApplicationUser> userManager,
+        ISchoolReadOnlyRepository schoolReadOnlyRepository,
+        ISchoolWriteOnlyRepository schoolWriteOnlyRepository,
+        IUnitOfWork unitOfWork) : IRequestHandler<RegisterCommand,Unit>
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ISchoolReadOnlyRepository _schoolReadOnlyRepository;
-        private readonly ISchoolWriteOnlyRepository _schoolWriteOnlyRepository;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public RegisterCommandHandler(
-            UserManager<ApplicationUser> userManager,
-            ISchoolReadOnlyRepository schoolReadOnlyRepository,
-            ISchoolWriteOnlyRepository schoolWriteOnlyRepository,
-            IUnitOfWork unitOfWork)
-        {
-            _userManager = userManager;
-            _schoolReadOnlyRepository = schoolReadOnlyRepository;
-            _schoolWriteOnlyRepository = schoolWriteOnlyRepository;
-            _unitOfWork = unitOfWork;
-        }
-
         public async Task<Unit> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
             var r = request.Request;
 
-            var schoolDuplicate = await _schoolReadOnlyRepository.GetDuplicateSchool(r.SchoolName, r.Inep, r.Address);
+            var schoolDuplicate = await schoolReadOnlyRepository.GetDuplicateSchool(r.SchoolName, r.Inep, r.Address);
+            
             if (schoolDuplicate != null)
             {
                 if (string.Equals(schoolDuplicate.Name, r.SchoolName, StringComparison.OrdinalIgnoreCase))
@@ -49,11 +32,12 @@ namespace InventarioEscolar.Application.Services.AuthService.RegisterAuth
                     throw new DuplicateEntityException(ResourceMessagesException.SCHOOL_ADDRESS_ALREADY_EXISTS);
             }
 
-            var existingUser = await _userManager.FindByEmailAsync(r.Email);
+            var existingUser = await userManager.FindByEmailAsync(r.Email);
+           
             if (existingUser != null)
-                throw new Exception("Este e-mail já está em uso.");
+                throw new Exception(ResourceMessagesException.THIS_EMAIL_IS_ALREADY_IN_USE);
 
-            await _unitOfWork.ExecuteInTransaction(async () =>
+            await unitOfWork.ExecuteInTransaction(async () =>
             {
                 var school = new School
                 {
@@ -63,8 +47,8 @@ namespace InventarioEscolar.Application.Services.AuthService.RegisterAuth
                     City = r.City
                 };
 
-                await _schoolWriteOnlyRepository.Insert(school);
-                await _unitOfWork.Commit();
+                await schoolWriteOnlyRepository.Insert(school);
+                await unitOfWork.Commit();
 
                 var user = new ApplicationUser
                 {
@@ -73,7 +57,8 @@ namespace InventarioEscolar.Application.Services.AuthService.RegisterAuth
                     SchoolId = school.Id
                 };
 
-                var result = await _userManager.CreateAsync(user, r.Password);
+                var result = await userManager.CreateAsync(user, r.Password);
+               
                 if (!result.Succeeded)
                     throw new Exception("Erro ao criar usuário: " + string.Join(", ", result.Errors.Select(e => e.Description)));
             });

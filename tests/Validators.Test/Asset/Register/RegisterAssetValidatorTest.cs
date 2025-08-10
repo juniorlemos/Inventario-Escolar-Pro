@@ -1,14 +1,8 @@
 ﻿using CommonTestUtilities.Request;
-using FluentValidation;
 using InventarioEscolar.Application.UsesCases.AssetCase.Register;
 using InventarioEscolar.Communication.Enum;
 using InventarioEscolar.Exceptions;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Validators.Test.Asset.Register
 {
@@ -154,6 +148,5 @@ namespace Validators.Test.Asset.Register
             result.IsValid.ShouldBeFalse();
             result.Errors.ShouldContain(e => e.ErrorMessage == ResourceMessagesException.INVALID_ROOM_LOCALIZATION);
         }
-
     }
 }

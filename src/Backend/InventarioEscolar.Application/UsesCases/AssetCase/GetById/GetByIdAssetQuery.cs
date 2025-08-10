@@ -1,5 +1,4 @@
-﻿using InventarioEscolar.Application.Dtos;
-using InventarioEscolar.Communication.Response;
+﻿using InventarioEscolar.Communication.Dtos;
 using MediatR;
 
 namespace InventarioEscolar.Application.UsesCases.AssetCase.GetById

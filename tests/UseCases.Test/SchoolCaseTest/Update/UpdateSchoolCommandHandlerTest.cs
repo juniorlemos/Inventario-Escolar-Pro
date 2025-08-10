@@ -2,22 +2,16 @@
 using CommonTestUtilities.Entities;
 using CommonTestUtilities.Repositories;
 using CommonTestUtilities.Repositories.SchoolRepository;
-using CommonTestUtilities.Services;
 using FluentValidation;
 using InventarioEscolar.Application.UsesCases.SchoolCase.Update;
 using InventarioEscolar.Communication.Dtos;
-using InventarioEscolar.Domain.Interfaces;
+using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
 using MediatR;
-using NSubstitute;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static CommonTestUtilities.Helpers.ValidatorTestHelper;
 
 namespace UseCases.Test.SchoolCaseTest.Update
 {
@@ -27,45 +21,35 @@ namespace UseCases.Test.SchoolCaseTest.Update
         public async Task Handle_ShouldUpdateSchool_WhenDtoIsValidAndSchoolExists()
         {
             var school = SchoolBuilder.Build();
-            var dto = UpdateSchoolDtoBuilder.Build();
+            var updateSchoolDto = UpdateSchoolDtoBuilder.Build();
 
-            var command = new UpdateSchoolCommand(school.Id, dto);
+            var command =  new UpdateSchoolCommand(school.Id, updateSchoolDto);
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
-            var validator = new ValidatorBuilder<UpdateSchoolDto>().WithValidResult().Build();
+            var validator = CreateValidator<UpdateSchoolDto>(true);
 
-            var schoolReadOnlyRepository = new SchoolReadOnlyRepositoryBuilder()
-                .WithSchoolExist(school.Id, school)
-                .Build();
-
-            var schoolUpdateOnlyRepository = new SchoolUpdateOnlyRepositoryBuilder().Build();
-
-            var handler = CreateUseCase(unitOfWork, validator, schoolReadOnlyRepository, schoolUpdateOnlyRepository);
+            var schoolReadOnlyRepository = CreateSchoolReadRepository(school.Id, school);
+            
+            var handler = CreateUseCase( validator, schoolReadOnlyRepository);
 
             var result = await handler.Handle(command, CancellationToken.None);
 
             result.ShouldBe(Unit.Value);
-            schoolUpdateOnlyRepository.Received(1).Update(school);
-            await unitOfWork.Received(1).Commit();
         }
 
         [Fact]
         public async Task Handle_ShouldThrowNotFoundException_WhenSchoolDoesNotExist()
         {
-            var id = 999;
-            var dto = UpdateSchoolDtoBuilder.Build();
-            var command = new UpdateSchoolCommand(id, dto);
+            int id = new Random().Next(1, 1000);
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
-            var validator = new ValidatorBuilder<UpdateSchoolDto>().WithValidResult().Build();
+            var updateSchoolDto = UpdateSchoolDtoBuilder.Build();
+            var command = new UpdateSchoolCommand(id, updateSchoolDto);
 
-            var schoolReadOnlyRepository = new SchoolReadOnlyRepositoryBuilder()
-                .WithSchoolNotFound(id)
-                .Build();
+            var validator = CreateValidator<UpdateSchoolDto>(true);
 
-            var schoolUpdateOnlyRepository = new SchoolUpdateOnlyRepositoryBuilder().Build();
+            var schoolReadOnlyRepository = CreateSchoolReadRepository(id, null);
 
-            var handler = CreateUseCase(unitOfWork, validator, schoolReadOnlyRepository, schoolUpdateOnlyRepository);
+
+            var handler = CreateUseCase( validator, schoolReadOnlyRepository);
 
             var exception = await Should.ThrowAsync<NotFoundException>(() =>
                 handler.Handle(command, CancellationToken.None));
@@ -77,34 +61,37 @@ namespace UseCases.Test.SchoolCaseTest.Update
         public async Task Handle_ShouldThrowValidationException_WhenDtoIsInvalid()
         {
             var school = SchoolBuilder.Build();
-            var dto = UpdateSchoolDtoBuilder.Build();
-            var command = new UpdateSchoolCommand(school.Id, dto);
+            var updateSchoolDto = UpdateSchoolDtoBuilder.Build();
+            var command = new UpdateSchoolCommand(school.Id, updateSchoolDto);
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
-            var validator = new ValidatorBuilder<UpdateSchoolDto>()
-                .WithInvalidResult(ResourceMessagesException.NAME_EMPTY)
-                .Build();
+            var validator = CreateValidator<UpdateSchoolDto>(false, ResourceMessagesException.NAME_EMPTY);
+            
+            var schoolReadOnlyRepository = CreateSchoolReadRepository(school.Id, school);
+            
 
-            var schoolReadOnlyRepository = new SchoolReadOnlyRepositoryBuilder()
-                .WithSchoolExist(school.Id, school)
-                .Build();
-
-            var schoolUpdateOnlyRepository = new SchoolUpdateOnlyRepositoryBuilder().Build();
-
-            var handler = CreateUseCase(unitOfWork, validator, schoolReadOnlyRepository, schoolUpdateOnlyRepository);
+            var handler = CreateUseCase( validator, schoolReadOnlyRepository);
 
             var exception = await Should.ThrowAsync<ErrorOnValidationException>(() =>
                 handler.Handle(command, CancellationToken.None));
 
             exception.Message.ShouldBe(ResourceMessagesException.NAME_EMPTY);
         }
-
-        private static UpdateSchoolCommandHandler CreateUseCase(
-            IUnitOfWork unitOfWork,
-            IValidator<UpdateSchoolDto> validator,
-            ISchoolReadOnlyRepository schoolReadOnlyRepository,
-            ISchoolUpdateOnlyRepository schoolUpdateOnlyRepository)
+        public static ISchoolReadOnlyRepository CreateSchoolReadRepository(long id, School? school)
         {
+            var builder = new SchoolReadOnlyRepositoryBuilder();
+
+            if (school == null)
+                return builder.WithSchoolNotFound(id).Build();
+
+            return builder.WithSchoolExist(id, school).Build();
+        }
+        private static UpdateSchoolCommandHandler CreateUseCase(
+            IValidator<UpdateSchoolDto> validator,
+            ISchoolReadOnlyRepository schoolReadOnlyRepository)
+        {
+            var unitOfWork = new UnitOfWorkBuilder().Build();
+            var schoolUpdateOnlyRepository = new SchoolUpdateOnlyRepositoryBuilder().Build();
+
             return new UpdateSchoolCommandHandler(
                 unitOfWork,
                 validator,

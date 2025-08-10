@@ -7,6 +7,5 @@
         Regular = 3,
         Bom = 4,
         Novo = 5,
-
     }
 }

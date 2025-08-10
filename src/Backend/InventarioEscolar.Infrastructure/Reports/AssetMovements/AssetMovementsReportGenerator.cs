@@ -1,5 +1,6 @@
 ﻿using InventarioEscolar.Application.UsesCases.ReportsCase.AssetMovementsCase;
 using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Infrastructure.Reports.AssetMovements;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
 
@@ -7,7 +8,7 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetMovementsCase
 {
     public class AssetMovementsReportGenerator : IAssetMovementsReportGenerator
     {
-        public byte[] Generate(string schoolName, IEnumerable<AssetMovement> movements, DateTime generatedAt)
+        public byte[] Generate(string? schoolName, IEnumerable<AssetMovement> movements, DateTime generatedAt)
         {
             QuestPDF.Settings.License = LicenseType.Community;
 

@@ -12,10 +12,8 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
 
             builder.HasKey(am => am.Id);
             builder.Property(am => am.Id).ValueGeneratedOnAdd();
-
             builder.Property(am => am.MovedAt).IsRequired();
             builder.Property(am => am.IsCanceled).IsRequired();
-
 
             builder.HasOne(am => am.Asset)
                    .WithMany()

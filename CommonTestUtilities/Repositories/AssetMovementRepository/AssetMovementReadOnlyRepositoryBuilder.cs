@@ -2,11 +2,6 @@
 using InventarioEscolar.Domain.Interfaces.Repositories.AssetMovements;
 using InventarioEscolar.Domain.Pagination;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommonTestUtilities.Repositories.AssetMovementRepository
 {
@@ -19,10 +14,10 @@ namespace CommonTestUtilities.Repositories.AssetMovementRepository
             _repository = Substitute.For<IAssetMovementReadOnlyRepository>();
         }
 
-        public AssetMovementReadOnlyRepositoryBuilder WithAssetMovementsExist(List<AssetMovement> assetMovements, int page, int pageSize, bool isCanceled)
+        public AssetMovementReadOnlyRepositoryBuilder WithAssetMovementsExist(IList<AssetMovement> assetMovements, int page, int pageSize, bool isCanceled)
         {
             var pagedResult = new PagedResult<AssetMovement>(
-                assetMovements.GetRange(0, pageSize),
+               ((List<AssetMovement>)assetMovements).GetRange(0, pageSize),
                 assetMovements.Count,
                 page,
                 pageSize
@@ -34,7 +29,7 @@ namespace CommonTestUtilities.Repositories.AssetMovementRepository
 
         public AssetMovementReadOnlyRepositoryBuilder WithGetAllReturningNull(int page, int pageSize, bool isCanceled)
         {
-            _repository.GetAll(page, pageSize, isCanceled).Returns((PagedResult<AssetMovement>?)null);
+            _repository.GetAll(page, pageSize, isCanceled)!.Returns((PagedResult<AssetMovement>?)null);
             return this;
         }
         public AssetMovementReadOnlyRepositoryBuilder WithAssetMovementExist(long id, AssetMovement assetMovement)
@@ -42,10 +37,9 @@ namespace CommonTestUtilities.Repositories.AssetMovementRepository
             _repository.GetById(id).Returns(assetMovement);
             return this;
         }
-
         public AssetMovementReadOnlyRepositoryBuilder WithAssetMovementNotFound(long id)
         {
-            _repository.GetById(id).Returns((AssetMovement)null);
+            _repository.GetById(id).Returns((AssetMovement)null!);
             return this;
         }
         public IAssetMovementReadOnlyRepository Build() => _repository;

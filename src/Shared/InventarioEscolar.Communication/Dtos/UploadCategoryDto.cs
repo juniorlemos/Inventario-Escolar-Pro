@@ -2,7 +2,7 @@
 
 namespace InventarioEscolar.Communication.Dtos
 {
-    public record UploadCategoryDto :ICategoryBaseDto
+    public record UpdateCategoryDto :ICategoryBaseDto
     {
         public string Name { get; set; }
         public string Description { get; set; }

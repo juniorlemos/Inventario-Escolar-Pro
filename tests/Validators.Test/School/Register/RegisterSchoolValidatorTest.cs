@@ -1,13 +1,7 @@
 ﻿using CommonTestUtilities.Request;
-using InventarioEscolar.Application.UsesCases.AssetCase.Register;
 using InventarioEscolar.Application.UsesCases.SchoolCase.Register;
 using InventarioEscolar.Exceptions;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Validators.Test.School.Register
 {

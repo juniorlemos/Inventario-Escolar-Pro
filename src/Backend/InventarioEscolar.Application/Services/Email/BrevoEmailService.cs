@@ -5,16 +5,10 @@ using System.Text.Json;
 
 namespace InventarioEscolar.Application.Services.Email
 {
-    public class BrevoEmailService : IEmailService
+    public class BrevoEmailService(IConfiguration configuration) : IEmailService
     {
-        private readonly HttpClient _httpClient;
-        private readonly string _apiKey;
-
-        public BrevoEmailService(IConfiguration configuration)
-        {
-            _httpClient = new HttpClient();
-            _apiKey = configuration["Brevo:ApiKey"];
-        }
+        private readonly HttpClient _httpClient = new();
+        private readonly string _apiKey = configuration["Brevo:ApiKey"];
 
         public async Task SendEmailAsync(string toEmail, string subject, string htmlContent)
         {
@@ -27,6 +21,7 @@ namespace InventarioEscolar.Application.Services.Email
             };
 
             var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+            
             _httpClient.DefaultRequestHeaders.Add("api-key", _apiKey);
 
             var response = await _httpClient.PostAsync("https://api.brevo.com/v3/smtp/email", content);

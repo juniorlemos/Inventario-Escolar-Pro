@@ -1,4 +1,4 @@
-﻿using InventarioEscolar.Application.Dtos;
+﻿using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Interfaces.Repositories.Assets;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;

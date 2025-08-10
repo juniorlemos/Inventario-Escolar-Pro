@@ -1,45 +1,29 @@
 ﻿using InventarioEscolar.Application.Services.Interfaces;
 using InventarioEscolar.Application.Services.Interfaces.Auth;
 using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InventarioEscolar.Application.Services.AuthService.LoginAuth
 {
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, string>
+    public class LoginCommandHandler(
+        UserManager<ApplicationUser> userManager,
+        ISignInManagerWrapper signInManagerWrapper,
+        IJwtTokenGenerator jwtTokenGenerator) : IRequestHandler<LoginCommand, string>
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ISignInManagerWrapper _signInManagerWrapper;
-        private readonly IJwtTokenGenerator _jwtTokenGenerator;
-
-        public LoginCommandHandler(
-            UserManager<ApplicationUser> userManager,
-            ISignInManagerWrapper signInManagerWrapper,
-            IJwtTokenGenerator jwtTokenGenerator)
-        {
-            _userManager = userManager;
-            _signInManagerWrapper = signInManagerWrapper;
-            _jwtTokenGenerator = jwtTokenGenerator;
-        }
-
         public async Task<string> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var r = request.Request;
 
-            var user = await _userManager.FindByEmailAsync(r.Email);
-            if (user == null)
-                throw new Exception("Usuário não encontrado");
-
-            var result = await _signInManagerWrapper.CheckPasswordSignInAsync(user, r.Password, false);
+            var user = await userManager.FindByEmailAsync(request.Request.Email)
+                ?? throw new Exception(ResourceMessagesException.INVALID_USERNAME_OR_PASSWORD);
+            
+            var result = await signInManagerWrapper.CheckPasswordSignInAsync(user, request.Request.Password, false);
+            
             if (!result.Succeeded)
-                throw new Exception("Senha inválida");
+                throw new Exception(ResourceMessagesException.INVALID_USERNAME_OR_PASSWORD);
 
-            return _jwtTokenGenerator.GenerateToken(user);
+            return jwtTokenGenerator.GenerateToken(user);
         }
     }
 }

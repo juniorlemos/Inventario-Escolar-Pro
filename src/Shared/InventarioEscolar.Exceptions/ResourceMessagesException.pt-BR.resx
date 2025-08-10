@@ -276,4 +276,16 @@
   <data name="USER_NOT_AUTHENTICATED" xml:space="preserve">
     <value>Usuário não autenticado</value>
   </data>
+  <data name="E_MAIL_NOT_FOUND" xml:space="preserve">
+    <value>E-mail não encontrado</value>
+  </data>
+  <data name="INVALID_USERNAME_OR_PASSWORD" xml:space="preserve">
+    <value>Usuário ou senha inválidos.</value>
+  </data>
+  <data name="THIS_EMAIL_IS_ALREADY_IN_USE" xml:space="preserve">
+    <value>Este e-mail já está em uso.</value>
+  </data>
+  <data name="USER_NOT_FOUND" xml:space="preserve">
+    <value>Usuário não encontrado</value>
+  </data>
 </root>

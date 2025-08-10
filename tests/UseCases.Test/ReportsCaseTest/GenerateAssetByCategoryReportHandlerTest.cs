@@ -1,15 +1,14 @@
-﻿using InventarioEscolar.Application.Services.Interfaces;
+﻿using CommonTestUtilities.Entities;
+using CommonTestUtilities.Repositories.ReportsRepository;
+using CommonTestUtilities.Repositories.SchoolRepository;
+using InventarioEscolar.Application.Services.Interfaces;
 using InventarioEscolar.Application.UsesCases.ReportsCase.AssetsByCategoryCase;
 using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
 using InventarioEscolar.Domain.Interfaces.RepositoriesReports;
 using NSubstitute;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static CommonTestUtilities.Helpers.CurrentUserServiceTestHelper;
 
 namespace UseCases.Test.ReportsCaseTest
 {
@@ -18,28 +17,20 @@ namespace UseCases.Test.ReportsCaseTest
         [Fact]
         public async Task Handle_ShouldReturnGeneratedReport_WhenCalledWithValidRequest()
         {
-            // Arrange
-            var assetRepository = Substitute.For<IAssetReportReadOnlyRepository>();
-            var reportGenerator = Substitute.For<IAssetByCategoryReportGenerator>();
-            var currentUserService = Substitute.For<ICurrentUserService>();
-            var schoolRepository = Substitute.For<ISchoolReadOnlyRepository>();
-
-            var schoolId = 10;
-            var school = new School { Id = schoolId, Name = "Escola Técnica Estadual" };
-
-            var assets = new List<Asset>
-            {
-                new Asset { Name = "Impressora", PatrimonyCode = 777 }
-            };
+            var school = SchoolBuilder.Build();
+            var assets = AssetBuilder.BuildList(10);
 
             var expectedBytes = new byte[] { 5, 10, 15 };
 
-            assetRepository.GetAllAssetReport().Returns(assets);
-            currentUserService.SchoolId.Returns(schoolId);
-            schoolRepository.GetById(schoolId).Returns(school);
-            reportGenerator.Generate(school.Name, assets, Arg.Any<DateTime>()).Returns(expectedBytes);
+            var assetRepository = CreateAssetReportReadRepository(assets);
 
-            var handler = new GenerateAssetByCategoryReportHandler(
+            var schoolRepository = CreateSchoolReadRepository(school);
+
+            var currentUserService = CreateCurrentUserService(true, school.Id);
+
+            var reportGenerator = createReportGenerator(school.Name, assets, expectedBytes);
+
+            var handler = createUseCase (
                 assetRepository,
                 reportGenerator,
                 currentUserService,
@@ -48,16 +39,48 @@ namespace UseCases.Test.ReportsCaseTest
 
             var query = new GenerateAssetByCategoryReportQuery();
 
-            // Act
             var result = await handler.Handle(query, CancellationToken.None);
 
-            // Assert
             result.ShouldBe(expectedBytes);
-
             await assetRepository.Received(1).GetAllAssetReport();
             var _ = currentUserService.Received(1).SchoolId;
-            await schoolRepository.Received(1).GetById(schoolId);
+            await schoolRepository.Received(1).GetById(school.Id);
             reportGenerator.Received(1).Generate(school.Name, assets, Arg.Any<DateTime>());
+        }
+        private static GenerateAssetByCategoryReportHandler createUseCase(
+            IAssetReportReadOnlyRepository assetRepository,
+            IAssetByCategoryReportGenerator reportGenerator,
+            ICurrentUserService currentUserService,
+            ISchoolReadOnlyRepository schoolReadOnlyRepository)
+        {
+            return new GenerateAssetByCategoryReportHandler(
+                assetRepository,
+                reportGenerator,
+                currentUserService,
+                schoolReadOnlyRepository
+            );
+        }
+        private static IAssetReportReadOnlyRepository CreateAssetReportReadRepository(
+            List<Asset> assets)
+        {
+            var assetRepository = new AssetReportReadOnlyRepositoryBuilder()
+                .WithAssets(assets)
+                .Build();
+
+            return assetRepository;
+        }
+        private static ISchoolReadOnlyRepository CreateSchoolReadRepository(
+            School school)
+        {
+            return new SchoolReadOnlyRepositoryBuilder()
+                .WithSchoolExist(school.Id, school)
+                .Build();
+        }
+        private static IAssetByCategoryReportGenerator createReportGenerator(string schoolName,IList<Asset> assets, byte[] expectedBytes)
+        {
+            return new AssetByCategoryReportGeneratorBuilder()
+                .WithGeneratedReport(schoolName, assets, expectedBytes)
+                .Build();
         }
     }
 }

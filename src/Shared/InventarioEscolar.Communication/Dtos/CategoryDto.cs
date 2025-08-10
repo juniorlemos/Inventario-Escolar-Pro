@@ -1,6 +1,6 @@
 ﻿using InventarioEscolar.Communication.Dtos.Interfaces;
 
-namespace InventarioEscolar.Application.Dtos
+namespace InventarioEscolar.Communication.Dtos
 {
     public record CategoryDto : ICategoryBaseDto
     {

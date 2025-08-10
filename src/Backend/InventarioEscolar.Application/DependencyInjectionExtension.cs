@@ -1,39 +1,11 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Application.Decorators;
-using InventarioEscolar.Application.Services.AuthService;
 using InventarioEscolar.Application.Services.AuthService.LoginAuth;
 using InventarioEscolar.Application.Services.Email;
 using InventarioEscolar.Application.Services.Interfaces;
 using InventarioEscolar.Application.Services.Interfaces.Auth;
 using InventarioEscolar.Application.Services.Mapster;
-using InventarioEscolar.Application.UsesCases.AssetCase.Delete;
-using InventarioEscolar.Application.UsesCases.AssetCase.GetAll;
-using InventarioEscolar.Application.UsesCases.AssetCase.GetById;
 using InventarioEscolar.Application.UsesCases.AssetCase.Register;
-using InventarioEscolar.Application.UsesCases.AssetCase.Update;
-using InventarioEscolar.Application.UsesCases.AssetMovementCase.GetAll;
-using InventarioEscolar.Application.UsesCases.AssetMovementCase.Register;
-using InventarioEscolar.Application.UsesCases.AssetMovementCase.Update;
-using InventarioEscolar.Application.UsesCases.CategoryCase.Delete;
-using InventarioEscolar.Application.UsesCases.CategoryCase.GetAll;
-using InventarioEscolar.Application.UsesCases.CategoryCase.GetById;
-using InventarioEscolar.Application.UsesCases.CategoryCase.Register;
-using InventarioEscolar.Application.UsesCases.CategoryCase.Update;
-using InventarioEscolar.Application.UsesCases.ReportsCase.AssetConservationCase;
-using InventarioEscolar.Application.UsesCases.ReportsCase.AssetMovementsCase;
-using InventarioEscolar.Application.UsesCases.ReportsCase.AssetsByCategoryCase;
-using InventarioEscolar.Application.UsesCases.ReportsCase.AssetsByLocationCase;
-using InventarioEscolar.Application.UsesCases.ReportsCase.InventoryCase;
-using InventarioEscolar.Application.UsesCases.RoomLocationCase.Delete;
-using InventarioEscolar.Application.UsesCases.RoomLocationCase.GetAll;
-using InventarioEscolar.Application.UsesCases.RoomLocationCase.GetById;
-using InventarioEscolar.Application.UsesCases.RoomLocationCase.Register;
-using InventarioEscolar.Application.UsesCases.RoomLocationCase.Update;
-using InventarioEscolar.Application.UsesCases.SchoolCase.Delete;
-using InventarioEscolar.Application.UsesCases.SchoolCase.GetAll;
-using InventarioEscolar.Application.UsesCases.SchoolCase.GetById;
-using InventarioEscolar.Application.UsesCases.SchoolCase.Register;
-using InventarioEscolar.Application.UsesCases.SchoolCase.Update;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -52,8 +24,8 @@ namespace InventarioEscolar.Application
 
             ConfigureIdentityTokens(services);
 
-            addMediatr(services);
-            addScrutor(services);
+            AddMediatr(services);
+            AddScrutor(services);
         }
         private static void AddUseServices(IServiceCollection services)
         {
@@ -72,7 +44,7 @@ namespace InventarioEscolar.Application
                 opt.TokenLifespan = TimeSpan.FromMinutes(30);
             });
         }
-        private static void addMediatr(IServiceCollection services)
+        private static void AddMediatr(IServiceCollection services)
         {
             services.AddMediatR(cfg =>
             {
@@ -80,7 +52,7 @@ namespace InventarioEscolar.Application
                 cfg.LicenseKey = "Gere sua licença e aplique aqui";
             });
         }
-        private static void addScrutor(IServiceCollection services)
+        private static void AddScrutor(IServiceCollection services)
         {
             services.Scan(scan => scan
                 .FromAssemblyOf<RegisterAssetCommandHandler>()

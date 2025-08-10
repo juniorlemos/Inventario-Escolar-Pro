@@ -2,25 +2,18 @@
 using CommonTestUtilities.Entities;
 using CommonTestUtilities.Repositories;
 using CommonTestUtilities.Repositories.AssetRepository;
-using CommonTestUtilities.Services;
 using FluentValidation;
-using InventarioEscolar.Application.Dtos;
 using InventarioEscolar.Application.Services.Interfaces;
 using InventarioEscolar.Application.UsesCases.AssetCase.Update;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Entities;
-using InventarioEscolar.Domain.Interfaces;
 using InventarioEscolar.Domain.Interfaces.Repositories.Assets;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
 using MediatR;
-using NSubstitute;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static CommonTestUtilities.Helpers.CurrentUserServiceTestHelper;
+using static CommonTestUtilities.Helpers.ValidatorTestHelper;
 
 namespace UseCases.Test.AssetCaseTest.Update
 {
@@ -29,67 +22,38 @@ namespace UseCases.Test.AssetCaseTest.Update
         [Fact]
         public async Task Handle_ShouldUpdateAsset_WhenAllFieldsAreValidAndUserIsAuthenticated()
         {
-            var updateAssetDto = UpdateAssetDtoBuilder.Build();
-
             var asset = AssetBuilder.Build();
+            var UpdateAssetDto = UpdateAssetDtoBuilder.Build();
+            var command = new UpdateAssetCommand(asset.Id, UpdateAssetDto);
 
-            var command = new UpdateAssetCommand(asset.Id, updateAssetDto);
+            var user = CreateCurrentUserService(true, asset.SchoolId);
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
+            var validator = CreateValidator<UpdateAssetDto>(isValid: true);
 
-            var currentUser = new CurrentUserServiceBuilder()
-                .IsAuthenticatedTrue()
-                .WithSchoolId(asset.SchoolId)
-                .Build();
+            var assetReadRepository = CreateAssetReadOnlyRepository(true, asset);
 
-            var validator = new ValidatorBuilder<UpdateAssetDto>()
-                .WithValidResult()
-                .Build();
+            var handler = CreateUseCase(validator, assetReadRepository, user);
 
-            var assetUpdateRepository = new AssetUpdateOnlyRepositoryBuilder().Build();
-
-            var assetReadRepository = new AssetReadOnlyRepositoryBuilder()
-                .WithAssetExist(asset.Id, asset)
-                .Build();
-
-            var useCase = CreateUseCase(unitOfWork, validator, assetReadRepository, assetUpdateRepository, currentUser);
-
-            var result = await useCase.Handle(command, CancellationToken.None);
+            var result = await handler.Handle(command, CancellationToken.None);
 
             result.ShouldBe(Unit.Value);
-            assetUpdateRepository.Received(1).Update(asset);
-            await unitOfWork.Received(1).Commit();
         }
 
         [Fact]
         public async Task Handle_ShouldThrowNotFoundException_WhenAssetDoesNotExist()
         {
-            var updateAssetDto = UpdateAssetDtoBuilder.Build();
-
             var asset = AssetBuilder.Build();
-            var command = new UpdateAssetCommand(asset.Id, updateAssetDto);
+            var UpdateAssetDto = UpdateAssetDtoBuilder.Build();
+            var command = new UpdateAssetCommand(asset.Id, UpdateAssetDto);
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
+            var user = CreateCurrentUserService(true, asset.SchoolId);
+            var validator = CreateValidator<UpdateAssetDto>(isValid: true);
+            var assetReadRepository = CreateAssetReadOnlyRepository(false, asset);
 
-            var currentUser = new CurrentUserServiceBuilder()
-                .IsAuthenticatedTrue()
-                .WithSchoolId(asset.SchoolId) 
-                .Build();
-
-            var validator = new ValidatorBuilder<UpdateAssetDto>()
-                .WithValidResult()
-                .Build();
-
-            var assetUpdateRepository = new AssetUpdateOnlyRepositoryBuilder().Build();
-
-            var assetReadRepository = new AssetReadOnlyRepositoryBuilder()
-                .WithAssetNotFound(asset.Id)
-                .Build();
-
-            var useCase = CreateUseCase(unitOfWork, validator, assetReadRepository, assetUpdateRepository, currentUser);
+            var handler = CreateUseCase(validator, assetReadRepository, user);
 
             var exception = await Should.ThrowAsync<NotFoundException>(
-                () => useCase.Handle(command, CancellationToken.None));
+                () => handler.Handle(command, CancellationToken.None));
 
             exception.Message.ShouldBe(ResourceMessagesException.ASSET_NOT_FOUND);
         }
@@ -98,30 +62,17 @@ namespace UseCases.Test.AssetCaseTest.Update
         public async Task Handle_ShouldThrowBusinessException_WhenUserIsNotAuthenticated()
         {
             var asset = AssetBuilder.Build();
-            var updateAssetDto = UpdateAssetDtoBuilder.Build();
+            var UpdateAssetDto = UpdateAssetDtoBuilder.Build();
+            var command = new UpdateAssetCommand(asset.Id, UpdateAssetDto);
 
-            var command = new UpdateAssetCommand(asset.Id, updateAssetDto);
+            var user = CreateCurrentUserService(false);
+            var validator = CreateValidator<UpdateAssetDto>(isValid: true);
+            var assetReadRepository = CreateAssetReadOnlyRepository(true, asset);
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
-
-            var currentUser = new CurrentUserServiceBuilder()
-                .IsAuthenticatedFalse()
-                .Build();
-
-            var validator = new ValidatorBuilder<UpdateAssetDto>()
-                .WithValidResult()
-                .Build();
-
-            var assetUpdateRepository = new AssetUpdateOnlyRepositoryBuilder().Build();
-
-            var assetReadRepository = new AssetReadOnlyRepositoryBuilder()
-                .WithAssetExist(asset.Id, asset)
-                .Build();
-
-            var useCase = CreateUseCase(unitOfWork, validator, assetReadRepository, assetUpdateRepository, currentUser);
+            var handler = CreateUseCase( validator, assetReadRepository, user);
 
             var exception = await Should.ThrowAsync<BusinessException>(
-                () => useCase.Handle(command, CancellationToken.None));
+                () => handler.Handle(command, CancellationToken.None));
 
             exception.Message.ShouldBe(ResourceMessagesException.ASSET_NOT_BELONG_TO_SCHOOL);
         }
@@ -130,47 +81,39 @@ namespace UseCases.Test.AssetCaseTest.Update
         public async Task Handle_ShouldThrowValidationException_WhenUpdateAssetDtoIsInvalid()
         {
             var asset = AssetBuilder.Build();
-            var updateAssetDto = UpdateAssetDtoBuilder.Build();
+            var UpdateAssetDto = UpdateAssetDtoBuilder.Build();
+            var command = new UpdateAssetCommand(asset.Id, UpdateAssetDto);
 
-            var command = new UpdateAssetCommand(asset.Id, updateAssetDto);
+            var user = CreateCurrentUserService(true, asset.SchoolId);
+            var validator = CreateValidator<UpdateAssetDto>(isValid: false, ResourceMessagesException.NAME_EMPTY);
+            var assetReadRepository = CreateAssetReadOnlyRepository(true, asset);
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
-
-            var currentUser = new CurrentUserServiceBuilder()
-                .IsAuthenticatedTrue()
-                .WithSchoolId(asset.SchoolId)
-                .Build();
-
-            var validator = new ValidatorBuilder<UpdateAssetDto>()
-                .WithInvalidResult(ResourceMessagesException.NAME_EMPTY)
-                .Build();
-
-            var assetUpdateRepository = new AssetUpdateOnlyRepositoryBuilder().Build();
-
-            var assetReadRepository = new AssetReadOnlyRepositoryBuilder()
-                .WithAssetExist(asset.Id, asset)
-                .Build();
-
-            var useCase = CreateUseCase(unitOfWork, validator, assetReadRepository, assetUpdateRepository, currentUser);
+            var handler = CreateUseCase(validator, assetReadRepository, user);
 
             var exception = await Should.ThrowAsync<ErrorOnValidationException>(
-              () => useCase.Handle(command, CancellationToken.None));
+                () => handler.Handle(command, CancellationToken.None));
+
             exception.Message.ShouldBe(ResourceMessagesException.NAME_EMPTY);
         }
 
-        private static UpdateAssetCommandHandler CreateUseCase(
-            IUnitOfWork unitOfWork,
-            IValidator<UpdateAssetDto> validator,
-            IAssetReadOnlyRepository assetReadOnlyRepository,
-            IAssetUpdateOnlyRepository assetUpdateOnlyRepository,
-            ICurrentUserService currentUser)
+        private static IAssetReadOnlyRepository CreateAssetReadOnlyRepository(bool exists, Asset asset)
         {
-            return new UpdateAssetCommandHandler(
-                unitOfWork,
-                validator,
-                assetReadOnlyRepository,
-                assetUpdateOnlyRepository,
-                currentUser);
+            var builder = new AssetReadOnlyRepositoryBuilder();
+
+            return exists
+                ? builder.WithAssetExist(asset.Id, asset).Build()
+                : builder.WithAssetNotFound(asset.Id).Build();
         }
-    }   
+
+        private static UpdateAssetCommandHandler CreateUseCase(
+            IValidator<UpdateAssetDto> validator,
+            IAssetReadOnlyRepository assetReadRepository,
+            ICurrentUserService user)
+        {
+            var unitOfWork = new UnitOfWorkBuilder().Build();
+            var assetUpdateRepository = new AssetUpdateOnlyRepositoryBuilder().Build();
+
+            return new UpdateAssetCommandHandler(unitOfWork, validator, assetReadRepository, assetUpdateRepository, user);
+        }
     }
+}

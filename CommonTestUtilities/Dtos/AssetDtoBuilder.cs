@@ -1,11 +1,6 @@
 ﻿using Bogus;
-using InventarioEscolar.Application.Dtos;
+using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Communication.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommonTestUtilities.Dtos
 {

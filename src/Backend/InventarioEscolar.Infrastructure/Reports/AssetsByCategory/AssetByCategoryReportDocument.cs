@@ -1,13 +1,10 @@
 ﻿using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Enums;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using System.Drawing;
 
-namespace InventarioEscolar.Infrastructure.Reports.AssetByCategoryCase
+namespace InventarioEscolar.Infrastructure.Reports.AssetsByCategory
 {
     public class AssetByCategoryReportDocument : IDocument
     {

@@ -48,7 +48,6 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
         {
             return await dbContext.Categories.AnyAsync(s => s.Name.ToUpper() == category.ToUpper() && s.SchoolId == schoolId);
         }
-
         public async Task<Category?> GetById(long categoryId)
         {
             return await dbContext.Categories.Where(c => c.Id == categoryId)
@@ -68,7 +67,6 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
                  })
                  .FirstOrDefaultAsync(category => category.Id == categoryId);
         }
-
         public async Task Insert(Category category) => await dbContext.Categories.AddAsync(category);
         public async Task<bool> Delete(long categoryId)
         {

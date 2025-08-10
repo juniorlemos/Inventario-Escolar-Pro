@@ -16,14 +16,11 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
 
             builder.HasKey(x => x.Id);
             builder.Property(e => e.Id).ValueGeneratedOnAdd();
-
             builder.Property(x => x.CreatedOn).IsRequired();
-
             builder.Property(x => x.Active).IsRequired().HasDefaultValue(true);
             builder.HasIndex(x => x.PatrimonyCode).IsUnique();
             builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
-            builder.Property(x => x.Description).HasMaxLength(200);
-                               
+            builder.Property(x => x.Description).HasMaxLength(200);              
             builder.Property(x => x.AcquisitionValue).HasPrecision(10, 2);
             builder.Property(x => x.SerieNumber).HasMaxLength(30);
             builder.Property(a => a.ConservationState).IsRequired().HasConversion<int>();
@@ -32,7 +29,6 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
                .WithMany(c => c.Assets) 
                .HasForeignKey(c => c.CategoryId)
                .IsRequired();
-
 
             builder.HasOne(a => a.RoomLocation)
                .WithMany(c => c.Assets)

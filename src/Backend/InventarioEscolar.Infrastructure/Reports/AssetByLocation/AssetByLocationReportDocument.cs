@@ -1,11 +1,10 @@
 ﻿using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Enums;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
-namespace InventarioEscolar.Infrastructure.Reports.AssetByLocationCase
+namespace InventarioEscolar.Infrastructure.Reports.AssetByLocation
 {
     public class AssetByLocationReportDocument : IDocument
     {

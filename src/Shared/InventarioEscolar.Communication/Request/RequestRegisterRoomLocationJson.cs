@@ -6,6 +6,5 @@
         public string? Description { get; set; }
         public string? Building { get; set; }
         public long SchoolId { get; set; }
-
     }
 }

@@ -1,14 +1,11 @@
 ﻿using CommonTestUtilities.Entities;
 using CommonTestUtilities.Repositories.SchoolRepository;
 using InventarioEscolar.Application.UsesCases.SchoolCase.GetById;
+using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UseCases.Test.SchoolCaseTest.GetById
 {
@@ -17,20 +14,14 @@ namespace UseCases.Test.SchoolCaseTest.GetById
         [Fact]
         public async Task Handle_ShouldReturnSchoolDto_WhenSchoolExists()
         {
-            // Arrange
-            var school = SchoolBuilder.Build(); // já existe conforme seu padrão
+            var school = SchoolBuilder.Build();
             var query = new GetByIdSchoolQuery(school.Id);
 
-            var repository = new SchoolReadOnlyRepositoryBuilder()
-                .WithSchoolExist(school.Id, school)
-                .Build();
+            var repository = CreateSchoolReadOnlyRepository(school.Id, school);
+            var handler = CreateHandler(repository);
 
-            var useCase = new GetByIdSchoolQueryHandler(repository);
+            var result = await handler.Handle(query, CancellationToken.None);
 
-            // Act
-            var result = await useCase.Handle(query, CancellationToken.None);
-
-            // Assert
             result.ShouldNotBeNull();
             result.Id.ShouldBe(school.Id);
         }
@@ -38,21 +29,30 @@ namespace UseCases.Test.SchoolCaseTest.GetById
         [Fact]
         public async Task Handle_ShouldThrowNotFoundException_WhenSchoolDoesNotExist()
         {
-            // Arrange
-            var school = SchoolBuilder.Build();
-            var query = new GetByIdSchoolQuery(school.Id);
+            var schoolId = 999; 
+            var query = new GetByIdSchoolQuery(schoolId);
 
-            var repository = new SchoolReadOnlyRepositoryBuilder()
-                .WithSchoolNotFound(school.Id)
-                .Build();
+            var repository = CreateSchoolReadOnlyRepository(schoolId, null);
+            var handler = CreateHandler(repository);
 
-            var useCase = new GetByIdSchoolQueryHandler(repository);
-
-            // Act & Assert
             var exception = await Should.ThrowAsync<NotFoundException>(() =>
-                useCase.Handle(query, CancellationToken.None));
+                handler.Handle(query, CancellationToken.None));
 
             exception.Message.ShouldBe(ResourceMessagesException.SCHOOL_NOT_FOUND);
+        }
+
+        private static ISchoolReadOnlyRepository CreateSchoolReadOnlyRepository(long schoolId, School? school)
+        {
+            var builder = new SchoolReadOnlyRepositoryBuilder();
+
+            return school is not null
+                ? builder.WithSchoolExist(schoolId, school).Build()
+                : builder.WithSchoolNotFound(schoolId).Build();
+        }
+
+        private static GetByIdSchoolQueryHandler CreateHandler(ISchoolReadOnlyRepository repository)
+        {
+            return new GetByIdSchoolQueryHandler(repository);
         }
     }
 }

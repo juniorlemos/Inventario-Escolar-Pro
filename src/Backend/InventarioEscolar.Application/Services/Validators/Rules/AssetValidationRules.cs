@@ -28,7 +28,6 @@ namespace InventarioEscolar.Application.Services.Validators.Rules
 
             validator.RuleFor(a => a.SerieNumber)
                .MaximumLength(30).WithMessage(ResourceMessagesException.MAXIMUM_SERIE_NUMBER);
-
         }
     }
 }

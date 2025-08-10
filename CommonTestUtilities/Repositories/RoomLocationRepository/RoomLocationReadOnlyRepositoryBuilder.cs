@@ -1,14 +1,7 @@
-﻿using CommonTestUtilities.Repositories.CategoryRepository;
-using InventarioEscolar.Domain.Entities;
-using InventarioEscolar.Domain.Interfaces.Repositories.Categories;
+﻿using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces.Repositories.RoomLocations;
 using InventarioEscolar.Domain.Pagination;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommonTestUtilities.Repositories.RoomLocationRepository
 {
@@ -24,9 +17,9 @@ namespace CommonTestUtilities.Repositories.RoomLocationRepository
             _repository.GetById(id).Returns(RoomLocation);
             return this;
         }
-        public RoomLocationReadOnlyRepositoryBuilder WithRoomLocationNotFound(long id)
+        public RoomLocationReadOnlyRepositoryBuilder WithRoomLocationNotExist(long id)
         {
-            _repository.GetById(id).Returns((RoomLocation)null);
+            _repository.GetById(id).Returns((RoomLocation)null!);
             return this;
         }
         public RoomLocationReadOnlyRepositoryBuilder WithRoomLocationsExist(IEnumerable<RoomLocation> roomLocations, int page = 1, int pageSize = 10)
@@ -48,7 +41,7 @@ namespace CommonTestUtilities.Repositories.RoomLocationRepository
         }
         public RoomLocationReadOnlyRepositoryBuilder WithGetAllReturningNull(int page, int pageSize)
         {
-            _repository.GetAll(page, pageSize).Returns((PagedResult<RoomLocation>?)null);
+            _repository.GetAll(page, pageSize)!.Returns((PagedResult<RoomLocation>?)null);
             return this;
         }
         public RoomLocationReadOnlyRepositoryBuilder WithRoomLocationNameNotExists(string name, long schoolId)
@@ -64,4 +57,3 @@ namespace CommonTestUtilities.Repositories.RoomLocationRepository
         public IRoomLocationReadOnlyRepository Build() => _repository;
     }
 }
-

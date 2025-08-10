@@ -38,7 +38,6 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
                 .Where(a => !a.Active)
                 .ToListAsync();
         }
-
         public async Task<PagedResult<Asset>> GetAll(int page, int pageSize)
         {
             var query = dbContext.Assets
@@ -84,7 +83,6 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
 
         public async Task<Asset?> GetById(long assetId)
         {
-
             return await dbContext.Assets
                  .Where(a => a.Id == assetId)
                  .Select(a => new Asset
@@ -115,7 +113,6 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
                  .FirstOrDefaultAsync(asset => asset.Id == assetId);
         }
         public void Update(Asset asset) => dbContext.Assets.Update(asset);
-      
         public async Task<bool> Delete(long assetId)
         {
             var asset = await dbContext.Assets.FindAsync(assetId);
@@ -128,28 +125,25 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
             await dbContext.SaveChangesAsync();
             return true;
         }
-
         public async Task<List<Asset>> GetAllWithConservationStateBySchoolAsync()
         {
             return await dbContext.Assets
-        .Include(a => a.School) // inclui dados da escola (opcional)
-        .Where(a => a.ConservationState != null) // garante que o estado está definido
-        .OrderBy(a => a.School.Name)             // opcional: organiza por escola
-        .ThenBy(a => a.ConservationState)        // opcional: organiza por estado
+        .Include(a => a.School) 
+        .Where(a => a.ConservationState != null) 
+        .OrderBy(a => a.School.Name)             
+        .ThenBy(a => a.ConservationState)       
         .ToListAsync();
         }
-
         public async Task<List<Asset>> GetAllAssetsWithLocationAsync()
         {
             return await dbContext.Assets
-                .Include(a => a.RoomLocation)  // inclui a localização do bem
-                .Include(a => a.School)        // opcional: útil se quiser saber de qual escola é o bem
-                .Where(a => a.RoomLocationId != null) // somente os que têm localização definida
+                .Include(a => a.RoomLocation)  
+                .Include(a => a.School)        
+                .Where(a => a.RoomLocationId != null) 
                 .OrderBy(a => a.School.Name)
                 .ThenBy(a => a.RoomLocation.Name)
                 .ThenBy(a => a.Name)
                 .ToListAsync();
         }
-
     }
 }

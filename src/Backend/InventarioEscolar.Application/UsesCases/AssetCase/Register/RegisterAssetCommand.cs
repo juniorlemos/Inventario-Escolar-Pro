@@ -1,4 +1,4 @@
-﻿using InventarioEscolar.Application.Dtos;
+﻿using InventarioEscolar.Communication.Dtos;
 using MediatR;
 
 namespace InventarioEscolar.Application.UsesCases.AssetCase.Register

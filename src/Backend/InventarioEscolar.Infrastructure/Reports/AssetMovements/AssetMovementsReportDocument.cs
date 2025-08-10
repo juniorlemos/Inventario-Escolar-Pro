@@ -3,7 +3,7 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
-namespace InventarioEscolar.Infrastructure.Reports.AssetMovementsCase
+namespace InventarioEscolar.Infrastructure.Reports.AssetMovements
 {
     public class AssetMovementsReportDocument : IDocument
     {

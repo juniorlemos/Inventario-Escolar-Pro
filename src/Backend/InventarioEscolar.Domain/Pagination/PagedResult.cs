@@ -7,7 +7,6 @@
         public int Page { get; set; } = page;
         public int PageSize { get; set; } = pageSize;
 
-
         public static PagedResult<T> Empty(int page, int pageSize)
         {
             return new PagedResult<T>([], 0, page, pageSize);

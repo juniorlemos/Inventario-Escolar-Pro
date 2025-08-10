@@ -1,5 +1,4 @@
-﻿using InventarioEscolar.Application.Dtos;
-using InventarioEscolar.Application.UsesCases.CategoryCase.Delete;
+﻿using InventarioEscolar.Application.UsesCases.CategoryCase.Delete;
 using InventarioEscolar.Application.UsesCases.CategoryCase.GetAll;
 using InventarioEscolar.Application.UsesCases.CategoryCase.GetById;
 using InventarioEscolar.Application.UsesCases.CategoryCase.Register;
@@ -76,7 +75,7 @@ namespace InventarioEscolar.Api.Controllers
          [FromRoute] long id,
          [FromBody] RequestUpdateCategoryJson request)
         {
-            var categoryDto = request.Adapt<UploadCategoryDto>();
+            var categoryDto = request.Adapt<UpdateCategoryDto>();
 
             await _mediator.Send(new UpdateCategoryCommand(id, categoryDto));
 

@@ -2,15 +2,12 @@
 using CommonTestUtilities.Repositories;
 using CommonTestUtilities.Repositories.SchoolRepository;
 using InventarioEscolar.Application.UsesCases.SchoolCase.Delete;
+using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
 using MediatR;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UseCases.Test.SchoolCaseTest.Delete
 {
@@ -20,20 +17,12 @@ namespace UseCases.Test.SchoolCaseTest.Delete
         public async Task Handle_ShouldReturnUnit_WhenSchoolDeletedSuccessfully()
         {
             var school = SchoolBuilder.Build();
-
-            var unitOfWork = new UnitOfWorkBuilder().Build();
-
-            var readRepo = new SchoolReadOnlyRepositoryBuilder()
-                .WithSchoolExist(school.Id, school)
-                .Build();
-
-            var deleteRepo = new SchoolDeleteOnlyRepositoryBuilder()
-                .WithDeleteReturningTrue(school.Id)
-                .Build();
-
             var command = new DeleteSchoolCommand(school.Id);
 
-            var handler = new DeleteSchoolCommandHandler(deleteRepo, readRepo, unitOfWork);
+            var readRepository = CreateSchoolReadOnlyRepository(true, school);
+            var deleteRepository = CreateSchoolDeleteOnlyRepository(school.Id);
+
+            var handler = CreateHandler(readRepository, deleteRepository);
 
             var result = await handler.Handle(command, CancellationToken.None);
 
@@ -44,20 +33,12 @@ namespace UseCases.Test.SchoolCaseTest.Delete
         public async Task Handle_ShouldThrowNotFoundException_WhenSchoolDoesNotExist()
         {
             var school = SchoolBuilder.Build();
-
-            var unitOfWork = new UnitOfWorkBuilder().Build();
-
-            var readRepo = new SchoolReadOnlyRepositoryBuilder()
-                .WithSchoolNotFound(school.Id)
-                .Build();
-
-            var deleteRepo = new SchoolDeleteOnlyRepositoryBuilder()
-                .WithDeleteReturningTrue(school.Id)
-                .Build();
-
             var command = new DeleteSchoolCommand(school.Id);
 
-            var handler = new DeleteSchoolCommandHandler(deleteRepo, readRepo, unitOfWork);
+            var readRepository = CreateSchoolReadOnlyRepository(false, school);
+            var deleteRepository = CreateSchoolDeleteOnlyRepository(school.Id);
+
+            var handler = CreateHandler(readRepository, deleteRepository);
 
             var exception = await Should.ThrowAsync<NotFoundException>(() =>
                 handler.Handle(command, CancellationToken.None));
@@ -73,24 +54,41 @@ namespace UseCases.Test.SchoolCaseTest.Delete
             school.Assets = AssetBuilder.BuildList(3);
             school.Categories = CategoryBuilder.BuildList(1);
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
-
-            var readRepo = new SchoolReadOnlyRepositoryBuilder()
-                .WithSchoolExist(school.Id, school)
-                .Build();
-
-            var deleteRepo = new SchoolDeleteOnlyRepositoryBuilder()
-                .WithDeleteReturningTrue(school.Id)
-                .Build();
-
             var command = new DeleteSchoolCommand(school.Id);
 
-            var handler = new DeleteSchoolCommandHandler(deleteRepo, readRepo, unitOfWork);
+            var readRepository = CreateSchoolReadOnlyRepository(true, school);
+            var deleteRepository = CreateSchoolDeleteOnlyRepository(school.Id);
+
+            var handler = CreateHandler(readRepository, deleteRepository);
 
             var exception = await Should.ThrowAsync<BusinessException>(() =>
                 handler.Handle(command, CancellationToken.None));
 
             exception.Message.ShouldBe(ResourceMessagesException.CATEGORY_HAS_ASSETS);
+        }
+
+        private static ISchoolReadOnlyRepository CreateSchoolReadOnlyRepository(bool exists, School school)
+        {
+            var builder = new SchoolReadOnlyRepositoryBuilder();
+
+            return exists
+                ? builder.WithSchoolExist(school.Id, school).Build()
+                : builder.WithSchoolNotFound(school.Id).Build();
+        }
+
+        private static ISchoolDeleteOnlyRepository CreateSchoolDeleteOnlyRepository(long schoolId)
+        {
+            return new SchoolDeleteOnlyRepositoryBuilder()
+                .WithDeleteReturningTrue(schoolId)
+                .Build();
+        }
+
+        private static DeleteSchoolCommandHandler CreateHandler(
+            ISchoolReadOnlyRepository readRepository,
+            ISchoolDeleteOnlyRepository deleteRepository)
+        {
+            var unitOfWork = new UnitOfWorkBuilder().Build();
+            return new DeleteSchoolCommandHandler(deleteRepository, readRepository, unitOfWork);
         }
     }
 }

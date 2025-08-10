@@ -3,7 +3,6 @@ using InventarioEscolar.Domain.Enums;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using System.Drawing;
 
 namespace InventarioEscolar.Infrastructure.Reports.AssetConservation
 {
@@ -11,7 +10,7 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetConservation
     {
         public string SchoolName { get; set; } = string.Empty;
         public DateTime GeneratedAt { get; set; }
-        public IEnumerable<Asset> Assets { get; set; } 
+        public IEnumerable<Asset>? Assets { get; set; } 
 
         public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
 

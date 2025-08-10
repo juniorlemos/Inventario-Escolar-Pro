@@ -1,6 +1,4 @@
-﻿using InventarioEscolar.Application.Dtos;
-using InventarioEscolar.Communication.Dtos;
-using InventarioEscolar.Domain.Entities;
+﻿using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
 using InventarioEscolar.Domain.Pagination;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +8,6 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
     public sealed class SchoolRepository(InventarioEscolarProDBContext dbContext) : ISchoolWriteOnlyRepository, ISchoolReadOnlyRepository, ISchoolUpdateOnlyRepository, ISchoolDeleteOnlyRepository
     {
         public void Update(School school) => dbContext.Schools.Update(school);
-
         public async Task<PagedResult<School>> GetAll(int page, int pageSize)
         {
             var query = dbContext.Schools
@@ -95,7 +92,6 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
 
             return school;
         }
-
         public async Task<School?> GetDuplicateSchool(string name, string? inep, string? address)
         {
             return await dbContext.Schools

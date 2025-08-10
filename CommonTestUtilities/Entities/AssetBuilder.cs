@@ -1,17 +1,11 @@
 ﻿using Bogus;
 using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommonTestUtilities.Entities
 {
     public static class AssetBuilder
     {
-       
             public static Faker<Asset> CreateFake()
             {
                 return new Faker<Asset>("pt_BR")
@@ -31,7 +25,6 @@ namespace CommonTestUtilities.Entities
                     .RuleFor(a => a.RoomLocation, f => f.Random.Bool() ? RoomLocationBuilder.Build() : null)
                     .RuleFor(a => a.RoomLocationId, (f, a) => a.RoomLocation?.Id);
             }
-
             public static Asset Build() => CreateFake().Generate();
             public static List<Asset> BuildList(int quantity) => CreateFake().Generate(quantity);
     }

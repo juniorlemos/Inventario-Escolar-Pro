@@ -1,14 +1,8 @@
 ﻿using CommonTestUtilities.Dtos;
 using CommonTestUtilities.Request;
-using InventarioEscolar.Application.UsesCases.CategoryCase.Update;
 using InventarioEscolar.Application.UsesCases.RoomLocationCase.Update;
 using InventarioEscolar.Exceptions;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Validators.Test.RoomLocation.Update
 {
@@ -89,6 +83,5 @@ namespace Validators.Test.RoomLocation.Update
             result.IsValid.ShouldBeFalse();
             result.Errors.ShouldContain(e => e.ErrorMessage == ResourceMessagesException.ROOMLOCATION_BUILDING_TOOLONG);
         }
-
     }
 }

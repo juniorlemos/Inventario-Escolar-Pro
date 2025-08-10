@@ -7,6 +7,5 @@ namespace InventarioEscolar.Domain.Entities
     {
         public long SchoolId { get; set; }
         public virtual School School { get; set; } = null!;
-
     }
 }

@@ -1,10 +1,5 @@
 ﻿using Bogus;
 using InventarioEscolar.Communication.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommonTestUtilities.Dtos
 {
@@ -25,7 +20,6 @@ namespace CommonTestUtilities.Dtos
 
             return faker.Generate();
         }
-
         public static AssetMovementDto BuildCanceled()
         {
             var faker = new Faker<AssetMovementDto>("pt_BR")

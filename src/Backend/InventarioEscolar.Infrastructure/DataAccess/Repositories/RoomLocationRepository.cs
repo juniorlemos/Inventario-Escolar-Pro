@@ -49,7 +49,6 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
         {
             return await dbContext.RoomLocations.AnyAsync(s => s.Name.ToUpper() == roomLocation.ToUpper() && s.SchoolId == schoolId );
         }
-
         public async Task<RoomLocation?> GetById(long roomlocationId)
         {
             return await dbContext.RoomLocations.Where(r => r.Id == roomlocationId)
@@ -69,7 +68,6 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
                  })
                  .FirstOrDefaultAsync(roomlocation => roomlocation.Id == roomlocationId);
         }
-
         public async Task Insert(RoomLocation roomLocation) => await dbContext.RoomLocations.AddAsync(roomLocation);
 
         public async Task<bool> Delete(long roomLocationId)

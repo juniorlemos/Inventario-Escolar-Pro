@@ -1,14 +1,14 @@
-﻿using InventarioEscolar.Application.Services.Interfaces;
+﻿using CommonTestUtilities.Entities;
+using CommonTestUtilities.Repositories.ReportsRepository;
+using CommonTestUtilities.Repositories.SchoolRepository;
+using InventarioEscolar.Application.Services.Interfaces;
 using InventarioEscolar.Application.UsesCases.ReportsCase.AssetConservationCase;
 using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
 using InventarioEscolar.Domain.Interfaces.RepositoriesReports;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Shouldly;
+using static CommonTestUtilities.Helpers.CurrentUserServiceTestHelper;
 
 namespace UseCases.Test.ReportsCaseTest
 {
@@ -17,42 +17,65 @@ namespace UseCases.Test.ReportsCaseTest
         [Fact]
         public async Task Handle_ShouldGenerateReport_WhenQueryIsValid()
         {
-            // Arrange
-            var repository = Substitute.For<IAssetReportReadOnlyRepository>();
-            var reportGenerator = Substitute.For<IAssetConservationStateReportGenerator>();
-            var currentUserService = Substitute.For<ICurrentUserService>();
-            var schoolReadOnlyRepository = Substitute.For<ISchoolReadOnlyRepository>();
+            var school = SchoolBuilder.Build();
+            var assets = AssetBuilder.BuildList(1);
+            var expectedBytes = new byte[] { 1, 2, 3 };
 
-            var handler = new GenerateAssetConservationStateReportHandler(
-                repository,
+            var assetRepository = CreateAssetReportReadRepository(assets);
+            var schoolRepository = CreateSchoolReadRepository(school);
+            var currentUserService = CreateCurrentUserService(true, school.Id);
+            var reportGenerator = CreateReportGenerator(school.Name, assets, expectedBytes);
+
+            var handler = CreateUseCase(
+                assetRepository,
                 reportGenerator,
                 currentUserService,
-                schoolReadOnlyRepository
+                schoolRepository
             );
 
             var query = new GenerateAssetConservationStateReportQuery();
 
-            var fakeAssets = new List<Asset>
-        {
-            new Asset { Id = 1, Name = "Notebook" }
-        };
-
-            var fakeSchool = new School { Id = 1, Name = "Escola Municipal X" };
-
-            currentUserService.SchoolId.Returns(fakeSchool.Id);
-            repository.GetAllAssetReport().Returns(Task.FromResult<IEnumerable<Asset>>(fakeAssets));
-            schoolReadOnlyRepository.GetById(fakeSchool.Id).Returns(Task.FromResult(fakeSchool));
-            var expectedBytes = new byte[] { 1, 2, 3 };
-            reportGenerator.Generate(fakeSchool.Name, fakeAssets, Arg.Any<DateTime>()).Returns(expectedBytes);
-
-            // Act
             var result = await handler.Handle(query, CancellationToken.None);
 
-            // Assert
-            Assert.Equal(expectedBytes, result);
-            await repository.Received(1).GetAllAssetReport();
-            await schoolReadOnlyRepository.Received(1).GetById(fakeSchool.Id);
-            reportGenerator.Received(1).Generate(fakeSchool.Name, fakeAssets, Arg.Any<DateTime>());
+            result.ShouldBe(expectedBytes);
+            await assetRepository.Received(1).GetAllAssetReport();
+            await schoolRepository.Received(1).GetById(school.Id);
+            reportGenerator.Received(1).Generate(school.Name, assets, Arg.Any<DateTime>());
+        }
+
+        private static GenerateAssetConservationStateReportHandler CreateUseCase(
+            IAssetReportReadOnlyRepository assetRepository,
+            IAssetConservationStateReportGenerator reportGenerator,
+            ICurrentUserService currentUserService,
+            ISchoolReadOnlyRepository schoolReadOnlyRepository)
+        {
+            return new GenerateAssetConservationStateReportHandler(
+                assetRepository,
+                reportGenerator,
+                currentUserService,
+                schoolReadOnlyRepository
+            );
+        }
+
+        private static IAssetReportReadOnlyRepository CreateAssetReportReadRepository(List<Asset> assets)
+        {
+            return new AssetReportReadOnlyRepositoryBuilder()
+                .WithAssets(assets)
+                .Build();
+        }
+
+        private static ISchoolReadOnlyRepository CreateSchoolReadRepository(School school)
+        {
+            return new SchoolReadOnlyRepositoryBuilder()
+                .WithSchoolExist(school.Id, school)
+                .Build();
+        }
+
+        private static IAssetConservationStateReportGenerator CreateReportGenerator(string schoolName, IList<Asset> assets, byte[] expectedBytes)
+        {
+            return new AssetConservationStateReportGeneratorBuilder()
+                .WithGeneratedReport(schoolName, assets, expectedBytes)
+                .Build();
         }
     }
 }

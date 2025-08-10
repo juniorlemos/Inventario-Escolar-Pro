@@ -5,7 +5,7 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetConservation
 {
     public class AssetConservationStateReportGenerator : IAssetConservationStateReportGenerator
     {
-        public byte[] Generate(string schoolName, IEnumerable<Domain.Entities.Asset> assets, DateTime generatedAt)
+        public byte[] Generate(string? schoolName, IEnumerable<Domain.Entities.Asset> assets, DateTime generatedAt)
         {
             QuestPDF.Settings.License = LicenseType.Community;
             var document = new AssetConservationStateReportDocument

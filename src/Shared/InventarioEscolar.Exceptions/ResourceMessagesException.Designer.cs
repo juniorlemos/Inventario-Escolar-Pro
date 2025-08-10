@@ -250,6 +250,15 @@ namespace InventarioEscolar.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Email not found.
+        /// </summary>
+        public static string E_MAIL_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("E_MAIL_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The category is mandatory and must be valid..
         /// </summary>
         public static string INVALID_CATEGORY {
@@ -273,6 +282,15 @@ namespace InventarioEscolar.Exceptions {
         public static string INVALID_ROOM_LOCALIZATION {
             get {
                 return ResourceManager.GetString("INVALID_ROOM_LOCALIZATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid username or password..
+        /// </summary>
+        public static string INVALID_USERNAME_OR_PASSWORD {
+            get {
+                return ResourceManager.GetString("INVALID_USERNAME_OR_PASSWORD", resourceCulture);
             }
         }
         
@@ -521,6 +539,15 @@ namespace InventarioEscolar.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This email is already in use..
+        /// </summary>
+        public static string THIS_EMAIL_IS_ALREADY_IN_USE {
+            get {
+                return ResourceManager.GetString("THIS_EMAIL_IS_ALREADY_IN_USE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown error..
         /// </summary>
         public static string UNKNOWN_ERROR {
@@ -535,6 +562,15 @@ namespace InventarioEscolar.Exceptions {
         public static string USER_NOT_AUTHENTICATED {
             get {
                 return ResourceManager.GetString("USER_NOT_AUTHENTICATED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User not found.
+        /// </summary>
+        public static string USER_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("USER_NOT_FOUND", resourceCulture);
             }
         }
     }

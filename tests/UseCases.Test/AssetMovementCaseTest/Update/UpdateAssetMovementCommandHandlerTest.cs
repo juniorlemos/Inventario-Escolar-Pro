@@ -3,23 +3,17 @@ using CommonTestUtilities.Repositories;
 using CommonTestUtilities.Repositories.AssetMovementRepository;
 using CommonTestUtilities.Repositories.AssetRepository;
 using CommonTestUtilities.Repositories.RoomLocationRepository;
-using CommonTestUtilities.Services;
 using InventarioEscolar.Application.Services.Interfaces;
 using InventarioEscolar.Application.UsesCases.AssetMovementCase.Update;
-using InventarioEscolar.Domain.Interfaces;
+using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces.Repositories.AssetMovements;
 using InventarioEscolar.Domain.Interfaces.Repositories.Assets;
 using InventarioEscolar.Domain.Interfaces.Repositories.RoomLocations;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
 using MediatR;
-using NSubstitute;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static CommonTestUtilities.Helpers.CurrentUserServiceTestHelper;
 
 namespace UseCases.Test.AssetMovementCaseTest.Update
 {
@@ -39,57 +33,26 @@ namespace UseCases.Test.AssetMovementCaseTest.Update
             var roomFrom = RoomLocationBuilder.Build();
             roomFrom.Id = assetMovement.FromRoom.Id;
             roomFrom.SchoolId = asset.SchoolId;
-            roomFrom.Assets.Add(asset);  // asset está na sala de origem
+            roomFrom.Assets.Add(asset);
 
             var roomTo = RoomLocationBuilder.Build();
             roomTo.Id = assetMovement.ToRoom.Id;
             roomTo.SchoolId = asset.SchoolId;
-            // NÃO adiciona asset em roomTo.Assets, pois ele será movido para cá
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
-
-            var assetReadOnlyRepository = new AssetReadOnlyRepositoryBuilder()
-                .WithAssetExist(asset.Id, asset)
-                .Build();
-
-            var assetMovementReadOnlyRepository = new AssetMovementReadOnlyRepositoryBuilder()
-                .WithAssetMovementExist(assetMovement.Id, assetMovement)
-                .Build();
-
-            var roomLocationReadOnlyRepository = new RoomLocationReadOnlyRepositoryBuilder()
-                .WithRoomLocationExist(roomFrom.Id, roomFrom)
-                .WithRoomLocationExist(roomTo.Id, roomTo)
-                .Build();
-
-            var assetUpdateOnlyRepository = new AssetUpdateOnlyRepositoryBuilder().Build();
-            var assetMovementUpdateOnlyRepository = new AssetMovementUpdateOnlyRepositoryBuilder().Build();
-            var roomLocationUpdateOnlyRepository = new RoomLocationUpdateOnlyRepositoryBuilder().Build();
-
-            var currentUser = new CurrentUserServiceBuilder()
-                .IsAuthenticatedTrue()
-                .WithSchoolId(asset.SchoolId)
-                .Build();
+            var assetReadOnlyRepository = CreateAssetReadOnlyRepository(true, asset);
+            var assetMovementReadOnlyRepository = CreateAssetMovementReadOnlyRepository(true, assetMovement);
+            var roomLocationReadOnlyRepository = CreateRoomLocationReadOnlyRepository(roomFrom, roomTo);
+            var currentUserService = CreateCurrentUserService(true, asset.SchoolId);
 
             var handler = CreateUseCase(
-                unitOfWork,
                 assetReadOnlyRepository,
                 roomLocationReadOnlyRepository,
-                roomLocationUpdateOnlyRepository,
                 assetMovementReadOnlyRepository,
-                assetUpdateOnlyRepository,
-                assetMovementUpdateOnlyRepository,
-                currentUser);
+                currentUserService);
 
             var result = await handler.Handle(command, CancellationToken.None);
 
             result.ShouldBe(Unit.Value);
-
-            assetMovementUpdateOnlyRepository.Received(1).Update(assetMovement);
-            assetUpdateOnlyRepository.Received(1).Update(asset);
-            roomLocationUpdateOnlyRepository.Received(1).Update(roomFrom);
-            roomLocationUpdateOnlyRepository.Received(1).Update(roomTo);
-            await unitOfWork.Received(1).Commit();
-
             assetMovement.IsCanceled.ShouldBeTrue();
             assetMovement.CancelReason.ShouldBe(command.CancelReason);
             asset.RoomLocationId.ShouldBe(roomFrom.Id);
@@ -100,22 +63,19 @@ namespace UseCases.Test.AssetMovementCaseTest.Update
         {
             var command = new UpdateAssetMovementCommand(999, "Cancelamento");
 
-            var assetMovementReadOnlyRepository = new AssetMovementReadOnlyRepositoryBuilder()
-                .WithAssetMovementNotFound(command.Id)
-                .Build();
+            var assetMovementReadOnlyRepository = CreateAssetMovementReadOnlyRepository(false);
+            var currentUserService = CreateCurrentUserService(true);
+            var roomLocationReadRepository = new RoomLocationReadOnlyRepositoryBuilder().Build();
+            var assetReadOnlyRepository = new AssetReadOnlyRepositoryBuilder().Build();
 
             var handler = CreateUseCase(
-                new UnitOfWorkBuilder().Build(),
-                new AssetReadOnlyRepositoryBuilder().Build(),
-                new RoomLocationReadOnlyRepositoryBuilder().Build(),
-                new RoomLocationUpdateOnlyRepositoryBuilder().Build(),
+                assetReadOnlyRepository,
+                roomLocationReadRepository,
                 assetMovementReadOnlyRepository,
-                new AssetUpdateOnlyRepositoryBuilder().Build(),
-                new AssetMovementUpdateOnlyRepositoryBuilder().Build(),
-                new CurrentUserServiceBuilder().IsAuthenticatedTrue().Build());
+                currentUserService);
 
-            var exception = await Should.ThrowAsync<NotFoundException>(() =>
-                handler.Handle(command, CancellationToken.None));
+            var exception = await Should.ThrowAsync<NotFoundException>(
+                () => handler.Handle(command, CancellationToken.None));
 
             exception.Message.ShouldBe(ResourceMessagesException.ASSETMOVEMENT_NOT_FOUND);
         }
@@ -126,26 +86,19 @@ namespace UseCases.Test.AssetMovementCaseTest.Update
             var assetMovement = AssetMovementBuilder.Build();
             var command = new UpdateAssetMovementCommand(assetMovement.Id, "Cancelamento");
 
-            var assetMovementReadOnlyRepository = new AssetMovementReadOnlyRepositoryBuilder()
-                .WithAssetMovementExist(assetMovement.Id, assetMovement)
-                .Build();
-
-            var assetReadOnlyRepository = new AssetReadOnlyRepositoryBuilder()
-                .WithAssetNotFound(assetMovement.Asset.Id)
-                .Build();
+            var assetMovementReadOnlyRepository = CreateAssetMovementReadOnlyRepository(true, assetMovement);
+            var assetReadOnlyRepository = CreateAssetReadOnlyRepository(false, assetMovement.Asset);
+            var currentUserService = CreateCurrentUserService(true);
+            var roomLocationReadRepository = new RoomLocationReadOnlyRepositoryBuilder().Build();
 
             var handler = CreateUseCase(
-                new UnitOfWorkBuilder().Build(),
                 assetReadOnlyRepository,
-                new RoomLocationReadOnlyRepositoryBuilder().Build(),
-                new RoomLocationUpdateOnlyRepositoryBuilder().Build(),
+                roomLocationReadRepository,
                 assetMovementReadOnlyRepository,
-                new AssetUpdateOnlyRepositoryBuilder().Build(),
-                new AssetMovementUpdateOnlyRepositoryBuilder().Build(),
-                new CurrentUserServiceBuilder().IsAuthenticatedTrue().Build());
+                currentUserService);
 
-            var exception = await Should.ThrowAsync<NotFoundException>(() =>
-                handler.Handle(command, CancellationToken.None));
+            var exception = await Should.ThrowAsync<NotFoundException>(
+                () => handler.Handle(command, CancellationToken.None));
 
             exception.Message.ShouldBe(ResourceMessagesException.ASSET_NOT_FOUND);
         }
@@ -157,58 +110,211 @@ namespace UseCases.Test.AssetMovementCaseTest.Update
             var command = new UpdateAssetMovementCommand(assetMovement.Id, "Cancelamento");
 
             var asset = AssetBuilder.Build();
-            asset.Id = assetMovement.Asset.Id;
-            asset.SchoolId = 999;
+            assetMovement.Asset = asset;
 
-            var assetMovementReadOnlyRepository = new AssetMovementReadOnlyRepositoryBuilder()
-                .WithAssetMovementExist(assetMovement.Id, assetMovement)
-                .Build();
-
-            var assetReadOnlyRepository = new AssetReadOnlyRepositoryBuilder()
-                .WithAssetExist(asset.Id, asset)
-                .Build();
-
-            var currentUser = new CurrentUserServiceBuilder()
-                .IsAuthenticatedTrue()
-                .WithSchoolId(assetMovement.Asset.SchoolId) // diferente do asset
-                .Build();
+            var assetMovementReadOnlyRepository = CreateAssetMovementReadOnlyRepository(true, assetMovement);
+            var assetReadOnlyRepository = CreateAssetReadOnlyRepository(true, asset);
+            var currentUserService = CreateCurrentUserService(true, asset.Id +1); 
 
             var handler = CreateUseCase(
-                new UnitOfWorkBuilder().Build(),
                 assetReadOnlyRepository,
                 new RoomLocationReadOnlyRepositoryBuilder().Build(),
-                new RoomLocationUpdateOnlyRepositoryBuilder().Build(),
                 assetMovementReadOnlyRepository,
-                new AssetUpdateOnlyRepositoryBuilder().Build(),
-                new AssetMovementUpdateOnlyRepositoryBuilder().Build(),
-                currentUser);
+                currentUserService);
 
-            var exception = await Should.ThrowAsync<BusinessException>(() =>
-                handler.Handle(command, CancellationToken.None));
+            var exception = await Should.ThrowAsync<BusinessException>(
+                () => handler.Handle(command, CancellationToken.None));
 
             exception.Message.ShouldBe(ResourceMessagesException.ASSET_NOT_BELONG_TO_SCHOOL);
         }
 
-        // Você pode criar mais testes para roomFrom e roomTo pertencimento, etc., seguindo o padrão acima.
+        [Fact]
+        public async Task Handle_ShouldThrowBusinessException_WhenRoomFromDoesNotBelongToSchool()
+        {
+            var assetMovement = AssetMovementBuilder.Build();
+            var command = new UpdateAssetMovementCommand(assetMovement.Id, "Cancelamento");
+
+            var roomFrom = RoomLocationBuilder.Build();
+            var asset = AssetBuilder.Build();
+            
+            assetMovement.Asset = asset;
+            assetMovement.AssetId = asset.Id;
+            assetMovement.SchoolId = asset.SchoolId;
+
+            assetMovement.FromRoom = roomFrom;
+
+            var assetMovementReadOnlyRepository = CreateAssetMovementReadOnlyRepository(true, assetMovement);
+            var assetReadOnlyRepository = CreateAssetReadOnlyRepository(true, asset);
+            var currentUserService = CreateCurrentUserService(true, asset.SchoolId);
+
+            var roomLocationReadOnlyRepository = new RoomLocationReadOnlyRepositoryBuilder()
+                .WithRoomLocationExist(roomFrom.Id, roomFrom).Build();
+              
+            var handler = CreateUseCase(
+                assetReadOnlyRepository,
+                roomLocationReadOnlyRepository, 
+                assetMovementReadOnlyRepository,
+                currentUserService);
+
+            var exception = await Should.ThrowAsync<BusinessException>(
+                () => handler.Handle(command, CancellationToken.None));
+
+            exception.Message.ShouldBe(ResourceMessagesException.ROOMLOCATION_NOT_BELONG_TO_SCHOOL);
+        }
+
+        [Fact]
+        public async Task Handle_ShouldThrowBusinessException_WhenRoomToDoesNotBelongToSchool()
+        {
+            var assetMovement = AssetMovementBuilder.Build();
+            var command = new UpdateAssetMovementCommand(assetMovement.Id, "Cancelamento");
+
+            var roomFrom = RoomLocationBuilder.Build();
+            var roomTo = RoomLocationBuilder.Build();
+            var asset = AssetBuilder.Build();
+
+            assetMovement.Asset = asset;
+            assetMovement.AssetId = asset.Id;
+            assetMovement.SchoolId = asset.SchoolId;
+
+            assetMovement.FromRoom = roomFrom;
+            assetMovement.FromRoomId = roomFrom.Id;
+
+            roomFrom.SchoolId = assetMovement.SchoolId;
+
+            assetMovement.ToRoom = roomTo;
+
+            var assetMovementReadOnlyRepository = CreateAssetMovementReadOnlyRepository(true, assetMovement);
+            var assetReadOnlyRepository = CreateAssetReadOnlyRepository(true, asset);
+            var currentUserService = CreateCurrentUserService(true, asset.SchoolId);
+
+            var roomLocationReadOnlyRepository = CreateRoomLocationReadOnlyRepository(roomFrom,roomTo);
+
+            var handler = CreateUseCase(
+                assetReadOnlyRepository,
+                roomLocationReadOnlyRepository,
+                assetMovementReadOnlyRepository,
+                currentUserService);
+
+            var exception = await Should.ThrowAsync<BusinessException>(
+                () => handler.Handle(command, CancellationToken.None));
+
+            exception.Message.ShouldBe(ResourceMessagesException.ROOMLOCATION_NOT_BELONG_TO_SCHOOL);
+        }
+
+        [Fact]
+        public async Task Handle_ShouldThrowNotFoundException_WhenFromRoomDoesNotExist()
+        {
+           
+            var assetMovement = AssetMovementBuilder.Build();
+            var command = new UpdateAssetMovementCommand(assetMovement.Id, "Cancelamento");
+
+            var asset = AssetBuilder.Build();
+
+            assetMovement.Asset = asset;
+            assetMovement.AssetId = asset.Id;
+            assetMovement.SchoolId = asset.SchoolId;
+
+            assetMovement.FromRoom = RoomLocationBuilder.Build(); 
+
+            var assetMovementReadOnlyRepository = CreateAssetMovementReadOnlyRepository(true, assetMovement);
+            var assetReadOnlyRepository = CreateAssetReadOnlyRepository(true, asset);
+            var currentUserService = CreateCurrentUserService(true, asset.SchoolId);
+
+            var roomLocationReadOnlyRepository = new RoomLocationReadOnlyRepositoryBuilder().Build();
+
+            var handler = CreateUseCase(
+                assetReadOnlyRepository,
+                roomLocationReadOnlyRepository,
+                assetMovementReadOnlyRepository,
+                currentUserService);
+
+            var exception = await Should.ThrowAsync<NotFoundException>(
+                () => handler.Handle(command, CancellationToken.None));
+
+            exception.Message.ShouldBe(ResourceMessagesException.ROOMLOCATION_NOT_FOUND_ORIGIN);
+        }
+
+        [Fact]
+        public async Task Handle_ShouldThrowNotFoundException_WhenToRoomDoesNotExist()
+        {
+            var assetMovement = AssetMovementBuilder.Build();
+            var command = new UpdateAssetMovementCommand(assetMovement.Id, "Cancelamento");
+
+            var roomFrom = RoomLocationBuilder.Build();
+            var asset = AssetBuilder.Build();
+
+            assetMovement.Asset = asset;
+            assetMovement.AssetId = asset.Id;
+            assetMovement.SchoolId = asset.SchoolId;
+
+            roomFrom.SchoolId = assetMovement.SchoolId;
+
+            assetMovement.FromRoom = roomFrom;
+            assetMovement.ToRoom = RoomLocationBuilder.Build(); 
+
+            var assetMovementReadOnlyRepository = CreateAssetMovementReadOnlyRepository(true, assetMovement);
+            var assetReadOnlyRepository = CreateAssetReadOnlyRepository(true, asset);
+            var currentUserService = CreateCurrentUserService(true, asset.SchoolId);
+
+            var roomLocationReadOnlyRepository = new RoomLocationReadOnlyRepositoryBuilder()
+                .WithRoomLocationExist(roomFrom.Id, roomFrom)  
+                .Build();                                     
+
+            var handler = CreateUseCase(
+                assetReadOnlyRepository,
+                roomLocationReadOnlyRepository,
+                assetMovementReadOnlyRepository,
+                currentUserService);
+
+            var exception = await Should.ThrowAsync<NotFoundException>(
+                () => handler.Handle(command, CancellationToken.None));
+
+            exception.Message.ShouldBe(ResourceMessagesException.ROOMLOCATION_NOT_FOUND_DESTINATION);
+        }
+
+        private static IAssetReadOnlyRepository CreateAssetReadOnlyRepository(bool exists, Asset asset)
+        {
+            var builder = new AssetReadOnlyRepositoryBuilder();
+            return exists
+                ? builder.WithAssetExist(asset.Id, asset).Build()
+                : builder.WithAssetNotFound(asset.Id).Build();
+        }
+
+        private static IAssetMovementReadOnlyRepository CreateAssetMovementReadOnlyRepository(bool exists, AssetMovement? movement = null)
+        {
+            var builder = new AssetMovementReadOnlyRepositoryBuilder();
+            return exists && movement != null
+                ? builder.WithAssetMovementExist(movement.Id, movement).Build()
+                : builder.WithAssetMovementNotFound(movement?.Id ?? 0).Build();
+        }
+
+        private static IRoomLocationReadOnlyRepository CreateRoomLocationReadOnlyRepository(RoomLocation roomFrom, RoomLocation roomTo)
+        {
+            return new RoomLocationReadOnlyRepositoryBuilder()
+                .WithRoomLocationExist(roomFrom.Id, roomFrom)
+                .WithRoomLocationExist(roomTo.Id, roomTo)
+                .Build();
+        }
 
         private static UpdateAssetMovementCommandHandler CreateUseCase(
-            IUnitOfWork unitOfWork,
             IAssetReadOnlyRepository assetReadOnlyRepository,
             IRoomLocationReadOnlyRepository roomLocationReadOnlyRepository,
-            IRoomLocationUpdateOnlyRepository roomLocationUpdateOnlyRepository,
             IAssetMovementReadOnlyRepository assetMovementReadOnlyRepository,
-            IAssetUpdateOnlyRepository assetUpdateOnlyRepository,
-            IAssetMovementUpdateOnlyRepository assetMovementUpdateOnlyRepository,
             ICurrentUserService currentUser)
         {
+            var unitOfWork = new UnitOfWorkBuilder().Build();
+            var assetUpdateRepository = new AssetUpdateOnlyRepositoryBuilder().Build();
+            var roomLocationUpdateRepository = new RoomLocationUpdateOnlyRepositoryBuilder().Build();
+            var assetMovementUpdateRepository = new AssetMovementUpdateOnlyRepositoryBuilder().Build();
+
             return new UpdateAssetMovementCommandHandler(
                 unitOfWork,
                 assetReadOnlyRepository,
                 roomLocationReadOnlyRepository,
-                roomLocationUpdateOnlyRepository,
+                roomLocationUpdateRepository,
                 assetMovementReadOnlyRepository,
-                assetUpdateOnlyRepository,
-                assetMovementUpdateOnlyRepository,
+                assetUpdateRepository,
+                assetMovementUpdateRepository,
                 currentUser);
         }
     }

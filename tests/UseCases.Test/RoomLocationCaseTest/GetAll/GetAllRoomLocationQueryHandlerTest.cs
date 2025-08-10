@@ -1,64 +1,73 @@
 ﻿using CommonTestUtilities.Entities;
 using CommonTestUtilities.Repositories.RoomLocationRepository;
 using InventarioEscolar.Application.UsesCases.RoomLocationCase.GetAll;
+using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Domain.Interfaces.Repositories.RoomLocations;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UseCases.Test.RoomLocationCaseTest.GetAll
 {
     public class GetAllRoomLocationQueryHandlerTest
     {
-        public class GetAllRoomLocationsQueryHandlerTest
+        [Fact]
+        public async Task Handle_ShouldReturnPagedResult_WhenRoomLocationsExist()
         {
-            [Fact]
-            public async Task Handle_ShouldReturnPagedResult_WhenRoomLocationsExist()
-            {
-                var roomLocations = RoomLocationBuilder.BuildList(20);
-                var page = 1;
-                var pageSize = 10;
+            const int page = 1;
+            const int pageSize = 10;
+            const int totalCount = 20;
+            const int expectedItems = 10;
 
-                var query = new GetAllRoomLocationsQuery(page, pageSize);
+            var roomLocations = RoomLocationBuilder.BuildList(totalCount);
+            var query = new GetAllRoomLocationsQuery(page, pageSize);
 
-                var repository = new RoomLocationReadOnlyRepositoryBuilder()
-                    .WithRoomLocationsExist(roomLocations, page, pageSize)
-                    .Build();
+            var repository = CreateRoomLocationReadOnlyRepository(true, roomLocations, page, pageSize);
+            var useCase = CreateUseCase(repository);
 
-                var useCase = new GetAllRoomLocationsQueryHandler(repository);
+            var result = await useCase.Handle(query, CancellationToken.None);
 
-                var result = await useCase.Handle(query, CancellationToken.None);
+            result.ShouldNotBeNull();
+            result.Items.Count.ShouldBe(expectedItems);
+            result.TotalCount.ShouldBe(totalCount);
+            result.Page.ShouldBe(page);
+            result.PageSize.ShouldBe(pageSize);
+        }
 
-                result.ShouldNotBeNull();
-                result.Items.Count.ShouldBe(10);
-                result.TotalCount.ShouldBe(20);
-                result.Page.ShouldBe(page);
-                result.PageSize.ShouldBe(pageSize);
-            }
+        [Fact]
+        public async Task Handle_ShouldReturnEmptyPagedResult_WhenRepositoryReturnsNullRoomLocations()
+        {
+            const int page = 1;
+            const int pageSize = 10;
+            var query = new GetAllRoomLocationsQuery(page, pageSize);
 
-            [Fact]
-            public async Task Handle_ShouldReturnEmptyPagedResult_WhenRepositoryReturnsNullRoomLocations()
-            {
-                var page = 1;
-                var pageSize = 10;
+            IList<RoomLocation>? roomLocations = null;
+            var repository = CreateRoomLocationReadOnlyRepository(false, roomLocations, page, pageSize);
+            var useCase = CreateUseCase(repository);
 
-                var query = new GetAllRoomLocationsQuery(page, pageSize);
+            var result = await useCase.Handle(query, CancellationToken.None);
 
-                var repository = new RoomLocationReadOnlyRepositoryBuilder()
-                    .WithGetAllReturningNull(page, pageSize)
-                    .Build();
+            result.ShouldNotBeNull();
+            result.Items.ShouldBeEmpty();
+            result.TotalCount.ShouldBe(0);
+            result.Page.ShouldBe(page);
+            result.PageSize.ShouldBe(pageSize);
+        }
 
-                var useCase = new GetAllRoomLocationsQueryHandler(repository);
-                var result = await useCase.Handle(query, CancellationToken.None);
+        private static IRoomLocationReadOnlyRepository CreateRoomLocationReadOnlyRepository(
+            bool exists,
+            IList<RoomLocation>? roomLocations,
+            int page,
+            int pageSize)
+        {
+            var builder = new RoomLocationReadOnlyRepositoryBuilder();
 
-                result.ShouldNotBeNull();
-                result.Items.ShouldBeEmpty();
-                result.TotalCount.ShouldBe(0);
-                result.Page.ShouldBe(page);
-                result.PageSize.ShouldBe(pageSize);
-            }
+            return exists
+                ? builder.WithRoomLocationsExist(roomLocations!, page, pageSize).Build()
+                : builder.WithGetAllReturningNull(page, pageSize).Build();
+        }
+
+        private static GetAllRoomLocationsQueryHandler CreateUseCase(IRoomLocationReadOnlyRepository repository)
+        {
+            return new GetAllRoomLocationsQueryHandler(repository);
         }
     }
 }

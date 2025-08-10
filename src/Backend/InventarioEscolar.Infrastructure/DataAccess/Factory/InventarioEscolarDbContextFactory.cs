@@ -22,21 +22,17 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Factory
             var optionsBuilder = new DbContextOptionsBuilder<InventarioEscolarProDBContext>();
             optionsBuilder.UseSqlServer(configuration.ConnectionString());
 
-            // Usando uma implementação fake de ICurrentUserService
             var fakeCurrentUserService = new FakeCurrentUserService();
 
             return new InventarioEscolarProDBContext(optionsBuilder.Options, fakeCurrentUserService);
         }
 
-        // Fake usada apenas para DesignTime/Migrations
         private class FakeCurrentUserService : ICurrentUserService
         {
             public long SchoolId => -1;
             public long? UserId => null;
             public string UserName => string.Empty;
             public bool IsAuthenticated => true;
-
-             
         }
     }
 }

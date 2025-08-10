@@ -1,10 +1,5 @@
 ﻿using CommonTestUtilities.Dtos;
 using InventarioEscolar.Application.UsesCases.AssetCase.Register;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommonTestUtilities.Request
 {

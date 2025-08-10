@@ -1,13 +1,7 @@
 ﻿using CommonTestUtilities.Request;
-using InventarioEscolar.Application.UsesCases.AssetCase.Register;
 using InventarioEscolar.Application.UsesCases.AssetMovementCase.Register;
 using InventarioEscolar.Exceptions;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Validators.Test.AssetMovement.Register
 {
@@ -68,7 +62,7 @@ namespace Validators.Test.AssetMovement.Register
         {
             var validator = new RegisterAssetMovementValidator();
             var dto = RegisterAssetMovementCommandBuilder.Build().AssetMovementDto;
-            dto.MovedAt = DateTime.UtcNow.AddMinutes(5); // no futuro
+            dto.MovedAt = DateTime.UtcNow.AddMinutes(5); 
 
             var result = validator.Validate(dto);
 

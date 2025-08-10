@@ -1,12 +1,5 @@
-﻿using CommonTestUtilities.Repositories.AssetRepository;
-using InventarioEscolar.Domain.Interfaces.Repositories.Assets;
-using InventarioEscolar.Domain.Interfaces.Repositories.Categories;
+﻿using InventarioEscolar.Domain.Interfaces.Repositories.Categories;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommonTestUtilities.Repositories.CategoryRepository
 {
@@ -24,6 +17,5 @@ namespace CommonTestUtilities.Repositories.CategoryRepository
             return this;
         }
         public ICategoryDeleteOnlyRepository Build() => _repository;
-
     }
 }

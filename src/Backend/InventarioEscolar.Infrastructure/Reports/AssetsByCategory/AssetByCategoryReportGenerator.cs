@@ -1,4 +1,5 @@
 ﻿using InventarioEscolar.Application.UsesCases.ReportsCase.AssetsByCategoryCase;
+using InventarioEscolar.Infrastructure.Reports.AssetsByCategory;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
 

@@ -1,7 +1,7 @@
 ﻿using InventarioEscolar.Communication.Dtos.Interfaces;
 using InventarioEscolar.Communication.Enum;
 
-namespace InventarioEscolar.Application.Dtos
+namespace InventarioEscolar.Communication.Dtos
 {
     public record AssetDto : IAssetBaseDto
     {

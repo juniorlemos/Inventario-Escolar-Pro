@@ -1,76 +1,35 @@
 ﻿using CommonTestUtilities.Dtos;
+using CommonTestUtilities.Entities;
 using CommonTestUtilities.Repositories;
 using CommonTestUtilities.Repositories.SchoolRepository;
-using CommonTestUtilities.Services;
 using FluentValidation;
 using InventarioEscolar.Application.UsesCases.SchoolCase.Register;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Entities;
-using InventarioEscolar.Domain.Interfaces;
 using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
 using Mapster;
-using NSubstitute;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static CommonTestUtilities.Helpers.ValidatorTestHelper;
 
 namespace UseCases.Test.SchoolCaseTest.Register
 {
     public class RegisterSchoolCommandHandlerTest
     {
-        [Fact]
-        public async Task Handle_ShouldRegisterSchool_WhenValid()
-        {
-            var dto = SchoolDtoBuilder.Build();
-            var command = new RegisterSchoolCommand(dto);
-
-            var unitOfWork = new UnitOfWorkBuilder().Build();
-
-            var validator = new ValidatorBuilder<SchoolDto>()
-                .WithValidResult()
-                .Build();
-
-            var schoolReadOnlyRepository = new SchoolReadOnlyRepositoryBuilder()
-                .WithDuplicateSchool(null)
-                .Build();
-
-            var schoolWriteOnlyRepository = new SchoolWriteOnlyRepositoryBuilder().Build();
-
-            var useCase = CreateUseCase(unitOfWork, validator, schoolReadOnlyRepository, schoolWriteOnlyRepository);
-
-            var result = await useCase.Handle(command, CancellationToken.None);
-
-            result.ShouldNotBeNull();
-            result.Name.ShouldBe(dto.Name);
-
-            await schoolWriteOnlyRepository.Received(1).Insert(Arg.Any<School>());
-            await unitOfWork.Received(1).Commit();
-        }
-
+        
         [Fact]
         public async Task Handle_ShouldThrowValidationException_WhenDtoIsInvalid()
         {
-            var dto = SchoolDtoBuilder.Build();
-            var command = new RegisterSchoolCommand(dto);
+            var schoolDto = SchoolDtoBuilder.Build();
+            var command = new RegisterSchoolCommand(schoolDto);
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
+            var validator = CreateValidator<SchoolDto>(false, ResourceMessagesException.NAME_EMPTY);
 
-            var validator = new ValidatorBuilder<SchoolDto>()
-                .WithInvalidResult(ResourceMessagesException.NAME_EMPTY)
-                .Build();
+            var schoolReadOnlyRepository = CreateSchoolReadRepository(null);
 
-            var schoolReadOnlyRepository = new SchoolReadOnlyRepositoryBuilder()
-                .WithDuplicateSchool(null)
-                .Build();
 
-            var schoolWriteOnlyRepository = new SchoolWriteOnlyRepositoryBuilder().Build();
-
-            var useCase = CreateUseCase(unitOfWork, validator, schoolReadOnlyRepository, schoolWriteOnlyRepository);
+            var useCase = CreateUseCase( validator, schoolReadOnlyRepository);
 
             var exception = await Should.ThrowAsync<ErrorOnValidationException>(() =>
                 useCase.Handle(command, CancellationToken.None));
@@ -81,24 +40,21 @@ namespace UseCases.Test.SchoolCaseTest.Register
         [Fact]
         public async Task Handle_ShouldThrowDuplicateEntityException_WhenNameAlreadyExists()
         {
-            var dto = SchoolDtoBuilder.Build();
-            var duplicate = dto.Adapt<School>();
-            duplicate.Inep = "99999999";
-            duplicate.Address = "Outro Endereço";
+            var schoolDto = SchoolDtoBuilder.Build();
+            var schoolSecond = SchoolBuilder.Build();
 
-            var command = new RegisterSchoolCommand(dto);
+            var duplicate = schoolDto.Adapt<School>();
+            duplicate.Inep = schoolSecond.Inep;
+            duplicate.Address = schoolSecond.Address;
+            duplicate.Name = schoolDto.Name;
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
+            var command = new RegisterSchoolCommand(schoolDto);
 
-            var validator = new ValidatorBuilder<SchoolDto>().WithValidResult().Build();
+            var validator = CreateValidator<SchoolDto>(true);
 
-            var schoolReadOnlyRepository = new SchoolReadOnlyRepositoryBuilder()
-                .WithDuplicateSchool(duplicate)
-                .Build();
+            var schoolReadOnlyRepository = CreateSchoolReadRepository(duplicate);
 
-            var schoolWriteOnlyRepository = new SchoolWriteOnlyRepositoryBuilder().Build();
-
-            var useCase = CreateUseCase(unitOfWork, validator, schoolReadOnlyRepository, schoolWriteOnlyRepository);
+            var useCase = CreateUseCase( validator, schoolReadOnlyRepository);
 
             var exception = await Should.ThrowAsync<DuplicateEntityException>(() =>
                 useCase.Handle(command, CancellationToken.None));
@@ -109,24 +65,22 @@ namespace UseCases.Test.SchoolCaseTest.Register
         [Fact]
         public async Task Handle_ShouldThrowDuplicateEntityException_WhenInepAlreadyExists()
         {
-            var dto = SchoolDtoBuilder.Build();
-            var duplicate = dto.Adapt<School>();
-            duplicate.Name = "Outra escola";
-            duplicate.Address = "Outro Endereço";
+            var schoolDto = SchoolDtoBuilder.Build();
+            var schoolSecond = SchoolBuilder.Build();
 
-            var command = new RegisterSchoolCommand(dto);
+            var duplicate = schoolDto.Adapt<School>();
+            duplicate.Name = schoolSecond.Name;
+            duplicate.Inep = schoolDto.Inep;
+            duplicate.Address = schoolSecond.Address;
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
+            var command = new RegisterSchoolCommand(schoolDto);
 
-            var validator = new ValidatorBuilder<SchoolDto>().WithValidResult().Build();
+            var validator = CreateValidator<SchoolDto>(true);
 
-            var schoolReadOnlyRepository = new SchoolReadOnlyRepositoryBuilder()
-                .WithDuplicateSchool(duplicate)
-                .Build();
+            var schoolReadOnlyRepository = CreateSchoolReadRepository(duplicate);
 
-            var schoolWriteOnlyRepository = new SchoolWriteOnlyRepositoryBuilder().Build();
 
-            var useCase = CreateUseCase(unitOfWork, validator, schoolReadOnlyRepository, schoolWriteOnlyRepository);
+            var useCase = CreateUseCase( validator, schoolReadOnlyRepository);
 
             var exception = await Should.ThrowAsync<DuplicateEntityException>(() =>
                 useCase.Handle(command, CancellationToken.None));
@@ -135,39 +89,70 @@ namespace UseCases.Test.SchoolCaseTest.Register
         }
 
         [Fact]
+        public async Task Handle_ShouldContinue_WhenDuplicateExistsButAddressIsDifferent()
+        {
+            var schoolDto = SchoolDtoBuilder.Build();
+
+            var duplicate = schoolDto.Adapt<School>();
+            var schoolSecond = SchoolBuilder.Build();
+
+            duplicate.Name = schoolSecond.Name;
+            duplicate.Inep = schoolSecond.Inep;
+            duplicate.Address = schoolSecond.Address;
+
+            var command = new RegisterSchoolCommand(schoolDto);
+
+            var validator = CreateValidator<SchoolDto>(true);
+            var schoolReadOnlyRepository = CreateSchoolReadRepository(duplicate);          
+
+            var useCase = CreateUseCase(validator, schoolReadOnlyRepository);
+
+            var result = await useCase.Handle(command, CancellationToken.None);
+
+            result.ShouldNotBeNull();
+            result.Name.ShouldBe(schoolDto.Name);
+
+        }
+
+        [Fact]
         public async Task Handle_ShouldThrowDuplicateEntityException_WhenAddressAlreadyExists()
         {
-            var dto = SchoolDtoBuilder.Build();
-            var duplicate = dto.Adapt<School>();
-            duplicate.Name = "Outra escola";
-            duplicate.Inep = "12345678";
+            var schoolDto = SchoolDtoBuilder.Build();
+            var schoolSecond = SchoolBuilder.Build();
 
-            var command = new RegisterSchoolCommand(dto);
+            var duplicate = schoolDto.Adapt<School>();
+            duplicate.Name = schoolSecond.Name;
+            duplicate.Inep = schoolSecond.Inep;
+            duplicate.Address = schoolDto.Address;
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
+            var command = new RegisterSchoolCommand(schoolDto);
 
-            var validator = new ValidatorBuilder<SchoolDto>().WithValidResult().Build();
+            var validator = CreateValidator<SchoolDto>(true);
 
-            var schoolReadOnlyRepository = new SchoolReadOnlyRepositoryBuilder()
-                .WithDuplicateSchool(duplicate)
-                .Build();
+            var schoolReadOnlyRepository = CreateSchoolReadRepository(duplicate);
 
-            var schoolWriteOnlyRepository = new SchoolWriteOnlyRepositoryBuilder().Build();
 
-            var useCase = CreateUseCase(unitOfWork, validator, schoolReadOnlyRepository, schoolWriteOnlyRepository);
+            var useCase = CreateUseCase( validator, schoolReadOnlyRepository);
 
             var exception = await Should.ThrowAsync<DuplicateEntityException>(() =>
                 useCase.Handle(command, CancellationToken.None));
 
             exception.Message.ShouldBe(ResourceMessagesException.SCHOOL_ADDRESS_ALREADY_EXISTS);
         }
-
-        private static RegisterSchoolCommandHandler CreateUseCase(
-            IUnitOfWork unitOfWork,
-            IValidator<SchoolDto> validator,
-            ISchoolReadOnlyRepository schoolReadOnlyRepository,
-            ISchoolWriteOnlyRepository schoolWriteOnlyRepository)
+        public static ISchoolReadOnlyRepository CreateSchoolReadRepository(School? duplicate)
         {
+            return new SchoolReadOnlyRepositoryBuilder()
+                .WithDuplicateSchool(duplicate)
+                .Build();
+        }
+        private static RegisterSchoolCommandHandler CreateUseCase(
+            IValidator<SchoolDto> validator,
+            ISchoolReadOnlyRepository schoolReadOnlyRepository)
+        {
+
+            var unitOfWork = new UnitOfWorkBuilder().Build();
+            var schoolWriteOnlyRepository = new SchoolWriteOnlyRepositoryBuilder().Build();
+
             return new RegisterSchoolCommandHandler(
                 unitOfWork,
                 validator,

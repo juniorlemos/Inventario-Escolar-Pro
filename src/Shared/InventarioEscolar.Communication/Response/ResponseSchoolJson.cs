@@ -1,5 +1,4 @@
-﻿using InventarioEscolar.Application.Dtos;
-using InventarioEscolar.Communication.Dtos;
+﻿using InventarioEscolar.Communication.Dtos;
 
 namespace InventarioEscolar.Communication.Response
 {

@@ -1,47 +1,28 @@
 ﻿using InventarioEscolar.Application.Services.Interfaces;
-using InventarioEscolar.Domain.Interfaces.Repositories.Assets;
 using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
 using InventarioEscolar.Domain.Interfaces.RepositoriesReports;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InventarioEscolar.Application.UsesCases.ReportsCase.AssetsByLocationCase
 {
-    public class GenerateAssetByLocationReportHandler
-        : IRequestHandler<GenerateAssetByLocationReportQuery, byte[]>
+    public class GenerateAssetByLocationReportHandler(
+        IAssetReportReadOnlyRepository repository,
+        IAssetByLocationReportGenerator reportGenerator,
+        ICurrentUserService currentUserService,
+        ISchoolReadOnlyRepository schoolReadOnlyRepository)
+                : IRequestHandler<GenerateAssetByLocationReportQuery, byte[]>
     {
-        private readonly IAssetReportReadOnlyRepository _repository;
-        private readonly IAssetByLocationReportGenerator _reportGenerator;
-        private readonly ICurrentUserService _currentUserService;
-        private readonly ISchoolReadOnlyRepository _schoolReadOnlyRepository;
-
-        public GenerateAssetByLocationReportHandler(
-            IAssetReportReadOnlyRepository repository,
-            IAssetByLocationReportGenerator reportGenerator,
-            ICurrentUserService currentUserService,
-            ISchoolReadOnlyRepository schoolReadOnlyRepository)
-        {
-            _repository = repository;
-            _reportGenerator = reportGenerator;
-            _currentUserService = currentUserService;
-            _schoolReadOnlyRepository = schoolReadOnlyRepository;
-        }
-
         public async Task<byte[]> Handle(
             GenerateAssetByLocationReportQuery request,
             CancellationToken cancellationToken)
         {
-            var assets = await _repository.GetAllAssetReport();
+            var assets = await repository.GetAllAssetReport();
 
-            var schoolId = _currentUserService.SchoolId;
+            var schoolId = currentUserService.SchoolId;
 
-            var schoolName = await _schoolReadOnlyRepository.GetById(schoolId);
+            var schoolName = await schoolReadOnlyRepository.GetById(schoolId);
           
-            return _reportGenerator.Generate(schoolName.Name, assets, DateTime.Now);
+            return reportGenerator.Generate(schoolName?.Name, assets, DateTime.Now);
         }
     }
 }

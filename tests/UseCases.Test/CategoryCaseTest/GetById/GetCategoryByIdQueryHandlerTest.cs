@@ -1,14 +1,11 @@
 ﻿using CommonTestUtilities.Entities;
 using CommonTestUtilities.Repositories.CategoryRepository;
 using InventarioEscolar.Application.UsesCases.CategoryCase.GetById;
+using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Domain.Interfaces.Repositories.Categories;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UseCases.Test.CategoryCaseTest.GetById
 {
@@ -20,12 +17,9 @@ namespace UseCases.Test.CategoryCaseTest.GetById
             var category = CategoryBuilder.Build();
 
             var query = new GetCategoryByIdQuery(category.Id);
+            var categoryReadOnlyRepository = CreateBuildCategoryReadRepository(true, category);
 
-            var repository = new CategoryReadOnlyRepositoryBuilder()
-                    .WithCategoryExist(category.Id, category)
-                    .Build();
-
-            var useCase = new GetCategoryByIdQueryHandler(repository);
+            var useCase = CreateUseCase(categoryReadOnlyRepository);
 
             var result = await useCase.Handle(query, CancellationToken.None);
 
@@ -40,18 +34,28 @@ namespace UseCases.Test.CategoryCaseTest.GetById
 
             var query = new GetCategoryByIdQuery(category.Id);
 
-            var repository = new CategoryReadOnlyRepositoryBuilder()
-                .WithCategoryNotFound(category.Id)
-                .Build();
+            var categoryReadOnlyRepository = CreateBuildCategoryReadRepository(false, category);
 
-            var useCase = new GetCategoryByIdQueryHandler(repository);
+            var useCase = CreateUseCase(categoryReadOnlyRepository);
 
             var exception = await Should.ThrowAsync<NotFoundException>(() => useCase.Handle(query, CancellationToken.None));
             exception.Message.ShouldBe(ResourceMessagesException.CATEGORY_NOT_FOUND);
         }
 
+        private static ICategoryReadOnlyRepository CreateBuildCategoryReadRepository(
+            bool categoryAlreadyExists,
+            Category category)
+        {
+            var categoryReadOnlyRepositoryBuilder = new CategoryReadOnlyRepositoryBuilder();
+            return categoryAlreadyExists
+                ? categoryReadOnlyRepositoryBuilder.WithCategoryExist(category.Id, category).Build()
+                : categoryReadOnlyRepositoryBuilder.WithCategoryNotExist(category.Id).Build();
+        }
 
+        private static GetCategoryByIdQueryHandler CreateUseCase(
+                        ICategoryReadOnlyRepository categoryReadOnlyRepository)
+        {
+            return new GetCategoryByIdQueryHandler(categoryReadOnlyRepository);
+        }
     }
 }
-
- 

@@ -1,5 +1,4 @@
-﻿using InventarioEscolar.Application.Dtos;
-using InventarioEscolar.Application.UsesCases.AssetCase.Delete;
+﻿using InventarioEscolar.Application.UsesCases.AssetCase.Delete;
 using InventarioEscolar.Application.UsesCases.AssetCase.GetAll;
 using InventarioEscolar.Application.UsesCases.AssetCase.GetById;
 using InventarioEscolar.Application.UsesCases.AssetCase.Register;

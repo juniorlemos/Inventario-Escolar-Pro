@@ -1,10 +1,5 @@
 ﻿using Bogus;
 using InventarioEscolar.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommonTestUtilities.Entities
 {
@@ -25,9 +20,7 @@ namespace CommonTestUtilities.Entities
                 .RuleFor(s => s.Assets, _ => new List<Asset>())
                 .RuleFor(s => s.Users, _ => new List<ApplicationUser>());
         }
-
         public static School Build() => CreateFake().Generate();
         public static List<School> BuildList(int quantity) => CreateFake().Generate(quantity);
-
     }
 }

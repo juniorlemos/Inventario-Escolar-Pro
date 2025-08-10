@@ -1,12 +1,6 @@
 ﻿using Bogus;
 using CommonTestUtilities.Dtos;
-using InventarioEscolar.Application.UsesCases.AssetCase.Update;
 using InventarioEscolar.Application.UsesCases.CategoryCase.Update;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommonTestUtilities.Request
 {

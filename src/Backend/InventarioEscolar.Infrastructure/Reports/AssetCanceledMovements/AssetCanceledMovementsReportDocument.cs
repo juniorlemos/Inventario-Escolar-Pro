@@ -2,11 +2,6 @@
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InventarioEscolar.Infrastructure.Reports.AssetCanceledMovements
 {
@@ -14,7 +9,7 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetCanceledMovements
     {
         public string SchoolName { get; set; } = string.Empty;
         public DateTime GeneratedAt { get; set; }
-        public IEnumerable<AssetMovement> Movements { get; set; }
+        public IEnumerable<AssetMovement>? Movements { get; set; }
 
         public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
 

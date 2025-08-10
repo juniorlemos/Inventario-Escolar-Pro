@@ -19,10 +19,11 @@ using InventarioEscolar.Infrastructure.DataAccess.Repositories;
 using InventarioEscolar.Infrastructure.DataAccess.Repositories.ReportsRepository;
 using InventarioEscolar.Infrastructure.Extensions;
 using InventarioEscolar.Infrastructure.Reports.AssetByCategoryCase;
-using InventarioEscolar.Infrastructure.Reports.AssetByLocationCase;
+using InventarioEscolar.Infrastructure.Reports.AssetByLocation;
 using InventarioEscolar.Infrastructure.Reports.AssetCanceledMovements;
 using InventarioEscolar.Infrastructure.Reports.AssetConservation;
 using InventarioEscolar.Infrastructure.Reports.AssetMovementsCase;
+using InventarioEscolar.Infrastructure.Reports.Inventory;
 using InventarioEscolar.Infrastructure.Security.Token;
 using InventarioEscolar.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
@@ -39,9 +40,8 @@ namespace InventarioEscolar.Infrastructure
             AddDbContext_SqlServer(services, configuration);
             AddRepositories(services);
             AddIdentity(services);
-            addReports(services);
+            AddReports(services);
             AddServices(services);
-
         }
 
         private static void AddIdentity( IServiceCollection services)
@@ -54,8 +54,6 @@ namespace InventarioEscolar.Infrastructure
                 options.Password.RequiredUniqueChars = 1;
                 options.Password.RequireDigit = false;
                 options.Password.RequireNonAlphanumeric = false;
-
-
             })
                     .AddEntityFrameworkStores<InventarioEscolarProDBContext>()
                     .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
@@ -95,7 +93,6 @@ namespace InventarioEscolar.Infrastructure
             services.AddScoped<ISchoolUpdateOnlyRepository, SchoolRepository>();
             services.AddScoped<ISchoolDeleteOnlyRepository, SchoolRepository>();
 
-
             services.AddScoped<ICategoryWriteOnlyRepository, CategoryRepository>();
             services.AddScoped<ICategoryReadOnlyRepository, CategoryRepository>();
             services.AddScoped<ICategoryUpdateOnlyRepository, CategoryRepository>();
@@ -103,10 +100,9 @@ namespace InventarioEscolar.Infrastructure
 
             services.AddScoped<IAssetMovementReportReadOnlyRepository, AssetMovementReportRepository>();
             services.AddScoped<IAssetReportReadOnlyRepository, AssetReportRepository>();
-
         }
 
-        private static void addReports( IServiceCollection services)
+        private static void AddReports( IServiceCollection services)
         {
             services.AddScoped<IInventoryReportGenerator, InventoryReportGenerator>();
             services.AddScoped<IAssetConservationStateReportGenerator, AssetConservationStateReportGenerator>();
@@ -121,6 +117,5 @@ namespace InventarioEscolar.Infrastructure
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddHttpContextAccessor();
         }
-       
     }
 }

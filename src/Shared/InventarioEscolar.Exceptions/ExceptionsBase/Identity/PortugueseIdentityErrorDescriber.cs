@@ -26,6 +26,5 @@ namespace InventarioEscolar.Exceptions.ExceptionsBase.Identity
         public override IdentityError PasswordRequiresUpper() { return new IdentityError { Code = nameof(PasswordRequiresUpper), Description = "Senhas devem conter ao menos uma letra maiúscula ('A'-'Z')." }; }
         public override IdentityError PasswordRequiresUniqueChars(int uniqueChars) { return new IdentityError { Code = nameof(PasswordRequiresUniqueChars), Description = "Senhas não podem ter todas as letras iguais " }; }
 
-
     }
 }

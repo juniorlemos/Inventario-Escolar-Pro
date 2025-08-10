@@ -1,25 +1,16 @@
 ﻿using InventarioEscolar.Application.Services.Interfaces;
 using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace InventarioEscolar.Infrastructure.DataAccess
 {
-    public class InventarioEscolarProDBContext : IdentityDbContext<ApplicationUser, ApplicationRole, long>
+    public class InventarioEscolarProDBContext(
+        DbContextOptions<InventarioEscolarProDBContext> options,
+        ICurrentUserService currentUserService) : IdentityDbContext<ApplicationUser, ApplicationRole, long>(options)
     {
-        private readonly ICurrentUserService _currentUserService;
-
-        public InventarioEscolarProDBContext(
-            DbContextOptions<InventarioEscolarProDBContext> options,
-            ICurrentUserService currentUserService)
-            : base(options)
-        {
-            _currentUserService = currentUserService;
-        }
-
         public DbSet<Asset> Assets { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<RoomLocation> RoomLocations { get; set; }
@@ -65,7 +56,7 @@ namespace InventarioEscolar.Infrastructure.DataAccess
                         Expression.Constant("SchoolId"));
 
                     var currentSchoolId = Expression.Property(
-                        Expression.Constant(_currentUserService),
+                        Expression.Constant(currentUserService),
                         nameof(ICurrentUserService.SchoolId)
                     );
 

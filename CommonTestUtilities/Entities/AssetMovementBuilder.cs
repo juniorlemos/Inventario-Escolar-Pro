@@ -31,7 +31,6 @@ namespace CommonTestUtilities.Entities
                 .RuleFor(m => m.School, f => SchoolBuilder.Build())
                 .RuleFor(m => m.SchoolId, (f, m) => m.School.Id);
         }
-
         public static AssetMovement Build() => CreateFake().Generate();
         public static List<AssetMovement> BuildList(int quantity) => CreateFake().Generate(quantity);
     }

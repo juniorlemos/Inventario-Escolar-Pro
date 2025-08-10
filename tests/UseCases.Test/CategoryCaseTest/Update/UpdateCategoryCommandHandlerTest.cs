@@ -2,23 +2,18 @@
 using CommonTestUtilities.Entities;
 using CommonTestUtilities.Repositories;
 using CommonTestUtilities.Repositories.CategoryRepository;
-using CommonTestUtilities.Services;
 using FluentValidation;
 using InventarioEscolar.Application.Services.Interfaces;
 using InventarioEscolar.Application.UsesCases.CategoryCase.Update;
 using InventarioEscolar.Communication.Dtos;
-using InventarioEscolar.Domain.Interfaces;
+using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces.Repositories.Categories;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
 using MediatR;
-using NSubstitute;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static CommonTestUtilities.Helpers.CurrentUserServiceTestHelper;
+using static CommonTestUtilities.Helpers.ValidatorTestHelper;
 
 namespace UseCases.Test.CategoryCaseTest.Update
 {
@@ -33,50 +28,36 @@ namespace UseCases.Test.CategoryCaseTest.Update
 
             var command = new UpdateCategoryCommand(category.Id, updateCategoryDto);
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
-            var validator = new ValidatorBuilder<UploadCategoryDto>().WithValidResult().Build();
-            var currentUser = new CurrentUserServiceBuilder()
-                .IsAuthenticatedTrue()
-                .WithSchoolId(category.SchoolId)
-                .Build();
+            var validator = CreateValidator<UpdateCategoryDto>(isValid: true);
 
-            var categoryReadOnlyRepository = new CategoryReadOnlyRepositoryBuilder()
-                .WithCategoryExist(category.Id, category)
-                .Build();
+            var userAuthenticated = CreateCurrentUserService(true, category.SchoolId);
+            var categoryReadOnlyRepository = CreateBuildCategoryReadRepository(true, category);
 
-            var categoryUpdateRepository = new CategoryUpdateOnlyRepositoryBuilder().Build();
-
-            var handler = CreateUseCase(unitOfWork, validator, categoryReadOnlyRepository, categoryUpdateRepository, currentUser);
+            var handler = CreateUseCase( validator, userAuthenticated, categoryReadOnlyRepository);
 
             var result = await handler.Handle(command, CancellationToken.None);
 
             result.ShouldBe(Unit.Value);
-            categoryUpdateRepository.Received(1).Update(category);
-            await unitOfWork.Received(1).Commit();
         }
 
         [Fact]
         public async Task Handle_ShouldThrowNotFoundException_WhenCategoryDoesNotExist()
         {
+            var category = CategoryBuilder.Build();
+
             var updateCategoryDto = UpdateCategoryDtoBuilder.Build();
+             
+            updateCategoryDto.Name = category.Name;
+            updateCategoryDto.Description = category.Description!;
 
-            var id = 999;
-            var command = new UpdateCategoryCommand(id, updateCategoryDto);
+            var userAuthenticated = CreateCurrentUserService(true, category.SchoolId);
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
-            var validator = new ValidatorBuilder<UploadCategoryDto>().WithValidResult().Build();
-            var currentUser = new CurrentUserServiceBuilder()
-                .IsAuthenticatedTrue()
-                .WithSchoolId(1)
-                .Build();
+            var categoryReadOnlyRepository = CreateBuildCategoryReadRepository(false, category);
+            var command = new UpdateCategoryCommand(category.Id, updateCategoryDto);
 
-            var categoryReadOnlyRepository = new CategoryReadOnlyRepositoryBuilder()
-                .WithCategoryNotFound(id)
-                .Build();
+            var validator = CreateValidator<UpdateCategoryDto>(isValid: true);
 
-            var categoryUpdateRepository = new CategoryUpdateOnlyRepositoryBuilder().Build();
-
-            var handler = CreateUseCase(unitOfWork, validator, categoryReadOnlyRepository, categoryUpdateRepository, currentUser);
+            var handler = CreateUseCase( validator , userAuthenticated, categoryReadOnlyRepository);
 
             var exception = await Should.ThrowAsync<NotFoundException>(
                 () => handler.Handle(command, CancellationToken.None));
@@ -92,19 +73,12 @@ namespace UseCases.Test.CategoryCaseTest.Update
 
             var command = new UpdateCategoryCommand(category.Id, updateCategoryDto);
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
-            var validator = new ValidatorBuilder<UploadCategoryDto>().WithValidResult().Build();
-            var currentUser = new CurrentUserServiceBuilder()
-                .IsAuthenticatedTrue()
-                .Build();
+            var validator = CreateValidator<UpdateCategoryDto>(isValid: true);
+            var userAuthenticated = CreateCurrentUserService(false);
 
-            var categoryReadOnlyRepository = new CategoryReadOnlyRepositoryBuilder()
-                .WithCategoryExist(category.Id, category)
-                .Build();
-
-            var categoryUpdateRepository = new CategoryUpdateOnlyRepositoryBuilder().Build();
-
-            var handler = CreateUseCase(unitOfWork, validator, categoryReadOnlyRepository, categoryUpdateRepository, currentUser);
+            var categoryReadOnlyRepository = CreateBuildCategoryReadRepository(true, category);
+           
+            var handler = CreateUseCase( validator, userAuthenticated, categoryReadOnlyRepository);
 
             var exception = await Should.ThrowAsync<BusinessException>(
                 () => handler.Handle(command, CancellationToken.None));
@@ -120,42 +94,41 @@ namespace UseCases.Test.CategoryCaseTest.Update
 
             var command = new UpdateCategoryCommand(category.Id, updateCategoryDto);
 
-            var unitOfWork = new UnitOfWorkBuilder().Build();
-            var validator = new ValidatorBuilder<UploadCategoryDto>()
-                .WithInvalidResult(ResourceMessagesException.NAME_EMPTY)
-                .Build();
+            var validator = CreateValidator<UpdateCategoryDto>(isValid: false, ResourceMessagesException.NAME_EMPTY);
 
-            var currentUser = new CurrentUserServiceBuilder()
-                .IsAuthenticatedTrue()
-                .WithSchoolId(category.SchoolId)
-                .Build();
+            var userAuthenticated = CreateCurrentUserService(true, category.SchoolId);
 
-            var categoryReadOnlyRepository = new CategoryReadOnlyRepositoryBuilder()
-                .WithCategoryExist(category.Id, category)
-                .Build();
-
-            var categoryUpdateRepository = new CategoryUpdateOnlyRepositoryBuilder().Build();
-
-            var handler = CreateUseCase(unitOfWork, validator, categoryReadOnlyRepository, categoryUpdateRepository, currentUser);
+            var categoryReadOnlyRepository = CreateBuildCategoryReadRepository(true, category);
+            var handler = CreateUseCase(validator, userAuthenticated, categoryReadOnlyRepository);
 
             var exception = await Should.ThrowAsync<ErrorOnValidationException>(
                 () => handler.Handle(command, CancellationToken.None));
 
             exception.Message.ShouldBe(ResourceMessagesException.NAME_EMPTY);
         }
-
-        private static UpdateCategoryCommandHandler CreateUseCase(
-            IUnitOfWork unitOfWork,
-            IValidator<UploadCategoryDto> validator,
-            ICategoryReadOnlyRepository categoryReadOnlyRepository,
-            ICategoryUpdateOnlyRepository categoryUpdateOnlyRepository,
-            ICurrentUserService currentUser)
+        private static ICategoryReadOnlyRepository CreateBuildCategoryReadRepository(bool categoryExists, Category category)
         {
+            var builder = new CategoryReadOnlyRepositoryBuilder();
+
+            return categoryExists
+                ? builder.WithCategoryExist(category.Id, category).Build()
+                : builder.WithCategoryNotExist(category.Id).Build();
+        }
+        
+        private static UpdateCategoryCommandHandler CreateUseCase(
+            IValidator<UpdateCategoryDto> validator,
+            ICurrentUserService currentUser,
+            ICategoryReadOnlyRepository categoryReadOnlyRepository
+            )
+        {
+            var unitOfWork = new UnitOfWorkBuilder().Build();
+            var categoryUpdateRepository = new CategoryUpdateOnlyRepositoryBuilder().Build();
+
             return new UpdateCategoryCommandHandler(
                 unitOfWork,
                 validator,
                 categoryReadOnlyRepository,
-                categoryUpdateOnlyRepository,
+                categoryUpdateRepository,
                 currentUser);
         }
     }

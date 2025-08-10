@@ -4,6 +4,6 @@ namespace InventarioEscolar.Application.UsesCases.ReportsCase.AssetsByLocationCa
 {
     public interface IAssetByLocationReportGenerator
     {
-        byte[] Generate(string schoolName, IEnumerable<Asset> assets, DateTime generatedAt);
+        byte[] Generate(string? schoolName, IEnumerable<Asset> assets, DateTime generatedAt);
     }
 }

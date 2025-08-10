@@ -1,11 +1,5 @@
 ﻿using InventarioEscolar.Application.Services.Interfaces;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CommonTestUtilities.Services
 {
@@ -32,6 +26,12 @@ namespace CommonTestUtilities.Services
         public CurrentUserServiceBuilder IsAuthenticatedFalse()
         {
             _currentUser.IsAuthenticated.Returns(false);
+            return this;
+        }
+
+        public CurrentUserServiceBuilder IsAuthenticated(bool isAuthenticated)
+        {
+            _currentUser.IsAuthenticated.Returns(isAuthenticated);
             return this;
         }
         public ICurrentUserService Build() => _currentUser;

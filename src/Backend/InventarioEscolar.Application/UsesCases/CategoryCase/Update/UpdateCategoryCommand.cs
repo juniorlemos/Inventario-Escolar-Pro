@@ -3,5 +3,5 @@ using MediatR;
 
 namespace InventarioEscolar.Application.UsesCases.CategoryCase.Update
 {
-    public record UpdateCategoryCommand(long Id, UploadCategoryDto CategoryDto) : IRequest<Unit>;
+    public record UpdateCategoryCommand(long Id, UpdateCategoryDto CategoryDto) : IRequest<Unit>;
 }

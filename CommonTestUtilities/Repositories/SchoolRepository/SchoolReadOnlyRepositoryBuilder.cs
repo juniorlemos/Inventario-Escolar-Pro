@@ -1,15 +1,7 @@
-﻿using CommonTestUtilities.Repositories.AssetRepository;
-using CommonTestUtilities.Repositories.RoomLocationRepository;
-using InventarioEscolar.Domain.Entities;
-using InventarioEscolar.Domain.Interfaces.Repositories.RoomLocations;
+﻿using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
 using InventarioEscolar.Domain.Pagination;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommonTestUtilities.Repositories.SchoolRepository
 {
@@ -27,7 +19,7 @@ namespace CommonTestUtilities.Repositories.SchoolRepository
         }
         public SchoolReadOnlyRepositoryBuilder WithSchoolNotFound(long id)
         {
-            _repository.GetById(id).Returns((School)null);
+            _repository.GetById(id).Returns((School)null!);
             return this;
         }
         public SchoolReadOnlyRepositoryBuilder WithDuplicateSchool(School? school)
@@ -58,7 +50,7 @@ namespace CommonTestUtilities.Repositories.SchoolRepository
 
         public SchoolReadOnlyRepositoryBuilder WithGetAllReturningNull(int page, int pageSize)
         {
-            _repository.GetAll(page, pageSize).Returns((PagedResult<School>?)null);
+            _repository.GetAll(page, pageSize)!.Returns((PagedResult<School>?)null);
             return this;
         }
         public ISchoolReadOnlyRepository Build() => _repository;
