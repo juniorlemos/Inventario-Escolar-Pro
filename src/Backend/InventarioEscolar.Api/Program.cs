@@ -20,7 +20,8 @@ builder.Services.AddCors(options =>
                   .AllowCredentials();
         });
 });
-// 
+
+ 
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<TrimStringsFilter>(); 

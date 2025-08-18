@@ -288,6 +288,44 @@ namespace InventarioEscolar.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("InventarioEscolar.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens", (string)null);
+                });
+
             modelBuilder.Entity("InventarioEscolar.Domain.Entities.RoomLocation", b =>
                 {
                     b.Property<long>("Id")
@@ -568,6 +606,17 @@ namespace InventarioEscolar.Infrastructure.Migrations
                     b.Navigation("School");
                 });
 
+            modelBuilder.Entity("InventarioEscolar.Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("InventarioEscolar.Domain.Entities.ApplicationUser", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("InventarioEscolar.Domain.Entities.RoomLocation", b =>
                 {
                     b.HasOne("InventarioEscolar.Domain.Entities.School", "School")
@@ -628,6 +677,11 @@ namespace InventarioEscolar.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("InventarioEscolar.Domain.Entities.ApplicationUser", b =>
+                {
+                    b.Navigation("RefreshTokens");
                 });
 
             modelBuilder.Entity("InventarioEscolar.Domain.Entities.Category", b =>

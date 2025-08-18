@@ -6,7 +6,7 @@ using InventarioEscolar.Exceptions.ExceptionsBase;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace InventarioEscolar.Application.Services.AuthService.RegisterAuth
+namespace InventarioEscolar.Application.UsesCases.AuthService.RegisterAuth
 {
     public class RegisterCommandHandler(
         UserManager<ApplicationUser> userManager,

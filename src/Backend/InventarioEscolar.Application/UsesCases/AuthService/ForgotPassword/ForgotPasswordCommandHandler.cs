@@ -4,7 +4,7 @@ using InventarioEscolar.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace InventarioEscolar.Application.Services.AuthService.ForgotPassword
+namespace InventarioEscolar.Application.UsesCases.AuthService.ForgotPassword
 {
     public class ForgotPasswordCommandHandler(
         UserManager<ApplicationUser> userManager,

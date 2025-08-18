@@ -2,7 +2,7 @@
 using InventarioEscolar.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace InventarioEscolar.Application.Services.AuthService.LoginAuth
+namespace InventarioEscolar.Application.UsesCases.AuthService.LoginAuth
 {
     public class SignInManagerWrapper(SignInManager<ApplicationUser> signInManager) : ISignInManagerWrapper
     {

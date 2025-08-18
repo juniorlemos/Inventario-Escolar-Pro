@@ -11,7 +11,7 @@ namespace InventarioEscolar.Api.Configurations
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("Jwt");
-            var secretKey = jwtSettings["Key"];
+            var secretKey = jwtSettings["SigningKey"];
             var issuer = jwtSettings["Issuer"];
             var audience = jwtSettings["Audience"];
 

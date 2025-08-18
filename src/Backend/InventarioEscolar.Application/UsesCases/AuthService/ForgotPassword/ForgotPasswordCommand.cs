@@ -1,7 +1,7 @@
 ﻿using InventarioEscolar.Communication.Request;
 using MediatR;
 
-namespace InventarioEscolar.Application.Services.AuthService.ForgotPassword
+namespace InventarioEscolar.Application.UsesCases.AuthService.ForgotPassword
 {
     public record ForgotPasswordCommand(ForgotPasswordRequest Request) : IRequest<Unit>;
 }

@@ -1,11 +1,12 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Application.Decorators;
-using InventarioEscolar.Application.Services.AuthService.LoginAuth;
 using InventarioEscolar.Application.Services.Email;
 using InventarioEscolar.Application.Services.Interfaces;
 using InventarioEscolar.Application.Services.Interfaces.Auth;
 using InventarioEscolar.Application.Services.Mapster;
 using InventarioEscolar.Application.UsesCases.AssetCase.Register;
+using InventarioEscolar.Application.UsesCases.AuthService.LoginAuth;
+using InventarioEscolar.Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;

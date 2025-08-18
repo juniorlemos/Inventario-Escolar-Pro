@@ -1,8 +1,8 @@
 ﻿using InventarioEscolar.Domain.Entities;
 
-namespace InventarioEscolar.Application.Services.Interfaces
+namespace InventarioEscolar.Domain.Interfaces
 {
-    public interface IJwtTokenGenerator
+    public interface ITokenService
     {
         string GenerateToken(ApplicationUser user);
     }

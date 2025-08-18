@@ -16,6 +16,7 @@ namespace InventarioEscolar.Infrastructure.DataAccess
         public DbSet<RoomLocation> RoomLocations { get; set; }
         public DbSet<School> Schools { get; set; }
         public DbSet<AssetMovement> AssetMovements { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

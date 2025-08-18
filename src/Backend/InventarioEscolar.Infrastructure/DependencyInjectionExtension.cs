@@ -113,7 +113,8 @@ namespace InventarioEscolar.Infrastructure
         }
         public static void AddServices( IServiceCollection services)
         {
-            services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            services.AddScoped<ITokenService, JwtTokenGenerator>();
+            services.AddScoped<IRefreshTokenService, RefreshTokenService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddHttpContextAccessor();
         }

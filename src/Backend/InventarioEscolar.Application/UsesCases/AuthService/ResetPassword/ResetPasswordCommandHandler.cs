@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System.Net;
 
-namespace InventarioEscolar.Application.Services.AuthService.ResetPassword
+namespace InventarioEscolar.Application.UsesCases.AuthService.ResetPassword
 {
     public class ResetPasswordCommandHandler(UserManager<ApplicationUser> userManager) : IRequestHandler<ResetPasswordCommand,Unit>
     {

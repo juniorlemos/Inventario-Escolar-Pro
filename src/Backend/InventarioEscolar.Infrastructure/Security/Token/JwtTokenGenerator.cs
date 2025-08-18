@@ -1,5 +1,5 @@
-﻿using InventarioEscolar.Application.Services.Interfaces;
-using InventarioEscolar.Domain.Entities;
+﻿using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Domain.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -8,15 +8,8 @@ using System.Text;
 
 namespace InventarioEscolar.Infrastructure.Security.Token
 {
-    public class JwtTokenGenerator : IJwtTokenGenerator
+    public class JwtTokenGenerator(IConfiguration configuration) : ITokenService
     {
-        private readonly IConfiguration _configuration;
-
-        public JwtTokenGenerator(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
         public string GenerateToken(ApplicationUser user)
         {
             var claims = new[]
@@ -27,12 +20,12 @@ namespace InventarioEscolar.Infrastructure.Security.Token
                 new Claim("schoolId", user.SchoolId.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SigningKey"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
+                issuer: configuration["Jwt:Issuer"],
+                audience: configuration["Jwt:Audience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: creds);
