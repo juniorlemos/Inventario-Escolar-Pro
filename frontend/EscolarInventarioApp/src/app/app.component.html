@@ -1,0 +1,25 @@
+<ng-container *ngIf="isReady()">
+  <ng-container *ngIf="isLoginRoute(); else mainLayout">
+    <router-outlet></router-outlet>
+  </ng-container>
+
+  <ng-template #mainLayout>
+    <app-left-sidebar
+      [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
+      (changeIsLeftSidebarCollapsed)="changeIsLeftSidebarCollapsed($event)">
+    </app-left-sidebar>
+
+    <app-main
+      [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
+      [screenWidth]="screenWidth()">
+    </app-main>
+  </ng-template>
+
+  <ngx-spinner
+    bdColor="rgba(0, 0, 0, 0.8)"
+    size="medium"
+    color="#fff"
+    type="ball-scale-multiple"
+    [fullScreen]="true">
+  </ngx-spinner>
+</ng-container>

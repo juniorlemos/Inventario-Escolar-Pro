@@ -1,0 +1,70 @@
+<div class="row justify-content-center my-4">
+  <div class="col-12 col-lg-10">
+    <div class="card rounded shadow-sm">
+      <form [formGroup]="form">
+        <div class="card-body">
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Nome</label>
+              <input
+                type="text"
+                class="form-control"
+                [ngClass]="cssValidator(f.name)"
+                formControlName="name"
+                placeholder="Insira o nome"
+              />
+              <div class="invalid-feedback" *ngIf="f['name']?.errors?.required">
+                Nome é obrigatório
+              </div>
+              <div class="invalid-feedback" *ngIf="f['name']?.errors?.minlength">
+                Nome deve ter no mínimo 3 caracteres
+              </div>
+              <div class="invalid-feedback" *ngIf="f['name']?.errors?.maxlength">
+                Nome deve ter no máximo 100 caracteres
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3 mt-3">
+            <div class="col-12 form-group-fixed">
+              <label class="form-label">Descrição</label>
+              <textarea
+                class="form-control"
+                [ngClass]="cssValidator(f.description)"
+                formControlName="description"
+                placeholder="Insira a descrição"
+                rows="3"
+              ></textarea>
+              <div class="invalid-feedback" *ngIf="f['description']?.errors?.maxlength">
+                Descrição deve ter no máximo 200 caracteres
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="card-footer d-flex justify-content-between">
+          <div>
+            <button class="btn btn-dark me-2" (click)="goBack()">Voltar</button>
+            <button
+              class="btn btn-outline-secondary"
+              (click)="resetForm()"
+              *ngIf="!isEditMode"
+            >
+              Limpar Formulário
+            </button>
+          </div>
+          <button
+            class="btn btn-success"
+            [disabled]="!form.valid"
+            (click)="saveCategory()"
+          >
+            {{ isEditMode ? 'Editar Categoria' : 'Salvar Categoria' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

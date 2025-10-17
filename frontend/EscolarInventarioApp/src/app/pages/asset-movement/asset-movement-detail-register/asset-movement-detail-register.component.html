@@ -1,0 +1,88 @@
+<div class="row justify-content-center my-4">
+  <div class="col-12 col-lg-10">
+    <div class="card rounded shadow-sm">
+      <form [formGroup]="form">
+        <div class="card-body">
+          <div class="row g-3">
+
+            <div class="col-md-6">
+              <label class="form-label">Item</label>
+              <select
+                class="form-select"
+                formControlName="assetId"
+                (change)="onAssetSelected($event)"
+                [ngClass]="{'is-invalid': f['assetId'].errors && (f['assetId'].touched || f['assetId'].dirty)}"
+              >
+                <option value="">Selecione...</option>
+                <option *ngFor="let ast of assets" [value]="ast.id">{{ ast.name }}</option>
+              </select>
+              <div class="invalid-feedback" *ngIf="f['assetId']?.errors?.['required']">
+                Item é obrigatório
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Responsável</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="responsible"
+                placeholder="Insira o responsável"
+                [ngClass]="cssValidator(f['responsible'])"
+              />
+              <div class="invalid-feedback" *ngIf="f['responsible']?.errors?.['required']">
+                Responsável é obrigatório
+              </div>
+              <div class="invalid-feedback" *ngIf="f['responsible']?.errors?.['minlength']">
+                Mínimo de 3 caracteres
+              </div>
+              <div class="invalid-feedback" *ngIf="f['responsible']?.errors?.['maxlength']">
+                Máximo de 100 caracteres
+              </div>
+            </div>
+
+ <div class="col-md-6">
+  <label class="form-label">Origem</label>
+ <input
+  type="text"
+  class="form-control"
+  [value]="getRoomNameById(form.get('fromRoomId')?.value)"
+  readonly
+/>
+</div>
+
+            <div class="col-md-6">
+              <label class="form-label">Destino</label>
+              <select
+                class="form-select"
+                formControlName="toRoomId"
+                [ngClass]="{'is-invalid': f['toRoomId'].errors && (f['toRoomId'].touched || f['toRoomId'].dirty)}"
+              >
+                <option value="">Selecione...</option>
+                <option *ngFor="let loc of roomlocations" [value]="loc.id">{{ loc.name }}</option>
+              </select>
+              <div class="invalid-feedback" *ngIf="f['toRoomId']?.errors?.['required']">
+                Localização de destino é obrigatória
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-between">
+          <div>
+            <button class="btn btn-dark me-2" (click)="goBack()">Voltar</button>
+            <button class="btn btn-outline-secondary" (click)="resetForm()">Limpar Formulário</button>
+          </div>
+          <button
+            class="btn btn-success"
+            [disabled]="!form.valid"
+            (click)="saveAssetMovement()"
+          >
+            Registrar Movimentação
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
