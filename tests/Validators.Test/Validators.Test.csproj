@@ -16,12 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Xunit" />
+    <ProjectReference Include="..\..\..\..\..\Downloads\Inventario-Escolar-Pro-master\Inventario-Escolar-Pro-master\tests\CommonTestUtilities\CommonTestUtilities.csproj" />
+    <ProjectReference Include="..\..\src\Backend\InventarioEscolar.Application\InventarioEscolar.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CommonTestUtilities\CommonTestUtilities.csproj" />
-    <ProjectReference Include="..\..\src\Backend\InventarioEscolar.Application\InventarioEscolar.Application.csproj" />
+    <Using Include="Xunit" />
   </ItemGroup>
 
 </Project>

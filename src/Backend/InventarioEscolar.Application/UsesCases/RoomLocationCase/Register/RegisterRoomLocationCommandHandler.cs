@@ -1,13 +1,12 @@
 ﻿using FluentValidation;
 using InventarioEscolar.Application.Services.Interfaces;
+using InventarioEscolar.Application.Services.Mappers;
 using InventarioEscolar.Application.Services.Validators;
 using InventarioEscolar.Communication.Dtos;
-using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces;
 using InventarioEscolar.Domain.Interfaces.Repositories.RoomLocations;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
-using Mapster;
 using MediatR;
 
 namespace InventarioEscolar.Application.UsesCases.RoomLocationCase.Register
@@ -31,12 +30,13 @@ namespace InventarioEscolar.Application.UsesCases.RoomLocationCase.Register
             if (alreadyExists)
                 throw new DuplicateEntityException(ResourceMessagesException.ROOMLOCATION_NAME_ALREADY_EXISTS);
 
-            var roomLocation = request.RoomLocationDto.Adapt<RoomLocation>();
+            var roomLocation = RoomLocationMapper.ToEntity(request.RoomLocationDto);
+            roomLocation.SchoolId = currentUser.SchoolId;
 
             await roomLocationWriteOnlyRepository.Insert(roomLocation);
             await unitOfWork.Commit();
 
-            return roomLocation.Adapt<RoomLocationDto>();
+            return RoomLocationMapper.ToDto(roomLocation);
         }
     }
 }

@@ -4,5 +4,5 @@ using MediatR;
 
 namespace InventarioEscolar.Application.UsesCases.AssetMovementCase.GetAll
 {
-    public record GetAllAssetMovementsQuery(int Page, int PageSize, bool? IsCanceled = null) : IRequest<PagedResult<AssetMovementDto>>;
+    public record GetAllAssetMovementsQuery(int Page, int PageSize, string SearchTerm, bool? IsCanceled = null ) : IRequest<PagedResult<AssetMovementDto>>;
 }

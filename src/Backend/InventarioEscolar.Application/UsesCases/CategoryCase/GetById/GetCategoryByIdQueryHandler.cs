@@ -1,4 +1,6 @@
-﻿using InventarioEscolar.Communication.Dtos;
+﻿using InventarioEscolar.Application.Services.Mappers;
+using InventarioEscolar.Communication.Dtos;
+using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces.Repositories.Categories;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
@@ -14,7 +16,7 @@ namespace InventarioEscolar.Application.UsesCases.CategoryCase.GetById
             var category = await categoryReadOnlyRepository.GetById(request.CategoryId)
                 ?? throw new NotFoundException(ResourceMessagesException.CATEGORY_NOT_FOUND);
            
-            return category.Adapt<CategoryDto>();
+            return CategoryMapper.ToDto(category);
         }
     }
 }

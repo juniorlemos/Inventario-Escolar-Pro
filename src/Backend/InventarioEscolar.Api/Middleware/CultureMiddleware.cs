@@ -3,15 +3,8 @@ using System.Globalization;
 
 namespace InventarioEscolar.Api.Middleware
 {
-    public class CultureMiddleware
+    public class CultureMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-
-        public CultureMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
-
         public async Task Invoke(HttpContext context)
         {
             var supportedLanguages = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
@@ -29,7 +22,7 @@ namespace InventarioEscolar.Api.Middleware
             CultureInfo.CurrentCulture = cultureInfo;
             CultureInfo.CurrentUICulture = cultureInfo;
 
-            await _next(context);
+            await next(context);
         }
     }
 }

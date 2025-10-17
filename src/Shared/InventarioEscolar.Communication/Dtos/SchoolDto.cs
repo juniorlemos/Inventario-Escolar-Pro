@@ -11,5 +11,6 @@ namespace InventarioEscolar.Communication.Dtos
         public string? City { get; set; }
         public ICollection<RoomLocationDto> RoomLocations { get; set; } = [];
         public ICollection<AssetDto> Assets { get; set; } = [];
+        public string Email { get; set; } = string.Empty;
     }
 }

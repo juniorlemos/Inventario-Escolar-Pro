@@ -1,11 +1,6 @@
 ﻿using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces.RepositoriesReports;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InventarioEscolar.Infrastructure.DataAccess.Repositories.ReportsRepository
 {
@@ -18,6 +13,5 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories.ReportsReposi
                .Include(m => m.RoomLocation)
                .ToListAsync();
         }
-    }
-    
+    } 
 }

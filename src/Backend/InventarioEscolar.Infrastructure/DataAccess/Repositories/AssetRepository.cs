@@ -1,4 +1,5 @@
 ﻿using InventarioEscolar.Domain.Entities;
+using InventarioEscolar.Domain.Enums;
 using InventarioEscolar.Domain.Interfaces.Repositories.Assets;
 using InventarioEscolar.Domain.Pagination;
 using Microsoft.EntityFrameworkCore;
@@ -38,9 +39,16 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
                 .Where(a => !a.Active)
                 .ToListAsync();
         }
-        public async Task<PagedResult<Asset>> GetAll(int page, int pageSize)
+        public async Task<PagedResult<Asset>> GetAll(
+                  int page,
+                  int pageSize,
+                  string? searchTerm = null,
+                  ConservationState? conservationState = null)
         {
+            page = Math.Max(page, 1);
+
             var query = dbContext.Assets
+                .AsNoTracking()
                 .Select(a => new Asset
                 {
                     Id = a.Id,
@@ -50,68 +58,57 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
                     AcquisitionValue = a.AcquisitionValue,
                     ConservationState = a.ConservationState,
                     SerieNumber = a.SerieNumber,
-                    RoomLocation = new RoomLocation
-                    {
-                        Id = a.RoomLocation.Id,
-                        Name = a.RoomLocation.Name
-                    },
-                    Category = new Category
-                    {
-                        Id = a.Category.Id,
-                        Name = a.Category.Name
-                    },
-                }).AsNoTracking();
+                    RoomLocation = a.RoomLocation != null
+                        ? new RoomLocation { Id = a.RoomLocation.Id, Name = a.RoomLocation.Name }
+                        : null,
+                    Category = a.Category != null
+                        ? new Category { Id = a.Category.Id, Name = a.Category.Name }
+                        : null
+                });
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var normalizedSearch = $"%{searchTerm.ToLower()}%";
+                query = query.Where(a =>
+                    EF.Functions.Like(a.Name.ToLower(), normalizedSearch) ||
+                    EF.Functions.Like(a.PatrimonyCode.ToString(), normalizedSearch));
+            }
+
+            if (conservationState.HasValue)
+            {
+                query = query.Where(a => a.ConservationState == conservationState.Value);
+            }
 
             var totalCount = await query.CountAsync();
 
-            var items = new List<Asset>();
+            List<Asset> items;
 
-            if (page > 0 && pageSize > 0)
+            if (pageSize > 0)
             {
                 items = await query
+                    .OrderBy(a => a.Name)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
             }
             else
             {
-                items = await query.ToListAsync();
+                items = await query
+                    .OrderBy(a => a.Name)
+                    .ToListAsync();
             }
 
-            return new PagedResult<Asset>(items, totalCount, page, pageSize);
+            return new PagedResult<Asset>(items, totalCount, page, pageSize, searchTerm);
         }
 
         public async Task<Asset?> GetById(long assetId)
         {
             return await dbContext.Assets
-                 .Where(a => a.Id == assetId)
-                 .Select(a => new Asset
-                 {
-                     Id = a.Id,
-                     Name = a.Name,
-                     Description = a.Description,
-                     PatrimonyCode = a.PatrimonyCode,
-                     AcquisitionValue = a.AcquisitionValue,
-                     ConservationState = a.ConservationState,
-                     SerieNumber = a.SerieNumber,
-                     SchoolId = a.SchoolId,
-                     CategoryId = a.CategoryId,
-                     RoomLocationId = a.RoomLocationId,
-                     RoomLocation = new RoomLocation
-                     {
-                         Id = a.RoomLocation.Id,
-                         Name = a.RoomLocation.Name,
-                         SchoolId = a.SchoolId,
-                     },
-                     Category = new Category
-                     {
-                         Id = a.Category.Id,
-                         Name = a.Category.Name,
-                         SchoolId=a.SchoolId,
-                     },
-                 })
-                 .FirstOrDefaultAsync(asset => asset.Id == assetId);
+                .Include(a => a.RoomLocation)
+                .Include(a => a.Category)
+                .FirstOrDefaultAsync(a => a.Id == assetId);
         }
+
         public void Update(Asset asset) => dbContext.Assets.Update(asset);
         public async Task<bool> Delete(long assetId)
         {

@@ -6,7 +6,6 @@ using InventarioEscolar.Domain.Interfaces;
 using InventarioEscolar.Domain.Interfaces.Repositories.Categories;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
-using Mapster;
 using MediatR;
 
 namespace InventarioEscolar.Application.UsesCases.CategoryCase.Update
@@ -30,7 +29,9 @@ namespace InventarioEscolar.Application.UsesCases.CategoryCase.Update
             if (category.SchoolId != currentUser.SchoolId)
                 throw new BusinessException(ResourceMessagesException.CATEGORY_NOT_BELONG_TO_SCHOOL);
 
-            request.CategoryDto.Adapt(category);
+            category.Name = request.CategoryDto.Name;
+            category.Description = request.CategoryDto.Description;
+
 
             categoryUpdateOnlyRepository.Update(category);
             await unitOfWork.Commit();

@@ -45,7 +45,7 @@ namespace InventarioEscolar.Infrastructure.Reports.Inventory
 
             var totalDanificados = Assets.Count(a => a.ConservationState == ConservationState.Danificado);
 
-            var totalIrrecuperavel = Assets.Count(a => a.ConservationState == ConservationState.Irrecuperável);
+            var totalIrrecuperavel = Assets.Count(a => a.ConservationState == ConservationState.Irrecuperavel);
 
             var itensNovos = Assets
                 .Count(a => a.CreatedOn >= DateTime.Today.AddDays(-30));

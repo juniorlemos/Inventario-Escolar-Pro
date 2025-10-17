@@ -4,15 +4,8 @@ using System.Text;
 
 namespace InventarioEscolar.Api.Middleware
 {
-    public class RequestLoggingMiddleware
+    public class RequestLoggingMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-
-        public RequestLoggingMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
-
         public async Task Invoke(HttpContext context)
         {
             context.Request.EnableBuffering();
@@ -39,7 +32,7 @@ namespace InventarioEscolar.Api.Middleware
             Log.Information("Requisição recebida: {Method} {Path} | IP: {IP} | Usuário: {User} | Corpo: {Body}",
                 method, path, ip, userId, Truncate(body, 1000));
 
-            await _next(context);
+            await next(context);
         }
 
         private string Truncate(string value, int maxLength) =>

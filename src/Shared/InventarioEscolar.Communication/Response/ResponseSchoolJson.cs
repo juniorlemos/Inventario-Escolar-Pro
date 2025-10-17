@@ -9,6 +9,7 @@ namespace InventarioEscolar.Communication.Response
         public string? Inep { get; set; }
         public string? Address { get; set; }
         public string? City { get; set; }
+        public string? Email { get; set; }
 
         public ICollection<RoomLocationSummaryDto> RoomLocations { get; set; } = [];
         public ICollection<AssetSummaryDto> Assets { get; set; } = [];

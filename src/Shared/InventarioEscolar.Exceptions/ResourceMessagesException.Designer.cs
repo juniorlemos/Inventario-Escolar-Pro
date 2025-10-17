@@ -97,6 +97,15 @@ namespace InventarioEscolar.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Asset not in origin room.
+        /// </summary>
+        public static string ASSET_NOT_IN_ORIGIN_ROOM {
+            get {
+                return ResourceManager.GetString("ASSET_NOT_IN_ORIGIN_ROOM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Asset ID must be greater than 0..
         /// </summary>
         public static string ASSETMOVEMENT_ASSET_ID_INVALID {
@@ -138,6 +147,15 @@ namespace InventarioEscolar.Exceptions {
         public static string ASSETMOVEMENT_NOT_FOUND {
             get {
                 return ResourceManager.GetString("ASSETMOVEMENT_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The responsible name for the asset movement cannot be empty..
+        /// </summary>
+        public static string ASSETMOVEMENT_RESPONSIBLE_NAME_EMPTY {
+            get {
+                return ResourceManager.GetString("ASSETMOVEMENT_RESPONSIBLE_NAME_EMPTY", resourceCulture);
             }
         }
         

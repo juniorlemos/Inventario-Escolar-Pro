@@ -7,6 +7,6 @@ namespace InventarioEscolar.Domain.Interfaces.Repositories.Categories
     {
         Task<bool> ExistCategoryName(string category, long? schoolId);
         Task<Category?> GetById(long categoryId);
-        Task<PagedResult<Category>> GetAll(int page, int pageSize);
+        Task<PagedResult<Category>> GetAll(int page, int pageSize, string? searchTerm);
     }
 }

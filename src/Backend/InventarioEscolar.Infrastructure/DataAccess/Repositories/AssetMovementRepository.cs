@@ -9,94 +9,56 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
     {
         public async Task Insert(AssetMovement assetMovement) => await dbContext.AssetMovements.AddAsync(assetMovement);
         public void Update(AssetMovement assetMovement) => dbContext.AssetMovements.Update(assetMovement);
-        public async Task<List<AssetMovement>> GetAllWithDetailsAsync()
+
+        public async Task<PagedResult<AssetMovement>> GetAll(int page, int pageSize,string searchTerm, bool? isCanceled = null)
         {
-            return await dbContext.AssetMovements
-                .Include(m => m.Asset)
-                .Include(m => m.FromRoom)
-                .Include(m => m.ToRoom)
-                .Where(m => !m.IsCanceled) 
-                .OrderByDescending(m => m.CanceledAt)
-                .ToListAsync();
-        }
-        public async Task<PagedResult<AssetMovement>> GetAll(int page, int pageSize, bool? isCanceled = null)
-        {
-            var query = dbContext.AssetMovements.AsQueryable();
+            var query = dbContext.AssetMovements
+                .Include(a => a.Asset)
+                .Include(a => a.FromRoom)
+                .Include(a => a.ToRoom)
+                .AsNoTracking()
+                .AsQueryable();
 
             if (isCanceled.HasValue)
-            {
                 query = query.Where(a => a.IsCanceled == isCanceled.Value);
+
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var normalizedSearch = searchTerm.ToLower();
+
+                query = query.Where(a =>
+                    a.Asset.Name.ToLower().Contains(normalizedSearch) ||
+                    a.FromRoom.Name.ToLower().Contains(normalizedSearch) ||
+                    a.ToRoom.Name.ToLower().Contains(normalizedSearch) );
             }
 
-            var assetMovementsQuery = query.Select(a => new AssetMovement
-            {
-                    Id = a.Id,
-                    MovedAt= a.MovedAt,
-                    Responsible = a.Responsible,
-                    CanceledAt = a.CanceledAt,
-                    CancelReason = a.CancelReason,
-                    IsCanceled = a.IsCanceled,
-                    Asset = new Asset
-                    {
-                        Id = a.Asset.Id,
-                        Name = a.Asset.Name,
-                    },
-                    FromRoom  = new RoomLocation
-                    {
-                        Id = a.FromRoomId,
-                        Name = a.FromRoom.Name
-                    },
-                    ToRoom = new RoomLocation
-                    {
-                        Id = a.ToRoomId,
-                        Name = a.ToRoom.Name
-                    },
-                }).AsNoTracking();
-
-            var totalCount = await assetMovementsQuery.CountAsync();
+            var totalCount = await query.CountAsync();
 
             var items = new List<AssetMovement>();
 
             if (page > 0 && pageSize > 0)
             {
-                items = await assetMovementsQuery
+                items = await query
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
             }
             else
             {
-                items = await assetMovementsQuery.ToListAsync();
+                items = await query.ToListAsync();
             }
 
             return new PagedResult<AssetMovement>(items, totalCount, page, pageSize);
         }
         public async Task<AssetMovement?> GetById(long assetMovementId)
         {
-            return await dbContext.AssetMovements
-                 .Where(a => a.Id == assetMovementId)
-                 .Select(a => new AssetMovement
-                 {
-                     Id = a.Id,
-                     MovedAt = a.MovedAt,
-                     Responsible = a.Responsible,
-                     Asset = new Asset
-                     {
-                         Id = a.Asset.Id,
-                         Name = a.Asset.Name,
-                     },
-                     FromRoom = new RoomLocation
-                     {
-                         Id = a.FromRoomId,
-                         Name = a.FromRoom.Name
-                     },
-                     ToRoom = new RoomLocation
-                     {
-                         Id = a.ToRoomId,
-                         Name = a.ToRoom.Name
-                     },
-                 })
-                 .FirstOrDefaultAsync(assetMovement => assetMovement.Id == assetMovementId);
+           
+         return await dbContext.AssetMovements
+        .Include(a => a.Asset)
+        .Include(a => a.FromRoom)
+        .Include(a => a.ToRoom)
+        .FirstOrDefaultAsync(a => a.Id == assetMovementId);
         }
     }
 }

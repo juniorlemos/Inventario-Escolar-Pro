@@ -1,5 +1,4 @@
 ﻿using InventarioEscolar.Domain.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace InventarioEscolar.Infrastructure.DataAccess
 {

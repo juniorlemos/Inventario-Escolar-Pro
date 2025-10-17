@@ -33,7 +33,7 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetConservation
         {
             var total = Assets.Count();
             var estados = Assets.Select(a => a.ConservationState.ToString()).Distinct().Count();
-            var totalIrrecuperavel = Assets.Count(a => a.ConservationState == ConservationState.Irrecuperável);
+            var totalIrrecuperavel = Assets.Count(a => a.ConservationState == ConservationState.Irrecuperavel);
             var totalDanificados = Assets.Count(a => a.ConservationState == ConservationState.Danificado);
             var totalRegulares = Assets.Count(a => a.ConservationState == ConservationState.Regular);
             var totalBons = Assets.Count(a => a.ConservationState == ConservationState.Bom);

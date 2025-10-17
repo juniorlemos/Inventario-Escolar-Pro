@@ -7,18 +7,11 @@ using MediatR;
 
 namespace InventarioEscolar.Application.UsesCases.SchoolCase.GetById
 {
-    public class GetByIdSchoolQueryHandler : IRequestHandler<GetByIdSchoolQuery, SchoolDto>
+    public class GetByIdSchoolQueryHandler(ISchoolReadOnlyRepository schoolReadOnlyRepository) : IRequestHandler<GetByIdSchoolQuery, SchoolDto>
     {
-        private readonly ISchoolReadOnlyRepository _schoolReadOnlyRepository;
-
-        public GetByIdSchoolQueryHandler(ISchoolReadOnlyRepository schoolReadOnlyRepository)
-        {
-            _schoolReadOnlyRepository = schoolReadOnlyRepository;
-        }
-
         public async Task<SchoolDto> Handle(GetByIdSchoolQuery request, CancellationToken cancellationToken)
         {
-            var school = await _schoolReadOnlyRepository.GetById(request.SchoolId);
+            var school = await schoolReadOnlyRepository.GetById(request.SchoolId);
 
             if (school is null)
                 throw new NotFoundException(ResourceMessagesException.SCHOOL_NOT_FOUND);

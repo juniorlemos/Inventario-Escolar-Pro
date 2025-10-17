@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using InventarioEscolar.Application.Services.Mappers;
 using InventarioEscolar.Application.Services.Validators;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Domain.Entities;
@@ -38,12 +39,13 @@ namespace InventarioEscolar.Application.UsesCases.SchoolCase.Register
                     throw new DuplicateEntityException(ResourceMessagesException.SCHOOL_ADDRESS_ALREADY_EXISTS);
             }
 
-            var school = request.SchoolDto.Adapt<School>();
+            var school = SchoolMapper.ToEntity(request.SchoolDto);
 
             await schoolWriteOnlyRepository.Insert(school);
+
             await unitOfWork.Commit();
 
-            return school.Adapt<SchoolDto>();
+            return SchoolMapper.ToDto(school);
         }
     }
 }

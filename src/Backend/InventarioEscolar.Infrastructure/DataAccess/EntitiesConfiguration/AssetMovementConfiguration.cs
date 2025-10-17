@@ -30,7 +30,9 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
                    .HasForeignKey(am => am.ToRoomId)
                    .OnDelete(DeleteBehavior.Restrict); 
 
-            builder.Property(am => am.Responsible).HasMaxLength(100);
+            builder.Property(am => am.Responsible).IsRequired()
+                   .HasMaxLength(100);
+
             builder.Property(am => am.CancelReason).HasMaxLength(200);
         }
     }

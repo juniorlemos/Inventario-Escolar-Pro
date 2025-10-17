@@ -6,22 +6,16 @@ using InventarioEscolar.Application.UsesCases.CategoryCase.Update;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Communication.Request;
 using InventarioEscolar.Communication.Response;
-using InventarioEscolar.Domain.Entities;
 using Mapster;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventarioEscolar.Api.Controllers
 {
-    public class CategoryController : InventarioApiBaseController
+    [Authorize]
+    public class CategoryController(IMediator mediator) : InventarioApiBaseController
     {
-        private readonly IMediator _mediator;
-
-        public CategoryController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpPost]
         [ProducesResponseType(typeof(ResponseCategoryJson), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
@@ -30,7 +24,7 @@ namespace InventarioEscolar.Api.Controllers
         {
             var categoryDto = request.Adapt<CategoryDto>();
 
-            var result = await _mediator.Send(new RegisterCategoryCommand(categoryDto));
+            var result = await mediator.Send(new RegisterCategoryCommand(categoryDto));
 
             var response = result.Adapt<ResponseCategoryJson>();
 
@@ -41,10 +35,10 @@ namespace InventarioEscolar.Api.Controllers
         [Route("{id}")]
         [ProducesResponseType(typeof(ResponseCategoryJson), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetByIdCategory(
+        public async Task<IActionResult> GetById(
                    [FromRoute] long id)
         {
-            var category = await _mediator.Send(new GetCategoryByIdQuery(id));
+            var category = await mediator.Send(new GetCategoryByIdQuery(id));
 
             var response = category.Adapt<ResponseCategoryJson>();
             return Ok(response);
@@ -55,9 +49,10 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAll(
           [FromQuery] int page = 0,
-          [FromQuery] int pageSize = 0)
+          [FromQuery] int pageSize = 0,
+          [FromQuery] string? searchTerm = null)
         {
-            var result = await _mediator.Send(new GetAllCategoriesQuery(page, pageSize));
+            var result = await mediator.Send(new GetAllCategoriesQuery(page, pageSize, searchTerm));
 
             var response = result.Adapt<ResponsePagedJson<ResponseCategoryJson>>();
 
@@ -77,7 +72,7 @@ namespace InventarioEscolar.Api.Controllers
         {
             var categoryDto = request.Adapt<UpdateCategoryDto>();
 
-            await _mediator.Send(new UpdateCategoryCommand(id, categoryDto));
+            await mediator.Send(new UpdateCategoryCommand(id, categoryDto));
 
             return NoContent();
         }
@@ -89,7 +84,7 @@ namespace InventarioEscolar.Api.Controllers
         public async Task<IActionResult> Delete(
         [FromRoute] long id)
         {
-            await _mediator.Send(new DeleteCategoryCommand(id));
+            await mediator.Send(new DeleteCategoryCommand(id));
             return NoContent();
         }
     }

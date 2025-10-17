@@ -2,11 +2,11 @@
 using InventarioEscolar.Application.Services.Interfaces;
 using InventarioEscolar.Application.Services.Validators;
 using InventarioEscolar.Communication.Dtos;
+using InventarioEscolar.Domain.Enums;
 using InventarioEscolar.Domain.Interfaces;
 using InventarioEscolar.Domain.Interfaces.Repositories.Assets;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
-using Mapster;
 using MediatR;
 
 namespace InventarioEscolar.Application.UsesCases.AssetCase.Update
@@ -28,7 +28,18 @@ namespace InventarioEscolar.Application.UsesCases.AssetCase.Update
             if (asset.SchoolId != currentUser.SchoolId)
                 throw new BusinessException(ResourceMessagesException.ASSET_NOT_BELONG_TO_SCHOOL);
 
-            request.AssetDto.Adapt(asset);
+            asset.Name = request.AssetDto.Name;
+            asset.Description = request.AssetDto.Description;
+            asset.PatrimonyCode = request.AssetDto.PatrimonyCode;
+            asset.AcquisitionValue = request.AssetDto.AcquisitionValue;
+            asset.SerieNumber = request.AssetDto.SerieNumber;
+            asset.ConservationState = (ConservationState) request.AssetDto.ConservationState;
+
+            asset.Category = null;
+            asset.CategoryId = request.AssetDto.CategoryId;
+
+            asset.RoomLocation = null;
+            asset.RoomLocationId = request.AssetDto.RoomLocationId;
 
             assetUpdateOnlyRepository.Update(asset);
             await unitOfWork.Commit();

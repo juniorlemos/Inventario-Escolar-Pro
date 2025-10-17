@@ -1,5 +1,5 @@
 ﻿using InventarioEscolar.Communication.Dtos;
-using InventarioEscolar.Communication.Enum;
+using InventarioEscolar.Domain.Enums;
 
 namespace InventarioEscolar.Communication.Response
 {

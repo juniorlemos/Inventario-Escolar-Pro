@@ -17,6 +17,7 @@ namespace InventarioEscolar.Application.Services.Validators.Rules
             validator.RuleFor(m => m.MovedAt)
                 .LessThanOrEqualTo(DateTime.UtcNow).WithMessage(ResourceMessagesException.ASSETMOVEMENT_MOVED_AT_INVALID);
             validator.RuleFor(m => m.Responsible)
+                .NotEmpty().WithMessage(ResourceMessagesException.ASSETMOVEMENT_RESPONSIBLE_NAME_EMPTY)
                 .MaximumLength(100).WithMessage(ResourceMessagesException.ASSETMOVEMENT_RESPONSIBLE_NAME_TOO_LONG);
             validator.RuleFor(m => m.CancelReason)
                 .MaximumLength(100).WithMessage(ResourceMessagesException.ASSETMOVEMENT_RESPONSIBLE_NAME_TOO_LONG);

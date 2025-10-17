@@ -1,5 +1,5 @@
 ﻿using InventarioEscolar.Communication.Dtos.Interfaces;
-using InventarioEscolar.Communication.Enum;
+using InventarioEscolar.Domain.Enums;
 
 namespace InventarioEscolar.Communication.Dtos
 {
@@ -13,7 +13,9 @@ namespace InventarioEscolar.Communication.Dtos
         public ConservationState ConservationState { get; set; }
         public string? SerieNumber { get; set; }
         public long CategoryId { get; set; }
+        public CategoryDto Category { get; set; }
         public long? RoomLocationId { get; set; }
+        public RoomLocationDto? RoomLocation { get; set; }
         public long SchoolId { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using InventarioEscolar.Communication.Response;
 using InventarioEscolar.Domain.Entities;
 using InventarioEscolar.Domain.Interfaces;
 using InventarioEscolar.Exceptions;
+using InventarioEscolar.Exceptions.ExceptionsBase;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -23,12 +24,12 @@ namespace InventarioEscolar.Application.UsesCases.AuthService.LoginAuth
            .FirstOrDefaultAsync(u => u.Email == request.Request.Email);
 
             if (user == null)
-                throw new Exception(ResourceMessagesException.INVALID_USERNAME_OR_PASSWORD);
+                throw new UnauthorizedException(ResourceMessagesException.INVALID_USERNAME_OR_PASSWORD);
 
             var result = await signInManagerWrapper.CheckPasswordSignInAsync(user, request.Request.Password, false);
 
             if (!result.Succeeded)
-                throw new Exception(ResourceMessagesException.INVALID_USERNAME_OR_PASSWORD);
+                throw new UnauthorizedException(ResourceMessagesException.INVALID_USERNAME_OR_PASSWORD);
 
             var accessToken = jwtTokenGenerator.GenerateToken(user);
 

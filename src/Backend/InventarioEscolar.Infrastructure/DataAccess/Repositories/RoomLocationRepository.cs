@@ -9,23 +9,22 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
     {
         public void Update(RoomLocation roomLocation) => dbContext.RoomLocations.Update(roomLocation);
 
-        public async Task<PagedResult<RoomLocation>> GetAll(int page, int pageSize)
+        public async Task<PagedResult<RoomLocation>> GetAll(int page, int pageSize, string? searchTerm)
         {
             var query = dbContext.RoomLocations
-               .Select(r => new RoomLocation
-               {
-                   Id = r.Id,
-                   Name = r.Name,
-                   Description = r.Description,
-                   Building = r.Building,
-                   Assets = r.Assets
-                         .Select(a => new Asset
-                         {
-                             Id = a.Id,
-                             Name = a.Name
-                         }).ToList()
-               })
-                .AsNoTracking();
+    .Include(r => r.Assets)
+    .Include(r => r.School)
+    .AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var normalizedSearch = searchTerm.ToLower();
+
+                query = query.Where(r =>
+                    r.Name.ToLower().Contains(normalizedSearch) ||
+                    (r.Building != null && r.Building.ToString().ToLower().Contains(normalizedSearch))
+                );
+            }
 
             var totalCount = await query.CountAsync();
 
@@ -51,22 +50,10 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
         }
         public async Task<RoomLocation?> GetById(long roomlocationId)
         {
-            return await dbContext.RoomLocations.Where(r => r.Id == roomlocationId)
-                 .Select(r => new RoomLocation
-                 {
-                     Id = r.Id,
-                     Name = r.Name,
-                     Description = r.Description,
-                     Building = r.Building,
-                     SchoolId = r.SchoolId,
-                     Assets = r.Assets
-                         .Select(a => new Asset
-                         {
-                             Id = a.Id,
-                             Name = a.Name
-                         }).ToList()
-                 })
-                 .FirstOrDefaultAsync(roomlocation => roomlocation.Id == roomlocationId);
+            return await dbContext.RoomLocations
+                .Include(r => r.School)
+                .Include(r => r.Assets)
+                .FirstOrDefaultAsync(r => r.Id == roomlocationId);
         }
         public async Task Insert(RoomLocation roomLocation) => await dbContext.RoomLocations.AddAsync(roomLocation);
 

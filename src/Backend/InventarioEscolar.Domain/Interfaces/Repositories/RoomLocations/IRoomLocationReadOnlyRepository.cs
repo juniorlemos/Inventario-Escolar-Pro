@@ -7,6 +7,6 @@ namespace InventarioEscolar.Domain.Interfaces.Repositories.RoomLocations
     {
          Task<bool> ExistRoomLocationName(string roomLocation, long? schoolId);
          Task<RoomLocation?> GetById(long roomlocationId);
-         Task<PagedResult<RoomLocation>> GetAll(int page, int pageSize);
+         Task<PagedResult<RoomLocation>> GetAll(int page, int pageSize, string? searchTerm);
     }
 }

@@ -4,5 +4,5 @@ using MediatR;
 
 namespace InventarioEscolar.Application.UsesCases.CategoryCase.GetAll
 {
-    public record GetAllCategoriesQuery(int Page, int PageSize) : IRequest<PagedResult<CategoryDto>>;
+    public record GetAllCategoriesQuery(int Page, int PageSize, string SearchTerm) : IRequest<PagedResult<CategoryDto>>;
 }

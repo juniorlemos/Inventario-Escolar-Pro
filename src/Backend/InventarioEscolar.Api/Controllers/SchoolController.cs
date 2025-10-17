@@ -1,26 +1,22 @@
 ﻿using InventarioEscolar.Application.UsesCases.SchoolCase.Delete;
 using InventarioEscolar.Application.UsesCases.SchoolCase.GetAll;
 using InventarioEscolar.Application.UsesCases.SchoolCase.GetById;
+using InventarioEscolar.Application.UsesCases.SchoolCase.GetSchollData;
 using InventarioEscolar.Application.UsesCases.SchoolCase.Register;
 using InventarioEscolar.Application.UsesCases.SchoolCase.Update;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Communication.Request;
 using InventarioEscolar.Communication.Response;
-using InventarioEscolar.Domain.Entities;
 using Mapster;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventarioEscolar.Api.Controllers
 {
-    public class SchoolController : InventarioApiBaseController
+    [Authorize]
+    public class SchoolController(IMediator mediator) : InventarioApiBaseController
     {
-        private readonly IMediator _mediator;
-
-        public SchoolController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
         [HttpPost]
         [ProducesResponseType(typeof(ResponseSchoolJson), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
@@ -29,7 +25,7 @@ namespace InventarioEscolar.Api.Controllers
         {
             var schoolDto = request.Adapt<SchoolDto>();
 
-            var result = await _mediator.Send(new RegisterSchoolCommand(schoolDto));
+            var result = await mediator.Send(new RegisterSchoolCommand(schoolDto));
 
             var response = result.Adapt<ResponseSchoolJson>();
 
@@ -43,7 +39,7 @@ namespace InventarioEscolar.Api.Controllers
         public async Task<IActionResult> GetByIdSchool(
               [FromRoute] long id)
         {
-            var school = await _mediator.Send(new GetByIdSchoolQuery(id));
+            var school = await mediator.Send(new GetByIdSchoolQuery(id));
 
             var response = school.Adapt<ResponseSchoolJson>();
             return Ok(response);
@@ -56,7 +52,7 @@ namespace InventarioEscolar.Api.Controllers
            [FromQuery] int page = 0,
            [FromQuery] int pageSize = 0)
         {
-            var result = await _mediator.Send(new GetAllSchoolQuery(page, pageSize));
+            var result = await mediator.Send(new GetAllSchoolQuery(page, pageSize));
 
             var response = result.Adapt<ResponsePagedJson<ResponseSchoolJson>>();
 
@@ -76,7 +72,7 @@ namespace InventarioEscolar.Api.Controllers
         {
             var updateSchoolDto = request.Adapt<UpdateSchoolDto>();
 
-            await _mediator.Send(new UpdateSchoolCommand(id, updateSchoolDto));
+            await mediator.Send(new UpdateSchoolCommand(id, updateSchoolDto));
 
             return NoContent();
         }
@@ -88,10 +84,22 @@ namespace InventarioEscolar.Api.Controllers
         public async Task<IActionResult> Delete(
         [FromRoute] long id)
         {
-            await _mediator.Send(new DeleteSchoolCommand(id));
+            await mediator.Send(new DeleteSchoolCommand(id));
 
             return NoContent();
         }
 
+        [HttpGet("schoolData")]
+        [ProducesResponseType(typeof(ResponseSchoolJson), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetMySchool()
+        {
+            var school = await mediator.Send(new GetSchoolDataQuery());
+            if (school == null)
+                return NotFound();
+
+            var response = school.Adapt<ResponseSchoolJson>();
+            return Ok(response);
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
     {
         public void Update(Category category) => dbContext.Categories.Update(category);
 
-        public async Task<PagedResult<Category>> GetAll(int page, int pageSize)
+        public async Task<PagedResult<Category>> GetAll(int page, int pageSize, string? searchTerm)
         {
             var query = dbContext.Categories
                  .Select(c => new Category
@@ -25,6 +25,14 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
                          }).ToList()
                  })
                 .AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var normalizedSearch = searchTerm.ToLower();
+
+                query = query.Where(a =>
+                    a.Name.ToLower().Contains(normalizedSearch));
+            }
 
             var totalCount = await query.CountAsync();
 
@@ -50,23 +58,12 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
         }
         public async Task<Category?> GetById(long categoryId)
         {
-            return await dbContext.Categories.Where(c => c.Id == categoryId)
-                 .Select(c => new Category
-                 {
-                     Id = c.Id,
-                     Name = c.Name,
-                     Description = c.Description,
-                     SchoolId = c.SchoolId,
-                     Assets = c.Assets
-                         .Select(a => new Asset
-                         {
-                             Id = a.Id,
-                             Name = a.Name
-                         }).ToList()
-                    
-                 })
-                 .FirstOrDefaultAsync(category => category.Id == categoryId);
+            return await dbContext.Categories
+                .Include(c => c.Assets)
+                .Include(c => c.School) 
+                .FirstOrDefaultAsync(c => c.Id == categoryId);
         }
+
         public async Task Insert(Category category) => await dbContext.Categories.AddAsync(category);
         public async Task<bool> Delete(long categoryId)
         {

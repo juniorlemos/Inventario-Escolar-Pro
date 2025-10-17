@@ -1,7 +1,6 @@
 ﻿using InventarioEscolar.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Emit;
 
 namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
 {
@@ -27,12 +26,12 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
             
             builder.HasOne(a => a.Category)
                .WithMany(c => c.Assets) 
-               .HasForeignKey(c => c.CategoryId)
+               .HasForeignKey(a => a.CategoryId)
                .IsRequired();
 
             builder.HasOne(a => a.RoomLocation)
                .WithMany(c => c.Assets)
-               .HasForeignKey(r => r.RoomLocationId)
+               .HasForeignKey(a => a.RoomLocationId)
                .IsRequired(false);
 
             builder.HasOne(a => a.School)

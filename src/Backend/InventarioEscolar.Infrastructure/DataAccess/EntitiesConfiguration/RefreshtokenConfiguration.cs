@@ -22,13 +22,11 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
             builder.Property(rt => rt.RevokedAt)
                 .IsRequired(false);
 
-            // FK para ApplicationUser
             builder.HasOne(rt => rt.User)
                 .WithMany(u => u.RefreshTokens)
                 .HasForeignKey(rt => rt.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Índice único no Token
             builder.HasIndex(rt => rt.Token)
                 .IsUnique();
         }

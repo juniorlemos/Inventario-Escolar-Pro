@@ -288,4 +288,10 @@
   <data name="USER_NOT_FOUND" xml:space="preserve">
     <value>Usuário não encontrado</value>
   </data>
+  <data name="ASSET_NOT_IN_ORIGIN_ROOM" xml:space="preserve">
+    <value>Ativo não está na sala de origem</value>
+  </data>
+  <data name="ASSETMOVEMENT_RESPONSIBLE_NAME_EMPTY" xml:space="preserve">
+    <value>O nome do responsável pela movimentação não pode ser vazio.</value>
+  </data>
 </root>

@@ -35,7 +35,7 @@ namespace InventarioEscolar.Application.UsesCases.AuthService.RegisterAuth
             var existingUser = await userManager.FindByEmailAsync(r.Email);
            
             if (existingUser != null)
-                throw new Exception(ResourceMessagesException.THIS_EMAIL_IS_ALREADY_IN_USE);
+                throw new BusinessException(ResourceMessagesException.THIS_EMAIL_IS_ALREADY_IN_USE);
 
             await unitOfWork.ExecuteInTransaction(async () =>
             {
@@ -60,7 +60,7 @@ namespace InventarioEscolar.Application.UsesCases.AuthService.RegisterAuth
                 var result = await userManager.CreateAsync(user, r.Password);
                
                 if (!result.Succeeded)
-                    throw new Exception("Erro ao criar usuário: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+                    throw new BusinessException("Erro ao criar usuário: " + string.Join(", ", result.Errors.Select(e => e.Description)));
             });
 
             return Unit.Value;

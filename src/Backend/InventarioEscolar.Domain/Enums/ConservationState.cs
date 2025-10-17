@@ -2,7 +2,7 @@
 {
     public enum ConservationState
     {
-        Irrecuperável = 1,
+        Irrecuperavel = 1,
         Danificado = 2,
         Regular = 3,
         Bom = 4,

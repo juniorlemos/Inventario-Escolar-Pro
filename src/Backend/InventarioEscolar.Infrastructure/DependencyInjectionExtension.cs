@@ -48,11 +48,11 @@ namespace InventarioEscolar.Infrastructure
         {
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
-                options.Password.RequiredLength = 5;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireLowercase = false;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = true;
                 options.Password.RequiredUniqueChars = 1;
-                options.Password.RequireDigit = false;
+                options.Password.RequireDigit = true;
                 options.Password.RequireNonAlphanumeric = false;
             })
                     .AddEntityFrameworkStores<InventarioEscolarProDBContext>()

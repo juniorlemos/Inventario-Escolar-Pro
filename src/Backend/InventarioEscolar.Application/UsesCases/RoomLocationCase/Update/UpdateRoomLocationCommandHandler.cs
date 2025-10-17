@@ -31,6 +31,7 @@ namespace InventarioEscolar.Application.UsesCases.RoomLocationCase.Update
                 throw new BusinessException(ResourceMessagesException.ROOMLOCATION_NOT_BELONG_TO_SCHOOL);
 
             request.RoomLocationDto.Adapt(roomLocation);
+            roomLocation.SchoolId = currentUser.SchoolId;
 
             roomLocationUpdateOnlyRepository.Update(roomLocation);
             await unitOfWork.Commit();

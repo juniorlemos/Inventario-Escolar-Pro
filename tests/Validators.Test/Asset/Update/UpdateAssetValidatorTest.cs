@@ -1,6 +1,6 @@
 ﻿using CommonTestUtilities.Request;
 using InventarioEscolar.Application.UsesCases.AssetCase.Update;
-using InventarioEscolar.Communication.Enum;
+using InventarioEscolar.Domain.Enums;
 using InventarioEscolar.Exceptions;
 using Shouldly;
 

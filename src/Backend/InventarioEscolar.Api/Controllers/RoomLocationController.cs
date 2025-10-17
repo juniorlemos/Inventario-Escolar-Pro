@@ -3,26 +3,19 @@ using InventarioEscolar.Application.UsesCases.RoomLocationCase.GetAll;
 using InventarioEscolar.Application.UsesCases.RoomLocationCase.GetById;
 using InventarioEscolar.Application.UsesCases.RoomLocationCase.Register;
 using InventarioEscolar.Application.UsesCases.RoomLocationCase.Update;
-using InventarioEscolar.Application.UsesCases.SchoolCase.Delete;
 using InventarioEscolar.Communication.Dtos;
 using InventarioEscolar.Communication.Request;
 using InventarioEscolar.Communication.Response;
-using InventarioEscolar.Domain.Entities;
 using Mapster;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventarioEscolar.Api.Controllers
 {
-    public class RoomLocationController : InventarioApiBaseController
+    [Authorize]
+    public class RoomLocationController(IMediator mediator) : InventarioApiBaseController
     {
-        private readonly IMediator _mediator;
-
-        public RoomLocationController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpPost]
         [ProducesResponseType(typeof(ResponseRoomLocationJson), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
@@ -31,7 +24,7 @@ namespace InventarioEscolar.Api.Controllers
         {
             var roomLocationDto = request.Adapt<RoomLocationDto>();
 
-            var result = await _mediator.Send(new RegisterRoomLocationCommand(roomLocationDto));
+            var result = await mediator.Send(new RegisterRoomLocationCommand(roomLocationDto));
 
             var response = result.Adapt<ResponseRoomLocationJson>();
 
@@ -45,7 +38,7 @@ namespace InventarioEscolar.Api.Controllers
         public async Task<IActionResult> GetByIdRoomLocation(
               [FromRoute] long id)
         {
-            var roomLocation = await _mediator.Send(new GetRoomLocationByIdQuery(id));
+            var roomLocation = await mediator.Send(new GetRoomLocationByIdQuery(id));
 
             var response = roomLocation.Adapt<ResponseRoomLocationJson>();
             return Ok(response);
@@ -56,9 +49,10 @@ namespace InventarioEscolar.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAll(
            [FromQuery] int page = 0,
-           [FromQuery] int pageSize = 0)
+           [FromQuery] int pageSize = 0,
+           [FromQuery] string? searchTerm = null)
         {
-            var result = await _mediator.Send(new GetAllRoomLocationsQuery(page, pageSize));
+            var result = await mediator.Send(new GetAllRoomLocationsQuery(page, pageSize, searchTerm));
 
             var response = result.Adapt<ResponsePagedJson<ResponseRoomLocationJson>>();
 
@@ -78,7 +72,7 @@ namespace InventarioEscolar.Api.Controllers
         {
             var roomLocationDto = request.Adapt<UpdateRoomLocationDto>();
 
-            await _mediator.Send(new UpdateRoomLocationCommand(id, roomLocationDto));
+            await mediator.Send(new UpdateRoomLocationCommand(id, roomLocationDto));
 
             return NoContent();
         }
@@ -90,7 +84,7 @@ namespace InventarioEscolar.Api.Controllers
         public async Task<IActionResult> Delete(
         [FromRoute] long id)
         {
-            await _mediator.Send(new DeleteRoomLocationCommand(id));
+            await mediator.Send(new DeleteRoomLocationCommand(id));
 
             return NoContent();
         }

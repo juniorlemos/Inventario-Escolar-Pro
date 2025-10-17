@@ -61,37 +61,15 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Repositories
         public async Task<School?> GetById(long schoolId)
         {
             var school = await dbContext.Schools
-                 .Where(s => s.Id == schoolId)
-                 .Select(s => new School
-                 {
-                     Id = s.Id,
-                     Name = s.Name,
-                     Inep = s.Inep,
-                     Address = s.Address,
-                     City = s.City,
-                     RoomLocations = s.RoomLocations
-                         .Select(r => new RoomLocation
-                         {
-                             Id = r.Id,
-                             Name = r.Name
-                         }).ToList(),
-                     Assets = s.Assets
-                         .Select(a => new Asset
-                         {
-                             Id = a.Id,
-                             Name = a.Name
-                         }).ToList(),
-                     Categories = s.Categories
-                         .Select(c => new Category
-                         {
-                             Id = c.Id,
-                             Name = c.Name
-                         }).ToList()
-                 })
-                 .FirstOrDefaultAsync(school => school.Id == schoolId);
+                .Include(s => s.RoomLocations)
+                .Include(s => s.Assets)
+                .Include(s => s.Categories)
+                .Include(s => s.Users)
+                .FirstOrDefaultAsync(s => s.Id == schoolId);
 
             return school;
         }
+
         public async Task<School?> GetDuplicateSchool(string name, string? inep, string? address)
         {
             return await dbContext.Schools

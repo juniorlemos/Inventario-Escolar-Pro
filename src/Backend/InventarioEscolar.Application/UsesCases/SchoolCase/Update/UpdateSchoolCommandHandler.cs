@@ -5,7 +5,6 @@ using InventarioEscolar.Domain.Interfaces;
 using InventarioEscolar.Domain.Interfaces.Repositories.Schools;
 using InventarioEscolar.Exceptions;
 using InventarioEscolar.Exceptions.ExceptionsBase;
-using Mapster;
 using MediatR;
 
 namespace InventarioEscolar.Application.UsesCases.SchoolCase.Update
@@ -25,7 +24,10 @@ namespace InventarioEscolar.Application.UsesCases.SchoolCase.Update
             if (school is null)
                 throw new NotFoundException(ResourceMessagesException.SCHOOL_NOT_FOUND);
 
-            request.SchoolDto.Adapt(school);
+            school.Name = request.SchoolDto.Name;
+            school.Inep = request.SchoolDto.Inep;
+            school.Address = request.SchoolDto.Address;
+            school.City = request.SchoolDto.City;
 
             schoolUpdateOnlyRepository.Update(school);
             await unitOfWork.Commit();

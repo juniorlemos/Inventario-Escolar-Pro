@@ -11,8 +11,8 @@ namespace InventarioEscolar.Application.UsesCases.CategoryCase.GetAll
     {
         public async Task<PagedResult<CategoryDto>> Handle(GetAllCategoriesQuery request, CancellationToken cancellationToken)
         {
-            var pagedCategories = await categoryReadOnlyRepository.GetAll(request.Page, request.PageSize)
-                                     ?? PagedResult<Category>.Empty(request.Page, request.PageSize);
+            var pagedCategories = await categoryReadOnlyRepository.GetAll(request.Page, request.PageSize,request.SearchTerm)
+                                     ?? PagedResult<Category>.Empty(request.Page, request.PageSize, request.SearchTerm);
 
             var dtoItems = pagedCategories.Items.Adapt<List<CategoryDto>>();
 
