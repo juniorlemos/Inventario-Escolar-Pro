@@ -360,4 +360,10 @@ MigrationBackup/
 .ionide/
 
 # Fody - auto-generated XML schema
-FodyWeavers.xsd
+FodyWeavers.xsdfrontend/node_modules/
+frontend/dist/
+src/Backend/InventarioEscolar.Api/appsettings.json
+src/Backend/InventarioEscolar.Api/appsettings.*.json
+src/Backend/InventarioEscolar.Api/Secrets/
+
+
