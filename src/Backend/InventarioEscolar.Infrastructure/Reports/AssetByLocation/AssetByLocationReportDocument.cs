@@ -51,7 +51,6 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetByLocation
 
             container.Column(column =>
             {
-                // col.Item().Image("logo.png", ImageScaling.FitHeight).Height(50); // Se quiser logotipo
 
                 column.Item().Text("Relatório de Patrimônio por Localização")
                     .FontSize(20).AlignCenter().Bold().FontColor(Colors.Green.Darken2);
@@ -65,43 +64,80 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetByLocation
 
                     row.RelativeItem(1).Column(col =>
                     {
-                        col.Item().Text($"🏫 Escola: {SchoolName}")
-                            .FontSize(12)
-                            .FontColor(Colors.Grey.Darken2)
-                            .Bold();
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("escola.png")).FitArea();
+                            row2.Spacing(3);
 
-                        col.Item().Text($"🗓️ Gerado em: {GeneratedAt:dd/MM/yyyy - HH:mm}")
+                            row2.RelativeItem().Text($"Escola: {SchoolName}")
                             .FontSize(10)
                             .FontColor(Colors.Grey.Darken2)
                             .Bold();
+                        });
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("calendario.png")).FitArea();
+                            row2.Spacing(3);
 
-                        col.Item().Text($"📦 Total de Bens: {Assets.Count()}")
+                            row2.RelativeItem().Text($"Gerado em: {GeneratedAt:dd/MM/yyyy - HH:mm}")
+                                .FontSize(10)
+                                .FontColor(Colors.Grey.Darken2)
+                                .Bold();
+                        });
+
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("itens.png")).FitArea();
+                            row2.Spacing(3);
+
+                            row2.RelativeItem().Text($"Total de Bens: {Assets.Count()}")
                             .FontSize(10)
                             .FontColor(Colors.Grey.Darken2)
                             .Bold();
+                        });
 
-                        col.Item().Text($"📍 Locais: {totalLocais}")
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("local.png")).FitArea();
+                            row2.Spacing(3);
+
+                            row2.RelativeItem().Text($"Totais de locais: {totalLocais}")
                             .FontSize(10)
                             .FontColor(Colors.Grey.Darken2)
                             .Bold();
+                        });
                     });
 
                     row.RelativeItem(1).Column(col =>
                     {
-                        col.Item().Text($"🆕 Novos (últimos 30 dias): {itensNovos}")
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("30-dias.png")).FitArea();
+                            row2.Spacing(3);
+                            row2.RelativeItem().Text($"Novos bens (últimos 30 dias): {itensNovos}")
                             .FontSize(10)
                             .FontColor(Colors.Grey.Darken2)
                             .Bold();
+                        });
 
-                        col.Item().Text($"⚠️ Danificados: {totalDanificados}")
-                           .FontSize(10)
-                           .FontColor(Colors.Yellow.Darken1)
-                           .Bold();
-
-                        col.Item().Text($"❌ Irrecuperáveis: {totalIrrecuperavel}")
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("danificado.png")).FitArea();
+                            row2.Spacing(3);
+                            row2.RelativeItem().Text($"Bens danificados: {totalDanificados}")
+                            .FontSize(10)
+                            .FontColor(Colors.Yellow.Darken1)
+                            .Bold();
+                        });
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("irrecuperavel.png")).FitArea();
+                            row2.Spacing(3);
+                            row2.RelativeItem().Text($"Bens irrecuperáveis: {totalIrrecuperavel}")
                             .FontSize(10)
                             .FontColor(Colors.Red.Darken1)
                             .Bold();
+                        });
                     });
 
                 });
@@ -196,6 +232,10 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetByLocation
                 text.Span(" de ").FontSize(9).FontColor(Colors.Green.Darken2);
                 text.TotalPages().FontSize(9).FontColor(Colors.Green.Darken2);
             });
+        }
+        private static string GetImagePath(string imageFileName)
+        {
+            return Path.Combine(AppContext.BaseDirectory, "Reports", "ImagensRelatorio", imageFileName);
         }
     }
 }

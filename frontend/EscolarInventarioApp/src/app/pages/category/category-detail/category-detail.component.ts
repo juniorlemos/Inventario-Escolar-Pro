@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormControl, A
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
-import { Category } from '../../../core/Models/Category';
+import { Category } from '../../../core/models/Category';
 import { CategoryService } from '../../../core/Services/category.service';
 import { Location } from '@angular/common';
 

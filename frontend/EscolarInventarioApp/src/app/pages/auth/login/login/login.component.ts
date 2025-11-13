@@ -4,8 +4,8 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from './../../../../core/Services/auth.service';
 import { ToastrService } from 'ngx-toastr';
-import { User } from '../../../../core/Models/auth/User';
-import { AuthResponse } from '../../../../core/Models/auth/AuthResponse';
+import { User } from '../../../../core/models/auth/User';
+import { AuthResponse } from '../../../../core/models/auth/AuthResponse';
 
 @Component({
   selector: 'app-login',
@@ -38,7 +38,7 @@ export class LoginComponent {
   get password() {
     return this.loginForm.get('password')!;
   }
-  
+
 togglePasswordVisibility(): void {
   this.showPassword = !this.showPassword;
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Asset } from '../../../../core/Models/Asset';
+import { Asset } from '../../../../core/models/Asset';
 import { AssetService } from './../../../../core/Services/asset.service';
 import { Component, TemplateRef } from '@angular/core';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
@@ -8,9 +8,9 @@ import { Router, RouterModule } from '@angular/router';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ModalModule, BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
-import { RoomLocation } from '../../../../core/Models/RoomLocation';
-import { Category } from '../../../../core/Models/Category';
-import { ConservationState } from '../../../../core/Models/enum/ConservationState.enum';
+import { Category } from '../../../../core/models/Category';
+import { ConservationState } from '../../../../core/models/enum/ConservationState.enum';
+import { RoomLocation } from '../../../../core/models/RoomLocation';
 
 
 @Component({

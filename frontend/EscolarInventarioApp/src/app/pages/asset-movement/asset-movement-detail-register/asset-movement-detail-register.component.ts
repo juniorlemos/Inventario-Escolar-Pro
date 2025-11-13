@@ -5,12 +5,12 @@ import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 
-import { Asset } from '../../../core/Models/Asset';
-import { Category } from '../../../core/Models/Category';
-import { PagedResult } from '../../../core/Models/Pagination';
-import { RoomLocation } from '../../../core/Models/RoomLocation';
-import { AssetSummary } from '../../../core/Models/AssetSummary';
-import { AssetMovement } from '../../../core/Models/AssetMovement';
+import { Asset } from '../../../core/models/Asset';
+import { Category } from '../../../core/models/Category';
+import { PagedResult } from '../../../core/models/Pagination';
+import { RoomLocation } from '../../../core/models/RoomLocation';
+import { AssetSummary } from '../../../core/models/AssetSummary';
+import { AssetMovement } from '../../../core/models/AssetMovement';
 
 import { AssetService } from '../../../core/Services/asset.service';
 import { CategoryService } from '../../../core/Services/category.service';

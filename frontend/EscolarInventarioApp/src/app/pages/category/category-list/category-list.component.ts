@@ -6,7 +6,7 @@ import { ModalModule, BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ToastrService } from 'ngx-toastr';
-import { Category } from '../../../core/Models/Category';
+import { Category } from '../../../core/models/Category';
 import { CategoryService } from '../../../core/Services/category.service';
 
 @Component({

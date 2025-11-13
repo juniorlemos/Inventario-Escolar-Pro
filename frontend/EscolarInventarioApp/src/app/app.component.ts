@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
     .pipe(filter(event => event instanceof NavigationEnd))
     .subscribe(() => {
       if (!this.authService.isLoggedIn() && !this.isLoginRoute()) {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/login'], { replaceUrl: true });
       }
     });
 

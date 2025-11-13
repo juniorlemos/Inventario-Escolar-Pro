@@ -26,25 +26,23 @@ import { authGuard } from './core/Gaurd/auth.guard';
 import { ForgotPasswordConfirmationComponent } from './pages/auth/forgot-password-confirmation/forgot-password-confirmation.component';
 import { ResetPasswordComponent } from './pages/auth/reset-password/reset-password.component';
 
-
-
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 
-  { path: 'login', component: LoginComponent },
-  { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'forgot-password/confirmation', component: ForgotPasswordConfirmationComponent },
+  { path: 'login', component: LoginComponent, title: 'Inventario360 – Login' },
+  { path: 'forgot-password', component: ForgotPasswordComponent, title: 'Inventario360 – Esqueci minha senha' },
+  { path: 'forgot-password/confirmation', component: ForgotPasswordConfirmationComponent, title: 'Inventario360 – Confirmação de redefinição' },
+  { path: 'reset-password', component: ResetPasswordComponent, title: 'Inventario360 – Redefinir senha' },
 
- { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'dashboard', component: DashboardComponent,canActivate:[authGuard], title: 'Inventario360 – Dashboard' },
 
   {
     path: 'settings',
     component: SettingsComponent,
     canActivate: [authGuard],
     children: [
-      { path: '', component: SettingsProfileComponent },
-      { path: 'profile', component: SettingsProfileComponent },
+      { path: '', component: SettingsProfileComponent, title: 'Inventario360 – Perfil' },
+      { path: 'profile', component: SettingsProfileComponent, title: 'Inventario360 – Perfil' },
     ]
   },
 
@@ -53,9 +51,9 @@ export const routes: Routes = [
     component: ReportComponent,
     canActivate: [authGuard],
     children: [
-      { path: '', component: ReportListComponent },
-      { path: 'list', component: ReportListComponent },
-      { path: 'view', component: ReportViewerComponent },
+      { path: '', component: ReportListComponent, title: 'Inventario360 – Relatórios' },
+      { path: 'list', component: ReportListComponent, title: 'Inventario360 – Relatórios' },
+      { path: 'view', component: ReportViewerComponent, title: 'Inventario360 – Visualizar Relatório' },
     ]
   },
 
@@ -64,10 +62,10 @@ export const routes: Routes = [
     component: CategoryComponent,
     canActivate: [authGuard],
     children:[
-      { path: '', component: CategoryListComponent },
-      { path: 'detail', component: CategoryDetailComponent },
-      { path: 'detail/:id', component: CategoryDetailComponent },
-      { path: 'list', component: CategoryListComponent },
+      { path: '', component: CategoryListComponent, title: 'Inventario360 – Categorias' },
+      { path: 'detail', component: CategoryDetailComponent, title: 'Inventario360 – Detalhes da Categoria' },
+      { path: 'detail/:id', component: CategoryDetailComponent, title: 'Inventario360 – Detalhes da Categoria' },
+      { path: 'list', component: CategoryListComponent, title: 'Inventario360 – Lista de Categorias' },
     ]
   },
 
@@ -76,10 +74,10 @@ export const routes: Routes = [
     component: RoomLocationComponent,
     canActivate: [authGuard],
     children:[
-      { path: '', component: RoomLocationListComponent },
-      { path: 'detail', component: RoomLocationDetailComponent },
-      { path: 'detail/:id', component: RoomLocationDetailComponent },
-      { path: 'list', component: RoomLocationListComponent },
+      { path: '', component: RoomLocationListComponent, title: 'Inventario360 – Locais' },
+      { path: 'detail', component: RoomLocationDetailComponent, title: 'Inventario360 – Detalhes do Local' },
+      { path: 'detail/:id', component: RoomLocationDetailComponent, title: 'Inventario360 – Detalhes do Local' },
+      { path: 'list', component: RoomLocationListComponent, title: 'Inventario360 – Lista de Locais' },
     ]
   },
 
@@ -88,10 +86,10 @@ export const routes: Routes = [
     component: AssetsComponent,
     canActivate: [authGuard],
     children:[
-      { path: '', component: AssetListComponent },
-      { path: 'detail', component: AssetDetailComponent },
-      { path: 'detail/:id', component: AssetDetailComponent },
-      { path: 'list', component: AssetListComponent },
+      { path: '', component: AssetListComponent, title: 'Inventario360 – Ativos' },
+      { path: 'detail', component: AssetDetailComponent, title: 'Inventario360 – Detalhes do Ativo' },
+      { path: 'detail/:id', component: AssetDetailComponent, title: 'Inventario360 – Detalhes do Ativo' },
+      { path: 'list', component: AssetListComponent, title: 'Inventario360 – Lista de Ativos' },
     ]
   },
 
@@ -100,14 +98,14 @@ export const routes: Routes = [
     component: AssetMovementComponent,
     canActivate: [authGuard],
     children:[
-      { path: '', component: AssetMovementListComponent },
-      { path: 'detail', component: AssetMovementDetailComponent },
-      { path: 'detail/:id', component: AssetMovementDetailComponent },
-      { path: 'detail-cancel/:id', component: AssetMovementDetailCancelComponent },
-      { path: 'detail-cancel', component: AssetMovementDetailCancelComponent },
-      { path: 'detail-register/:id', component: AssetMovementDetailRegisterComponent },
-      { path: 'detail-register', component: AssetMovementDetailRegisterComponent },
-      { path: 'list', component: AssetMovementListComponent },
+      { path: '', component: AssetMovementListComponent, title: 'Inventario360 – Movimentações' },
+      { path: 'detail', component: AssetMovementDetailComponent, title: 'Inventario360 – Detalhes da Movimentação' },
+      { path: 'detail/:id', component: AssetMovementDetailComponent, title: 'Inventario360 – Detalhes da Movimentação' },
+      { path: 'detail-cancel/:id', component: AssetMovementDetailCancelComponent, title: 'Inventario360 – Cancelar Movimentação' },
+      { path: 'detail-cancel', component: AssetMovementDetailCancelComponent, title: 'Inventario360 – Cancelar Movimentação' },
+      { path: 'detail-register/:id', component: AssetMovementDetailRegisterComponent, title: 'Inventario360 – Registrar Movimentação' },
+      { path: 'detail-register', component: AssetMovementDetailRegisterComponent, title: 'Inventario360 – Registrar Movimentação' },
+      { path: 'list', component: AssetMovementListComponent, title: 'Inventario360 – Lista de Movimentações' },
     ]
   },
 

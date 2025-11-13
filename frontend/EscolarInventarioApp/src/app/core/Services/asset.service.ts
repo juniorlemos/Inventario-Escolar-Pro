@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 import { take, map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { Asset } from '../Models/Asset';
-import { PagedResult } from '../Models/Pagination';
+import { Asset } from '../models/Asset';
+import { PagedResult } from '../models/Pagination';
 
 @Injectable({
   providedIn: 'root'

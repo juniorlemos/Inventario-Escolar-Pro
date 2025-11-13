@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter, TemplateRef, inject } from '@an
 import { Router, RouterModule } from '@angular/router';
 import { BsModalRef, BsModalService, ModalModule } from 'ngx-bootstrap/modal';
 import { NavSideItemsService } from '../../../core/Services/nav-side-items.service';
-import { NavItem } from '../../../core/Models/NavItem';
+import { NavItem } from '../../../core/models/NavItem';
 import { AuthService } from '../../../core/Services/auth.service';
 import { AuthStore } from '../../../core/stores/auth.store';
 
@@ -52,7 +52,7 @@ export class LeftSidebarComponent {
     localStorage.clear();
     sessionStorage.clear();
     this.modalRef?.hide();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/login'], { replaceUrl: true });
   }
 
   get shouldShowSidebar(): boolean {

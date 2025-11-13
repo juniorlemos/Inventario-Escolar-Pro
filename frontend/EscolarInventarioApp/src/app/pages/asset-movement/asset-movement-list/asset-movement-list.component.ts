@@ -5,7 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ToastrService } from 'ngx-toastr';
-import { AssetMovement } from '../../../core/Models/AssetMovement';
+import { AssetMovement } from '../../../core/models/AssetMovement';
 import { AssetMovementService } from '../../../core/Services/asset-movement.service';
 import { DateFormatPipe } from '../../../core/Pipe/date-format.pipe';
 

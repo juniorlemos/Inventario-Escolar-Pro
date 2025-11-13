@@ -52,7 +52,7 @@ namespace InventarioEscolar.Infrastructure.Reports.Inventory
 
             container.Column(column =>
             {
-                column.Item().Text("📘 Relatório Patrimonial")
+                column.Item().Text("Relatório Patrimonial")
                     .FontSize(20)
                     .Bold()
                     .AlignCenter()
@@ -67,48 +67,89 @@ namespace InventarioEscolar.Infrastructure.Reports.Inventory
 
                     row.RelativeItem(1).Column(col =>
                     {
-                        col.Item().Text($"🏫 Escola: {SchoolName}")
-                            .FontSize(12)
-                            .FontColor(Colors.Grey.Darken2)
-                            .Bold();
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("escola.png")).FitArea();
+                            row2.Spacing(3);
 
-                        col.Item().Text($"🗓️ Gerado em: {GeneratedAt:dd/MM/yyyy - HH:mm}")
+                            row2.RelativeItem().Text($"Escola: {SchoolName}")
                             .FontSize(10)
                             .FontColor(Colors.Grey.Darken2)
                             .Bold();
+                        });
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("calendario.png")).FitArea();
+                            row2.Spacing(3);
 
-                        col.Item().Text($"📦 Total de Bens: {Assets.Count()}")
+                            row2.RelativeItem().Text($"Gerado em: {GeneratedAt:dd/MM/yyyy - HH:mm}")
+                                .FontSize(10)
+                                .FontColor(Colors.Grey.Darken2)
+                                .Bold();
+                        });
+
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("itens.png")).FitArea();
+                            row2.Spacing(3);
+
+                            row2.RelativeItem().Text($"Total de bens: {Assets.Count()}")
                             .FontSize(10)
                             .FontColor(Colors.Grey.Darken2)
                             .Bold();
+                        });
 
-                        col.Item().Text($"📍 Locais: {totalLocais}")
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("local.png")).FitArea();
+                            row2.Spacing(3);
+
+                            row2.RelativeItem().Text($"Quantidade de locais: {totalLocais}")
                             .FontSize(10)
                             .FontColor(Colors.Grey.Darken2)
                             .Bold();
+                        });
                     });
 
                     row.RelativeItem(1).Column(col =>
                     {
-                        col.Item().Text($"🗂️ Categorias: {totalCategorias}")
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("categoria.png")).FitArea();
+                            row2.Spacing(3);
+                            row2.RelativeItem().Text($"Quantidade de categorias: {totalCategorias}")
                             .FontSize(10)
                             .FontColor(Colors.Grey.Darken2)
                             .Bold();
-
-                        col.Item().Text($"🆕 Novos (últimos 30 dias): {itensNovos}")
+                        });
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("30-dias.png")).FitArea();
+                            row2.Spacing(3);
+                            row2.RelativeItem().Text($"Novos bens (últimos 30 dias): {itensNovos}")
                             .FontSize(10)
                             .FontColor(Colors.Grey.Darken2)
                             .Bold();
+                        });
 
-                        col.Item().Text($"⚠️ Danificados: {totalDanificados}")
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("danificado.png")).FitArea();
+                            row2.Spacing(3);
+                            row2.RelativeItem().Text($"Bens danificados: {totalDanificados}")
                             .FontSize(10)
                             .FontColor(Colors.Yellow.Darken1)
                             .Bold();
-
-                        col.Item().Text($"❌ Irrecuperáveis: {totalIrrecuperavel}")
+                        });
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("irrecuperavel.png")).FitArea();
+                            row2.Spacing(3);
+                            row2.RelativeItem().Text($"Bens irrecuperáveis: {totalIrrecuperavel}")
                             .FontSize(10)
                             .FontColor(Colors.Red.Darken1)
                             .Bold();
+                        });
                     });
                 });
             });
@@ -162,7 +203,6 @@ namespace InventarioEscolar.Infrastructure.Reports.Inventory
                 }
             });
         }
-
         void ComposeFooter(IContainer container)
         {
             container.AlignCenter().Text(text =>
@@ -172,6 +212,10 @@ namespace InventarioEscolar.Infrastructure.Reports.Inventory
                 text.Span(" de ").FontSize(9).FontColor(Colors.Green.Darken2);
                 text.TotalPages().FontSize(9).FontColor(Colors.Green.Darken2);
             });
+        }
+        private string GetImagePath(string imageFileName)
+        {
+            return Path.Combine(AppContext.BaseDirectory, "Reports", "ImagensRelatorio", imageFileName);
         }
     }
 }

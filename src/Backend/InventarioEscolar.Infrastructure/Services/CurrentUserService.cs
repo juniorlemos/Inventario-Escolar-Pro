@@ -5,20 +5,13 @@ using System.Security.Claims;
 
 namespace InventarioEscolar.Infrastructure.Services
 {
-    public class CurrentUserService : ICurrentUserService
+    public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public CurrentUserService(IHttpContextAccessor httpContextAccessor)
-        {
-            _httpContextAccessor = httpContextAccessor;
-        }
-
         public long SchoolId
         {
             get
             {
-                var user = _httpContextAccessor.HttpContext?.User
+                var user = httpContextAccessor.HttpContext?.User
                     ?? throw new InvalidOperationException("Usuário não autenticado.");
 
                 var claim = user.FindFirst("schoolId")?.Value
@@ -35,7 +28,7 @@ namespace InventarioEscolar.Infrastructure.Services
         {
             get
             {
-                var user = _httpContextAccessor.HttpContext?.User;
+                var user = httpContextAccessor.HttpContext?.User;
                 if (user == null) return null;
 
                 var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -52,14 +45,14 @@ namespace InventarioEscolar.Infrastructure.Services
         {
             get
             {
-                var user = _httpContextAccessor.HttpContext?.User;
+                var user = httpContextAccessor.HttpContext?.User;
 
                 return user?.FindFirst(JwtRegisteredClaimNames.Name)?.Value
                     ?? user?.FindFirst("name")?.Value
                     ?? user?.Identity?.Name;
             }
         }
-        public bool IsAuthenticated => _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true;
+        public bool IsAuthenticated => httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true;
 
     }
 }

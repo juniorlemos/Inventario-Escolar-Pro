@@ -36,7 +36,7 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetMovements
 
             container.Column(column =>
             {
-                column.Item().Text("📤 Relatório de Movimentação Patrimonial")
+                column.Item().Text("Relatório de Movimentação Patrimonial")
                     .FontSize(20)
                     .Bold()
                     .AlignCenter()
@@ -50,28 +50,60 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetMovements
 
                     row.RelativeItem(1).Column(col =>
                     {
-                        col.Item().Text($"🏫 Escola: {SchoolName}")
-                            .FontSize(12).FontColor(Colors.Grey.Darken2)
-                            .Bold();
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("escola.png")).FitArea();
+                            row2.Spacing(3);
 
-                        col.Item().Text($"🗓️ Gerado em: {GeneratedAt:dd/MM/yyyy - HH:mm}")
-                            .FontSize(10).FontColor(Colors.Grey.Darken2)
+                            row2.RelativeItem().Text($"Escola: {SchoolName}")
+                            .FontSize(10)
+                            .FontColor(Colors.Grey.Darken2)
                             .Bold();
+                        });
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("calendario.png")).FitArea();
+                            row2.Spacing(3);
 
-                        col.Item().Text($"📦 Total de Movimentações: {total}")
-                            .FontSize(10).FontColor(Colors.Grey.Darken2)
-                            .Bold();
+                            row2.RelativeItem().Text($"Gerado em: {GeneratedAt:dd/MM/yyyy - HH:mm}")
+                                .FontSize(10)
+                                .FontColor(Colors.Grey.Darken2)
+                                .Bold();
+                        });
+
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("movimentacao.png")).FitArea();
+                            row2.Spacing(3);
+
+                            row2.RelativeItem().Text($"Total de Movimentações: {total}")
+                                .FontSize(10)
+                                .FontColor(Colors.Grey.Darken2)
+                                .Bold();
+                        });
                     });
 
                     row.RelativeItem(1).Column(col =>
                     {
-                        col.Item().Text($"🕒 Últimos 30 dias: {ultimos30}")
-                            .FontSize(10).FontColor(Colors.Grey.Darken2)
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("30-dias.png")).FitArea();
+                            row2.Spacing(3);
+                            row2.RelativeItem().Text($"Movimentações dos últimos 30 dias: {ultimos30}")
+                            .FontSize(10)
+                            .FontColor(Colors.Grey.Darken2)
                             .Bold();
+                        });
 
-                        col.Item().Text($"❌ Canceladas: {canceladas}")
-                            .FontSize(10).FontColor(Colors.Red.Darken2)
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("cancelado.png")).FitArea();
+                            row2.Spacing(3);
+                            row2.RelativeItem().Text($"Total de Movimentações Canceladas: {canceladas}")
+                            .FontSize(10)
+                            .FontColor(Colors.Red.Darken2)
                             .Bold();
+                        });
                     });
                 });
             });
@@ -128,6 +160,10 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetMovements
                 text.Span(" de ").FontSize(9).FontColor(Colors.Green.Darken2);
                 text.TotalPages().FontSize(9).FontColor(Colors.Green.Darken2);
             });
+        }
+        private static string GetImagePath(string imageFileName)
+        {
+            return Path.Combine(AppContext.BaseDirectory, "Reports", "ImagensRelatorio", imageFileName);
         }
     }
 }

@@ -2,8 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, take } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { PagedResult } from '../Models/Pagination';
-import { RoomLocation } from '../Models/RoomLocation';
+import { PagedResult } from '../models/Pagination';
+import { RoomLocation } from '../models/RoomLocation';
 
 @Injectable({
   providedIn: 'root'

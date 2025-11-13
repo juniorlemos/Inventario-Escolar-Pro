@@ -2,8 +2,8 @@ using InventarioEscolar.Api.Configurations;
 using InventarioEscolar.Api.Filters;
 using InventarioEscolar.Application;
 using InventarioEscolar.Infrastructure;
+using InventarioEscolar.Infrastructure.DataSeeder;
 using Serilog;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,20 +11,18 @@ LoggerConfigurationFactory.ConfigureSerilog(builder);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigins",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:4200") 
-                  .AllowAnyMethod() 
-                  .AllowAnyHeader() 
-                  .AllowCredentials();
-        });
+    options.AddPolicy("AllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200", "http://frontend")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
 });
 
- 
 builder.Services.AddControllers(options =>
 {
-    options.Filters.Add<TrimStringsFilter>(); 
+    options.Filters.Add<TrimStringsFilter>();
 })
 .AddJsonOptions(options =>
 {
@@ -42,25 +40,28 @@ builder.Host.UseSerilog();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 
-
 var app = builder.Build();
 
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseHttpsRedirection();
+}
 
-app.UseHttpsRedirection();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await DataSeeder.SeedDatabaseAsync(services);
+}
 
 app.UseCors("AllowSpecificOrigins");
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
-app.Run();
+await app.RunAsync(); 

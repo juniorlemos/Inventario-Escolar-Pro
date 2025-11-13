@@ -1,9 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { AssetMovement } from '../Models/AssetMovement';
-import { PagedResult } from '../Models/Pagination';
+import { PagedResult } from '../models/Pagination';
 import { map, Observable, take } from 'rxjs';
+import { AssetMovement } from '../models/AssetMovement';
 
 @Injectable({
   providedIn: 'root'

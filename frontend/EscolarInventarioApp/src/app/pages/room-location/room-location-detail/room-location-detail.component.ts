@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormControl, A
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
-import { RoomLocation } from '../../../core/Models/RoomLocation';
+import { RoomLocation } from '../../../core/models/RoomLocation';
 import { RoomLocationService } from '../../../core/Services/room-location.service';
 import { Location } from '@angular/common';
 

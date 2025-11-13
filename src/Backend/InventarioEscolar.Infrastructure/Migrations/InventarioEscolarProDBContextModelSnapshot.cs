@@ -225,6 +225,7 @@ namespace InventarioEscolar.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Responsible")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 

@@ -1,0 +1,45 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Teste123@
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - inventario-network
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/1433"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    
+  inventarioescolar.api:
+    image: ${DOCKER_REGISTRY-}inventarioescolarapi
+    build:
+      context: .
+      dockerfile: src/Backend/InventarioEscolar.Api/Dockerfile
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - inventario-network
+
+  frontend:
+    build:
+      context: ./frontend/EscolarInventarioApp
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    networks:
+      - inventario-network
+
+networks:
+  inventario-network:
+    driver: bridge
+
+volumes:
+  sqlserver_data:

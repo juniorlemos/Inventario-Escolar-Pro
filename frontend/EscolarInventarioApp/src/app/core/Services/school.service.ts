@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable, take } from 'rxjs';
-import { UpdateSchoolRequest } from '../Models/UpdateSchoolRequest';
-import { School } from '../Models/School';
+import { UpdateSchoolRequest } from '../models/UpdateSchoolRequest';
+import { School } from '../models/School';
 
 @Injectable({
   providedIn: 'root'

@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { School } from '../../../core/Models/School';
-import { UpdateSchoolRequest } from '../../../core/Models/UpdateSchoolRequest';
+import { School } from '../../../core/models/School';
+import { UpdateSchoolRequest } from '../../../core/models/UpdateSchoolRequest';
 import { SchoolService } from '../../../core/Services/school.service';
 import { Location } from '@angular/common';
 
@@ -77,7 +77,7 @@ export class SettingsProfileComponent implements OnInit {
 
   resetForm(): void {
     this.form.reset();
-    this.loadSchool(); 
+    this.loadSchool();
   }
 
   goBack(): void {

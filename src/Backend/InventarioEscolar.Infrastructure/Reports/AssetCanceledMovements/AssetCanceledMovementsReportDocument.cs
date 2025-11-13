@@ -35,7 +35,7 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetCanceledMovements
         {
             container.Column(column =>
             {
-                column.Item().Text("❌ Relatório de Movimentações Patrimoniais Canceladas")
+                column.Item().Text("Relatório de Movimentações Patrimoniais Canceladas")
                     .FontSize(20)
                     .Bold()
                     .AlignCenter()
@@ -49,20 +49,38 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetCanceledMovements
 
                     row.RelativeItem(1).Column(col =>
                     {
-                        col.Item().Text($"🏫 Escola: {SchoolName}")
-                            .FontSize(12).FontColor(Colors.Grey.Darken2)
-                            .Bold();
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("escola.png")).FitArea();
+                            row2.Spacing(3);
 
-                        col.Item().Text($"🗓️ Gerado em: {GeneratedAt:dd/MM/yyyy - HH:mm}")
-                            .FontSize(10).FontColor(Colors.Grey.Darken2)
+                            row2.RelativeItem().Text($"Escola: {SchoolName}")
+                            .FontSize(10)
+                            .FontColor(Colors.Grey.Darken2)
                             .Bold();
+                        });
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("calendario.png")).FitArea();
+                            row2.Spacing(3);
 
-                        col.Item().Text($"📦 Total de Movimentações Canceladas: {totalCanceled}")
-                            .FontSize(10).FontColor(Colors.Grey.Darken2)
+                            row2.RelativeItem().Text($"Gerado em: {GeneratedAt:dd/MM/yyyy - HH:mm}")
+                                .FontSize(10)
+                                .FontColor(Colors.Grey.Darken2)
+                                .Bold();
+                        });
+
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("cancelado.png")).FitArea();
+                            row2.Spacing(3);
+                            row2.RelativeItem().Text($"Total de Movimentações Canceladas: {totalCanceled}")
+                            .FontSize(10)
+                            .FontColor(Colors.Red.Darken2)
                             .Bold();
+                        });
                     });
 
-                    // Você pode adicionar outras métricas específicas aqui se quiser
                 });
             });
         }
@@ -120,6 +138,10 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetCanceledMovements
                 text.Span(" de ").FontSize(9).FontColor(Colors.Green.Darken2);
                 text.TotalPages().FontSize(9).FontColor(Colors.Green.Darken2);
             });
+        }
+        private static string GetImagePath(string imageFileName)
+        {
+            return Path.Combine(AppContext.BaseDirectory, "Reports", "ImagensRelatorio", imageFileName);
         }
     }
 }

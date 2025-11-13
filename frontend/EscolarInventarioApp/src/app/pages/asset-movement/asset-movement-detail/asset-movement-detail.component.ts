@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { Location } from '@angular/common';
-import { AssetMovement } from '../../../core/Models/AssetMovement';
+import { AssetMovement } from '../../../core/models/AssetMovement';
 import { DateFormatPipe } from '../../../core/Pipe/date-format.pipe';
 
 @Component({

@@ -4,14 +4,14 @@ import { CommonModule, Location } from '@angular/common';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
-import { Asset } from '../../../../core/Models/Asset';
+import { Asset } from '../../../../core/models/Asset';
 import { AssetService } from '../../../../core/Services/asset.service';
 import { CategoryService } from '../../../../core/Services/category.service';
 import { RoomLocationService } from '../../../../core/Services/room-location.service';
-import { PagedResult } from '../../../../core/Models/Pagination';
-import { ConservationState } from '../../../../core/Models/enum/ConservationState.enum';
-import { RoomLocation } from '../../../../core/Models/RoomLocation';
-import { Category } from '../../../../core/Models/Category';
+import { PagedResult } from '../../../../core/models/Pagination';
+import { ConservationState } from '../../../../core/models/enum/ConservationState.enum';
+import { RoomLocation } from '../../../../core/models/RoomLocation';
+import { Category } from '../../../../core/models/Category';
 import { NgxMaskDirective } from 'ngx-mask';
 
 

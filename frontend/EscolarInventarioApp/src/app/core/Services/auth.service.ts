@@ -4,9 +4,9 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../../environments/environment';
-import { User } from '../Models/auth/User';
-import { AuthResponse } from '../Models/auth/AuthResponse';
+import { User } from '../models/auth/User';
 import { AuthStore } from '../stores/auth.store';
+import { AuthResponse } from '../models/auth/AuthResponse';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -19,7 +19,6 @@ export class AuthService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
-  // 🔐 Autenticação
   login(user: User): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, user);
   }
@@ -27,7 +26,7 @@ export class AuthService {
   forgotPassword(email: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/forgot-password`, { email });
   }
-  
+
 resetPassword(email: string, token: string, newPassword: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/reset-password`, {
       email,
@@ -40,7 +39,6 @@ resetPassword(email: string, token: string, newPassword: string): Observable<voi
     return this.http.post<AuthResponse>(`${this.apiUrl}/refresh`, { refreshToken });
   }
 
-  // 💾 Armazenamento de tokens
   saveTokens(accessToken: string, refreshToken: string): void {
     this.authStore.saveTokens(accessToken, refreshToken);
   }
@@ -53,16 +51,15 @@ resetPassword(email: string, token: string, newPassword: string): Observable<voi
     return this.authStore.getRefreshToken();
   }
 
-  // ✅ Verifica se o token está válido
+
   isLoggedIn(): boolean {
     return this.authStore.isLoggedIn();
   }
 
-  // 🚪 Logout
+
  logout(): void {
   this.authStore.clearTokens();
 
-  // força redirecionamento após limpar os signals
   setTimeout(() => {
     this.router.navigate(['/login']);
   }, 0);

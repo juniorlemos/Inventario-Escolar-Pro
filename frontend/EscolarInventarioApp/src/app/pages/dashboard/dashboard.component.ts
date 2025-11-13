@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { SchoolService } from '../../core/Services/school.service';
-import { DashboardData } from '../../core/Models/DashboardData';
-import { School } from '../../core/Models/School';
+import { DashboardData } from '../../core/models/DashboardData';
+import { School } from '../../core/models/School';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -88,6 +88,6 @@ export class DashboardComponent implements OnInit {
   logout(): void {
     localStorage.clear();
     sessionStorage.clear();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/login'], { replaceUrl: true });
   }
 }

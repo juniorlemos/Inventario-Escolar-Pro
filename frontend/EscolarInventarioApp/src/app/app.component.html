@@ -6,12 +6,14 @@
   <ng-template #mainLayout>
     <app-left-sidebar
       [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
-      (changeIsLeftSidebarCollapsed)="changeIsLeftSidebarCollapsed($event)">
+      (changeIsLeftSidebarCollapsed)="changeIsLeftSidebarCollapsed($event)"
+    >
     </app-left-sidebar>
 
     <app-main
       [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
-      [screenWidth]="screenWidth()">
+      [screenWidth]="screenWidth()"
+    >
     </app-main>
   </ng-template>
 
@@ -20,6 +22,7 @@
     size="medium"
     color="#fff"
     type="ball-scale-multiple"
-    [fullScreen]="true">
+    [fullScreen]="true"
+  >
   </ngx-spinner>
 </ng-container>

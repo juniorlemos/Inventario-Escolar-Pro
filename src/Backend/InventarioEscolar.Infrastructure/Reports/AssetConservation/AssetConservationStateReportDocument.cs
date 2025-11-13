@@ -41,7 +41,7 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetConservation
 
             container.Column(column =>
             {
-                column.Item().Text("🔧 Relatório de Conservação Patrimonial")
+                column.Item().Text("Relatório de Conservação Patrimonial")
                     .FontSize(20)
                     .Bold()
                     .AlignCenter()
@@ -55,21 +55,48 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetConservation
 
                     row.RelativeItem(1).Column(col =>
                     {
-                        col.Item().Text($"🏫 Escola: {SchoolName}")
-                            .FontSize(12).FontColor(Colors.Grey.Darken2)
-                            .Bold();
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("escola.png")).FitArea();
+                            row2.Spacing(3);
 
-                        col.Item().Text($"🗓️ Gerado em: {GeneratedAt:dd/MM/yyyy HH:mm}")
-                            .FontSize(10).FontColor(Colors.Grey.Darken2)
+                            row2.RelativeItem().Text($"Escola: {SchoolName}")
+                            .FontSize(10)
+                            .FontColor(Colors.Grey.Darken2)
                             .Bold();
+                        });
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("calendario.png")).FitArea();
+                            row2.Spacing(3);
 
-                        col.Item().Text($"📦 Total de Bens: {total}")
-                            .FontSize(10).FontColor(Colors.Grey.Darken2)
+                            row2.RelativeItem().Text($"Gerado em: {GeneratedAt:dd/MM/yyyy - HH:mm}")
+                                .FontSize(10)
+                                .FontColor(Colors.Grey.Darken2)
+                                .Bold();
+                        });
+
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("itens.png")).FitArea();
+                            row2.Spacing(3);
+
+                            row2.RelativeItem().Text($"Total de Bens: {Assets.Count()}")
+                            .FontSize(10)
+                            .FontColor(Colors.Grey.Darken2)
                             .Bold();
+                        });
 
-                        col.Item().Text($"📊 Tipos de Estado de Conservação: {estados}")
-                           .FontSize(10).FontColor(Colors.Grey.Darken2)
-                           .Bold();
+                        col.Item().Row(row2 =>
+                        {
+                            row2.ConstantItem(10).Height(10).Image(GetImagePath("conservacao.png")).FitArea();
+                            row2.Spacing(3);
+
+                            row2.RelativeItem().Text($"Tipos de Estado de Conservação: {estados}")
+                            .FontSize(10)
+                            .FontColor(Colors.Grey.Darken2)
+                            .Bold();
+                        });
                     });
 
                 });
@@ -144,6 +171,10 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetConservation
                 text.Span(" de ").FontSize(9).FontColor(Colors.Green.Darken2);
                 text.TotalPages().FontSize(9).FontColor(Colors.Green.Darken2);
             });
+        }
+        private static string GetImagePath(string imageFileName)
+        {
+            return Path.Combine(AppContext.BaseDirectory, "Reports", "ImagensRelatorio", imageFileName);
         }
     }
 }

@@ -6,8 +6,8 @@ import { ModalModule, BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ToastrService } from 'ngx-toastr';
-import { RoomLocation } from '../../../core/Models/RoomLocation';
 import { RoomLocationService } from '../../../core/Services/room-location.service';
+import { RoomLocation } from '../../../core/models/RoomLocation';
 
 @Component({
   selector: 'app-room-location-list',
