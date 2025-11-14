@@ -1,0 +1,63 @@
+name: CI/CD - Inventario Escolar Pro
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Restaurar Pacotes .NET
+        run: dotnet restore src/Backend/InventarioEscolar.Api/InventarioEscolar.Api.csproj
+
+      - name: Build Backend
+        run: dotnet build src/Backend/InventarioEscolar.Api/InventarioEscolar.Api.csproj --configuration Release
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Instalar dependências do Angular
+        run: |
+          cd frontend/EscolarInventarioApp
+          npm install
+
+      - name: Build do Angular
+        run: |
+          cd frontend/EscolarInventarioApp
+          npm run build
+
+      - name: Docker Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
+      - name: Build & Push API Docker
+        uses: docker/build-push-action@v5
+        with:
+          context: ./src/Backend/InventarioEscolar.Api
+          file: ./src/Backend/InventarioEscolar.Api/Dockerfile
+          push: true
+          tags: juniorlemosoi/inventarioescolarapi:latest
+
+      - name: Build & Push Front Docker
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend/EscolarInventarioApp
+          file: ./frontend/EscolarInventarioApp/Dockerfile
+          push: true
+          tags: juniorlemosoi/inventarioescolarfront:latest
