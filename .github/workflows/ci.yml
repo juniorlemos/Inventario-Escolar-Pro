@@ -49,7 +49,7 @@ jobs:
       - name: Build & Push API Docker
         uses: docker/build-push-action@v5
         with:
-          context: ./src/Backend/InventarioEscolar.Api
+          context: .
           file: ./src/Backend/InventarioEscolar.Api/Dockerfile
           push: true
           tags: juniorlemosoi/inventarioescolarapi:latest
@@ -57,7 +57,7 @@ jobs:
       - name: Build & Push Front Docker
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend/EscolarInventarioApp
+          context: .
           file: ./frontend/EscolarInventarioApp/Dockerfile
           push: true
           tags: juniorlemosoi/inventarioescolarfront:latest
