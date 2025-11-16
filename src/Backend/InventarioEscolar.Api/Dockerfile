@@ -9,8 +9,8 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Copia apenas os arquivos .csproj para restaurar dependências
-COPY ["Backend/InventarioEscolar.Api/InventarioEscolar.Api.csproj", "InventarioEscolar.Api/"]
+# Copia apenas os arquivos .csproj para restaurar dependências (.NET Best Practice)
+COPY ["Backend/InventarioEscolar.Api/InventarioEscolar.Api.csproj", "Backend/InventarioEscolar.Api/"]
 COPY ["Backend/InventarioEscolar.Application/InventarioEscolar.Application.csproj", "Backend/InventarioEscolar.Application/"]
 COPY ["Backend/InventarioEscolar.Domain/InventarioEscolar.Domain.csproj", "Backend/InventarioEscolar.Domain/"]
 COPY ["Backend/InventarioEscolar.Infrastructure/InventarioEscolar.Infrastructure.csproj", "Backend/InventarioEscolar.Infrastructure/"]
@@ -18,7 +18,7 @@ COPY ["Shared/InventarioEscolar.Communication/InventarioEscolar.Communication.cs
 COPY ["Shared/InventarioEscolar.Exceptions/InventarioEscolar.Exceptions.csproj", "Shared/InventarioEscolar.Exceptions/"]
 
 # Restaura pacotes
-RUN dotnet restore "InventarioEscolar.Api/InventarioEscolar.Api.csproj"
+RUN dotnet restore "Backend/InventarioEscolar.Api/InventarioEscolar.Api.csproj"
 
 # Copia todo o restante do código
 COPY . .
