@@ -1,0 +1,18 @@
+<nav class="nav-header">
+  <div class="header-text">
+    <span class="current-screen">{{ titulo }}</span>
+  </div>
+
+  <div class="header-links">
+    <a *ngFor="let item of headerItems"
+       [routerLink]="item.routeLink"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }"
+       class="nav-link">
+      <i [class]="'fa ' + item.icon"></i>
+      <span>{{ item.label }}</span>
+    </a>
+  </div>
+</nav>
+
+

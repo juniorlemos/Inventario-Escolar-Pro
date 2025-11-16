@@ -1,0 +1,119 @@
+
+<div class="card rounded shadow-sm p-3 ">
+
+  <div class="row align-items-center g-3 mb-3">
+  <div class="col-12 col-md-7">
+    <div class="input-group">
+      <span class="input-group-text"><i class="fa fa-search"></i></span>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Pesquisar ..."
+        (input)="onSearchChange($event)"
+      >
+    </div>
+  </div>
+
+  <div class="col-12 col-md-3">
+    <div class="btn-group w-100">
+      <button type="button"
+              class="btn"
+              [ngClass]="statusFiltro === null ? 'btn-primary' : 'btn-outline-primary'"
+              (click)="statusFiltro = null; filtrarPorStatus()">
+        Todas
+      </button>
+      <button type="button"
+              class="btn"
+              [ngClass]="statusFiltro === false ? 'btn-primary' : 'btn-outline-primary'"
+              (click)="statusFiltro = false; filtrarPorStatus()">
+        Ativas
+      </button>
+      <button type="button"
+              class="btn"
+              [ngClass]="statusFiltro === true ? 'btn-primary' : 'btn-outline-primary'"
+              (click)="statusFiltro = true; filtrarPorStatus()">
+        Canceladas
+      </button>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-2 text-md-end">
+    <a class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2"
+       routerLink="/assetmovement/detail-register">
+      <i class="fa fa-plus-circle"></i>
+      <span class="d-none d-sm-inline">Novo</span>
+    </a>
+  </div>
+</div>
+
+  <table class="table table-striped table-hover ">
+    <thead class="thead-dark">
+      <tr>
+      <th style="width: 10%;">Código</th>
+      <th style="width: 20%;">Item</th>
+      <th style="width: 15%;" class="d-none d-md-table-cell">Origem</th>
+      <th style="width: 15%;" class="d-none d-md-table-cell">Destino</th>
+      <th style="width: 10%;" class="d-none d-md-table-cell">Data </th>
+      <th style="width: 10%;" class="d-none d-md-table-cell">Responsavel</th>
+      <th style="width: 10%;"> Cancelamento </th>
+    </tr>
+  </thead>
+<tbody>
+  @for (assetmovement of data; let i = $index; track assetmovement.id) {
+    <tr style="cursor: pointer;" (click)="detalheAsset(assetmovement.id)">
+
+      <td style="width: 10%;">{{ (currentPage - 1) * pageSize + i + 1}}</td>
+      <td style="width: 20%;">{{ assetmovement.asset?.name}}</td>
+      <td style="width: 15%">{{ assetmovement.fromRoom?.name }}</td>
+      <td style="width: 15%;" class="d-none d-md-table-cell">{{ assetmovement.toRoom?.name }}</td>
+      <td style="width: 10%;" >{{ (assetmovement.movedAt | dateFormat:'dd/MM/yyyy') }}</td>
+      <td style="width: 10%;" class=" d-none d-md-table-cell">{{ assetmovement.responsible }}</td>
+
+    <td style="width: 10%; text-align: center;">
+  <a *ngIf="!assetmovement.isCanceled"
+     class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center"
+     (click)="cancelarMovimentacao(assetmovement.id)"
+     title="Cancelar movimentação">
+     <i class="fa fa-ban"></i>
+  </a>
+
+  <span *ngIf="assetmovement.isCanceled"
+      class="btn btn-sm btn-outline-secondary d-flex align-items-center justify-content-center"
+      (click)="informarMovimentacaoCancelada(); $event.stopPropagation()"
+      title="Movimentação já cancelada"
+      style="cursor: default;">
+  <i class="fa fa-ban"></i>
+  <span class="d-none d-sm-inline">&nbsp;Cancelado</span>
+</span>
+</td>
+
+
+  }
+  @empty {
+    <tr>
+      <td colspan="7">Não há itens disponíveis.</td>
+    </tr>
+  }
+</tbody>
+
+</table>
+<div class="d-flex justify-content-center">
+<pagination [boundaryLinks]="true"
+            [align]="true"
+            [totalItems]="totalItems"
+            [itemsPerPage]="pageSize"
+            [(ngModel)]="currentPage"
+            (pageChanged)="pageChanged($event)"
+            pageBtnClass="btn"
+            previousText="&lsaquo;"
+            nextText="&rsaquo;"
+            firstText="&laquo;"
+            lastText="&raquo;">
+</pagination>
+
+</div>
+</div>
+
+
+
+

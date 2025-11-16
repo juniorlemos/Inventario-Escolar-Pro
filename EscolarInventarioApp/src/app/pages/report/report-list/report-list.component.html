@@ -1,0 +1,33 @@
+<div class="report-menu">
+  <button (click)="generateReport('inventory')"
+          [class.active]="selectedReport === 'inventory'">
+    Inventário
+  </button>
+
+  <button (click)="generateReport('by-location')"
+          [class.active]="selectedReport === 'by-location'">
+    Por Localização
+  </button>
+
+  <button (click)="generateReport('movements')"
+          [class.active]="selectedReport === 'movements'">
+    Movimentações
+  </button>
+
+  <button (click)="generateReport('canceled-movements')"
+          [class.active]="selectedReport === 'canceled-movements'">
+    Movimentações Canceladas
+  </button>
+
+  <button (click)="generateReport('conservation')"
+          [class.active]="selectedReport === 'conservation'">
+    Estado de Conservação
+  </button>
+
+  <button (click)="generateReport('by-category')"
+          [class.active]="selectedReport === 'by-category'">
+    Por Categoria
+  </button>
+</div>
+
+<app-report-viewer *ngIf="pdfUrl" [pdfUrl]="pdfUrl"></app-report-viewer>
