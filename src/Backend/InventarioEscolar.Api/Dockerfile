@@ -10,12 +10,12 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Copia apenas os arquivos .csproj para restaurar dependências (.NET Best Practice)
-COPY ["Backend/InventarioEscolar.Api/InventarioEscolar.Api.csproj", "Backend/InventarioEscolar.Api/"]
-COPY ["Backend/InventarioEscolar.Application/InventarioEscolar.Application.csproj", "Backend/InventarioEscolar.Application/"]
-COPY ["Backend/InventarioEscolar.Domain/InventarioEscolar.Domain.csproj", "Backend/InventarioEscolar.Domain/"]
-COPY ["Backend/InventarioEscolar.Infrastructure/InventarioEscolar.Infrastructure.csproj", "Backend/InventarioEscolar.Infrastructure/"]
-COPY ["Shared/InventarioEscolar.Communication/InventarioEscolar.Communication.csproj", "Shared/InventarioEscolar.Communication/"]
-COPY ["Shared/InventarioEscolar.Exceptions/InventarioEscolar.Exceptions.csproj", "Shared/InventarioEscolar.Exceptions/"]
+COPY ["src/Backend/InventarioEscolar.Api/InventarioEscolar.Api.csproj", "Backend/InventarioEscolar.Api/"]
+COPY ["src/Backend/InventarioEscolar.Application/InventarioEscolar.Application.csproj", "Backend/InventarioEscolar.Application/"]
+COPY ["src/Backend/InventarioEscolar.Domain/InventarioEscolar.Domain.csproj", "Backend/InventarioEscolar.Domain/"]
+COPY ["src/Backend/InventarioEscolar.Infrastructure/InventarioEscolar.Infrastructure.csproj", "Backend/InventarioEscolar.Infrastructure/"]
+COPY ["src/Shared/InventarioEscolar.Communication/InventarioEscolar.Communication.csproj", "Shared/InventarioEscolar.Communication/"]
+COPY ["src/Shared/InventarioEscolar.Exceptions/InventarioEscolar.Exceptions.csproj", "Shared/InventarioEscolar.Exceptions/"]
 
 # Restaura pacotes
 RUN dotnet restore "Backend/InventarioEscolar.Api/InventarioEscolar.Api.csproj"
