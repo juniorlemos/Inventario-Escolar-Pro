@@ -58,7 +58,7 @@ jobs:
       - name: Build & Push Front Docker
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./frontend/EscolarInventarioApp
           file: ./frontend/EscolarInventarioApp/Dockerfile
           push: true
           tags: juniorlemosoi/inventarioescolarfront:latest
