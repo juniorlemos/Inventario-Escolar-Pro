@@ -3,6 +3,7 @@ using InventarioEscolar.Domain.Enums;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using System.Globalization;
 
 namespace InventarioEscolar.Infrastructure.Reports.AssetByLocation
 {
@@ -204,7 +205,7 @@ namespace InventarioEscolar.Infrastructure.Reports.AssetByLocation
                     table.Cell().Background(bgColor).Padding(padding).Text(asset.SerieNumber?.ToString() ?? "-");
                     table.Cell().Background(bgColor).Padding(padding).Text(asset.Category?.Name ?? "-");
                     table.Cell().Background(bgColor).Padding(padding).Text(estado).FontColor(estadoColor);
-                    table.Cell().Background(bgColor).Padding(padding).Text(asset.AcquisitionValue.HasValue ? asset.AcquisitionValue.Value.ToString("C2") : "-");
+                    table.Cell().Background(bgColor).Padding(padding).Text(asset.AcquisitionValue.HasValue ? asset.AcquisitionValue.Value.ToString("C2", new CultureInfo("pt-BR")) : "-");
                     table.Cell().Background(bgColor).Padding(padding).Text(asset.CreatedOn.ToString("dd/MM/yyyy"));
                 }
 

@@ -13,10 +13,17 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "http://frontend")
+        policy.WithOrigins("http://localhost","http://localhost:4200", "http://frontend")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
+    });
+
+    options.AddPolicy("DevCors", policy =>
+    {
+        policy.AllowAnyOrigin()  
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
@@ -47,10 +54,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("DevCors");
 }
 else
 {
     app.UseHttpsRedirection();
+    app.UseCors("AllowSpecificOrigins");
 }
 
 using (var scope = app.Services.CreateScope())
@@ -59,7 +68,6 @@ using (var scope = app.Services.CreateScope())
     await DataSeeder.SeedDatabaseAsync(services);
 }
 
-app.UseCors("AllowSpecificOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

@@ -25,9 +25,10 @@ import { ForgotPasswordComponent } from './pages/auth/forgot-password/forgot-pas
 import { authGuard } from './core/Gaurd/auth.guard';
 import { ForgotPasswordConfirmationComponent } from './pages/auth/forgot-password-confirmation/forgot-password-confirmation.component';
 import { ResetPasswordComponent } from './pages/auth/reset-password/reset-password.component';
+import { redirectGuard } from './core/Gaurd/redirect.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '', canActivate: [redirectGuard], pathMatch: 'full' },
 
   { path: 'login', component: LoginComponent, title: 'Inventario360 – Login' },
   { path: 'forgot-password', component: ForgotPasswordComponent, title: 'Inventario360 – Esqueci minha senha' },

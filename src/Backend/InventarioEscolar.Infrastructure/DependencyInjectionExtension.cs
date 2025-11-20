@@ -37,7 +37,7 @@ namespace InventarioEscolar.Infrastructure
     {
         public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            AddDbContext_SqlServer(services, configuration);
+            AddDbContext_PostgreSql(services, configuration);
             AddRepositories(services);
             AddIdentity(services);
             AddReports(services);
@@ -62,7 +62,7 @@ namespace InventarioEscolar.Infrastructure
         
         private static void AddDbContext_SqlServer(IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = configuration.ConnectionString();
+            var connectionString = configuration.ConnectionStringSQLServer();
 
             services.AddDbContext<InventarioEscolarProDBContext>(dbContextOptions =>
             {
@@ -70,6 +70,15 @@ namespace InventarioEscolar.Infrastructure
             });
         }
 
+        private static void AddDbContext_PostgreSql(IServiceCollection services, IConfiguration configuration)
+        {
+            var connectionString = configuration.ConnectionStringPostgres();
+
+            services.AddDbContext<InventarioEscolarProDBContext>(dbContextOptions =>
+            {
+                dbContextOptions.UseNpgsql(connectionString);
+            });
+        }
         private static void AddRepositories(IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();

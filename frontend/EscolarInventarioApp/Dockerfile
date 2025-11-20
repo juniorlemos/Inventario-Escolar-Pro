@@ -13,7 +13,11 @@ RUN npm run build -- --configuration=production --project=EscolarInventarioApp
 FROM nginx:alpine
 RUN rm -rf /usr/share/nginx/html/*
 
+# Copia o build do Angular (pasta correta!)
 COPY --from=build /app/dist/escolar-inventario-app /usr/share/nginx/html
+
+# Copia configuração customizada do Nginx
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

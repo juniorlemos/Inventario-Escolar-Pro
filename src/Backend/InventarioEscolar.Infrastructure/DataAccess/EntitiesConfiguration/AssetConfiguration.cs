@@ -10,7 +10,7 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
         {
             builder.ToTable("Assets", tb =>
             {
-                tb.HasCheckConstraint("CK_Asset_Name_MinLength", "LEN(Name) >= 2");
+                tb.HasCheckConstraint("CK_Asset_Name_MinLength", "LENGTH(\"Name\") >= 2");
             });
 
             builder.HasKey(x => x.Id);

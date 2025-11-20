@@ -1,45 +1,49 @@
+
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sqlserver
+  postgres:
+    image: postgres:16
+    container_name: inventario_postgres
+    restart: always
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=Teste123@
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: INVENTARIOESCOLAR
     ports:
-      - "1433:1433"
+      - "5432:5432"
     volumes:
-      - sqlserver_data:/var/opt/mssql
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - inventario-network
-    healthcheck:
-      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/1433"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    
-  inventarioescolar.api:
-    image: ${DOCKER_REGISTRY-}inventarioescolarapi
+      - inventario_net
+
+  api:
     build:
       context: .
       dockerfile: src/Backend/InventarioEscolar.Api/Dockerfile
+    container_name: inventario_api
     depends_on:
-      sqlserver:
-        condition: service_healthy
+      - postgres
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=INVENTARIOESCOLAR;Username=postgres;Password=123456"
+    ports:
+      - "8080:8080"
     networks:
-      - inventario-network
+      - inventario_net
 
   frontend:
     build:
       context: ./frontend/EscolarInventarioApp
       dockerfile: Dockerfile
+    container_name: inventario_front
     ports:
-      - "4200:80"
+      - "80:80"
+    depends_on:
+      - api
     networks:
-      - inventario-network
+      - inventario_net
 
 networks:
-  inventario-network:
-    driver: bridge
+  inventario_net:
 
 volumes:
-  sqlserver_data:
+  postgres_data:

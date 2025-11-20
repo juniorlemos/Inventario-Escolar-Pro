@@ -20,7 +20,7 @@ namespace InventarioEscolar.Infrastructure.DataAccess.Factory
                 .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<InventarioEscolarProDBContext>();
-            optionsBuilder.UseSqlServer(configuration.ConnectionString());
+            optionsBuilder.UseNpgsql(configuration.ConnectionStringPostgres());
 
             var fakeCurrentUserService = new FakeCurrentUserService();
 

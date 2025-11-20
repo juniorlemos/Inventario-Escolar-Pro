@@ -9,7 +9,7 @@ namespace InventarioEscolar.Api.Configurations
         public static void ConfigureSerilog(WebApplicationBuilder builder)
         {
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug() // ou .Information() em produção
+                .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()

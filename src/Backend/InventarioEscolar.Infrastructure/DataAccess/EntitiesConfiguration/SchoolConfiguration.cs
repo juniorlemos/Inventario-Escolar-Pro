@@ -11,7 +11,7 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
 
             builder.ToTable("Schools", tb =>
             {
-                tb.HasCheckConstraint("CK_Schools_Name_MinLength", "LEN(Name) >= 2");
+                tb.HasCheckConstraint("CK_Schools_Name_MinLength", "LENGTH(\"Name\") >= 2");
             });
 
             builder.HasKey(s => s.Id);
@@ -32,12 +32,10 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
             builder.HasIndex(s => s.Name)
                    .IsUnique();
             builder.HasIndex(s => s.Inep)
-                   .IsUnique()
-                   .HasFilter("[Inep] IS NOT NULL");
+                   .IsUnique();
 
             builder.HasIndex(s => s.Address)
-                   .IsUnique()
-                   .HasFilter("[Address] IS NOT NULL");
+                   .IsUnique();
 
             builder.HasMany(s => s.Users)
                    .WithOne(u => u.School)

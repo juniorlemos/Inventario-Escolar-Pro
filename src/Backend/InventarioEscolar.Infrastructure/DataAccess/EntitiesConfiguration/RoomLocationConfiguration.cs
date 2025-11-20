@@ -10,7 +10,7 @@ namespace InventarioEscolar.Infrastructure.DataAccess.EntitiesConfiguration
         {
             builder.ToTable("RoomLocations", tb =>
             {
-                tb.HasCheckConstraint("CK_RoomLocation_Name_MinLength", "LEN(Name) >= 2");
+                tb.HasCheckConstraint("CK_RoomLocation_Name_MinLength", "LENGTH(\"Name\") >= 2");
             });
 
             builder.HasKey(x => x.Id);
