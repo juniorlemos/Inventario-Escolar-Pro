@@ -22,10 +22,10 @@ import { RoomLocationListComponent } from './pages/room-location/room-location-l
 import { RoomLocationDetailComponent } from './pages/room-location/room-location-detail/room-location-detail.component';
 import { LoginComponent } from './pages/auth/login/login/login.component';
 import { ForgotPasswordComponent } from './pages/auth/forgot-password/forgot-password/forgot-password.component';
-import { authGuard } from './core/Gaurd/auth.guard';
+import { authGuard } from './core/guard/auth.guard';
 import { ForgotPasswordConfirmationComponent } from './pages/auth/forgot-password-confirmation/forgot-password-confirmation.component';
 import { ResetPasswordComponent } from './pages/auth/reset-password/reset-password.component';
-import { redirectGuard } from './core/Gaurd/redirect.guard';
+import { redirectGuard } from './core/guard/redirect.guard';
 
 export const routes: Routes = [
   { path: '', canActivate: [redirectGuard], pathMatch: 'full' },
