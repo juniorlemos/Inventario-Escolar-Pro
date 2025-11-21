@@ -25,7 +25,6 @@ import { ForgotPasswordComponent } from './pages/auth/forgot-password/forgot-pas
 import { authGuard } from './core/guard/auth.guard';
 import { ForgotPasswordConfirmationComponent } from './pages/auth/forgot-password-confirmation/forgot-password-confirmation.component';
 import { ResetPasswordComponent } from './pages/auth/reset-password/reset-password.component';
-import { redirectGuard } from './core/guard/redirect.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full' },
