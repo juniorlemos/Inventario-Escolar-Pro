@@ -28,7 +28,7 @@ import { ResetPasswordComponent } from './pages/auth/reset-password/reset-passwo
 import { redirectGuard } from './core/guard/redirect.guard';
 
 export const routes: Routes = [
-  { path: '', canActivate: [redirectGuard], pathMatch: 'full' },
+  { path: '', pathMatch: 'full' },
 
   { path: 'login', component: LoginComponent, title: 'Inventario360 – Login' },
   { path: 'forgot-password', component: ForgotPasswordComponent, title: 'Inventario360 – Esqueci minha senha' },
