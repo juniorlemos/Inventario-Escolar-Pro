@@ -13,10 +13,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("http://localhost","http://localhost:4200", "http://frontend")
+        policy.WithOrigins("https://inventario360-frontend.onrender.com")
               .AllowAnyMethod()
               .AllowAnyHeader()
-              .AllowCredentials();
+              .AllowCredentials()
+              .WithExposedHeaders("*");
     });
 
     options.AddPolicy("DevCors", policy =>
