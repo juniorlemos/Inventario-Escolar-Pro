@@ -24,12 +24,12 @@ namespace InventarioEscolar.Application.UsesCases.AuthService.LoginAuth
            .FirstOrDefaultAsync(u => u.Email == request.Request.Email);
 
             if (user == null)
-                throw new UnauthorizedException(ResourceMessagesException.INVALID_USERNAME_OR_PASSWORD);
+                throw new UnauthorizedException("Usuário ou senha inválidos.");
 
             var result = await signInManagerWrapper.CheckPasswordSignInAsync(user, request.Request.Password, false);
 
             if (!result.Succeeded)
-                throw new UnauthorizedException(ResourceMessagesException.INVALID_USERNAME_OR_PASSWORD);
+                throw new UnauthorizedException("Usuário ou senha inválidos.");
 
             var accessToken = jwtTokenGenerator.GenerateToken(user);
 
