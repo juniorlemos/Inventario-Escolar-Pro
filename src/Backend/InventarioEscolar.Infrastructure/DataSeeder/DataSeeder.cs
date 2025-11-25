@@ -161,6 +161,40 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
             }
 
             await context.SaveChangesAsync();
+
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            if (!await roleManager.RoleExistsAsync("Admin"))
+            {
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
+            }
+
+            
+            var admin = await userManager.FindByEmailAsync("admin@admin.com");
+
+            if (admin == null)
+            {
+                admin = new ApplicationUser
+                {
+                    UserName = "admin@admin.com",
+                    Email = "admin@admin.com",
+                    EmailConfirmed = true
+                };
+
+                var result = await userManager.CreateAsync(admin, "Admin@123");
+
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(admin, "Admin");
+                }
+            }
+            else
+            {
+                
+                if (!await userManager.IsInRoleAsync(admin, "Admin"))
+                    await userManager.AddToRoleAsync(admin, "Admin");
+            }
         }
+
     }
 }
