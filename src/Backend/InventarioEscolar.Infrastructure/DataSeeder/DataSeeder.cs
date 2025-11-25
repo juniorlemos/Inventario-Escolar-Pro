@@ -162,11 +162,15 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
 
             await context.SaveChangesAsync();
 
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
 
             if (!await roleManager.RoleExistsAsync("Admin"))
             {
-                await roleManager.CreateAsync(new IdentityRole("Admin"));
+                await roleManager.CreateAsync(new ApplicationRole
+                {
+                    Name = "Admin",
+                    NormalizedName = "ADMIN"
+                });
             }
 
             
