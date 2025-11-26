@@ -34,7 +34,6 @@ namespace InventarioEscolar.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
         [Route("{id}")]
         [ProducesResponseType(typeof(ResponseSchoolJson), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
@@ -48,7 +47,6 @@ namespace InventarioEscolar.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ResponsePagedJson<ResponseSchoolJson>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAll(
@@ -66,7 +64,6 @@ namespace InventarioEscolar.Api.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "Admin")]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
@@ -82,7 +79,6 @@ namespace InventarioEscolar.Api.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "Admin")]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
