@@ -14,12 +14,16 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<InventarioEscolarProDBContext>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
 
             await context.Database.MigrateAsync();
 
             // =============================
             // ESCOLA, CATEGORIAS E SALAS
             // =============================
+
+
+           
             if (!await context.Schools.AnyAsync())
             {
                 var escola = new School
@@ -30,6 +34,33 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                     City = "Quixeramobim"
                 };
 
+                await context.Schools.AddAsync(escola);
+                await context.SaveChangesAsync();
+
+                var user = new ApplicationUser
+                {
+                    UserName = "admin@escola.com",
+                    Email = "admin@escola.com",
+                    EmailConfirmed = true,
+                    SchoolId = escola.Id,
+                    School = escola
+                };
+
+                var result = await userManager.CreateAsync(user, "Admin@123");
+
+                if (result.Succeeded)
+                {
+                    if (!await roleManager.RoleExistsAsync("Admin"))
+                    {
+                        await roleManager.CreateAsync(new ApplicationRole
+                        {
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
+                    }
+
+                    await userManager.AddToRoleAsync(user, "Admin");
+                }
                 // Categorias
                 var categorias = new[]
                 {
@@ -142,62 +173,8 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                 await context.SaveChangesAsync();
             }
 
-            // =============================
-            // USUÁRIO PADRÃO
-            // =============================
-            if (!await userManager.Users.AnyAsync())
-            {
-                var escola = await context.Schools.FirstAsync();
-
-                var user = new ApplicationUser
-                {
-                    UserName = "admin@escola.com",
-                    Email = "admin@escola.com",
-                    EmailConfirmed = true,
-                    SchoolId = escola.Id
-                };
-
-                await userManager.CreateAsync(user, "Admin@123");
-            }
-
-            await context.SaveChangesAsync();
-
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-
-            if (!await roleManager.RoleExistsAsync("Admin"))
-            {
-                await roleManager.CreateAsync(new ApplicationRole
-                {
-                    Name = "Admin",
-                    NormalizedName = "ADMIN"
-                });
-            }
-
-            
-            var admin = await userManager.FindByEmailAsync("admin@admin.com");
-
-            if (admin == null)
-            {
-                admin = new ApplicationUser
-                {
-                    UserName = "admin@admin.com",
-                    Email = "admin@admin.com",
-                    EmailConfirmed = true
-                };
-
-                var result = await userManager.CreateAsync(admin, "Admin@123");
-
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(admin, "Admin");
-                }
-            }
-            else
-            {
-                
-                if (!await userManager.IsInRoleAsync(admin, "Admin"))
-                    await userManager.AddToRoleAsync(admin, "Admin");
-            }
+       
+      
         }
 
     }
