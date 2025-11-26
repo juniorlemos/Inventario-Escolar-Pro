@@ -100,14 +100,18 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                     new RoomLocation { Name = "Depósito de Materiais", Building = "Bloco H", Description = "Área destinada ao armazenamento de equipamentos e materiais.", School = escola }
                 };
 
+            if (!context.Categories.Any())
+            {
+
                 await context.Categories.AddRangeAsync(categorias);
                 await context.RoomLocations.AddRangeAsync(salas);
                 await context.SaveChangesAsync();
 
-                // =============================
-                // ATIVOS
-                // =============================
-                var ativos = new[]
+            }
+            // =============================
+            // ATIVOS
+            // =============================
+            var ativos = new[]
                 {
                 // ==== Informática ====
                     new Asset { Name = "Computador Dell Optiplex", Description = "Desktop Core i5 com 8GB RAM", PatrimonyCode = 1001, AcquisitionValue = 3500.00m, ConservationState = ConservationState.Novo, CategoryId = categorias.First(c => c.Name == "Informática").Id, RoomLocationId = salas.First(s => s.Name == "Laboratório de Informática").Id, SchoolId = escola.Id },
@@ -150,15 +154,16 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                     new Asset { Name = "Tabela de Basquete", Description = "Estrutura metálica com aro e tabela", PatrimonyCode = 8004, AcquisitionValue = 1800.00m, ConservationState = ConservationState.Regular, CategoryId = categorias.First(c => c.Name == "Esporte e Lazer").Id, RoomLocationId = salas.First(s => s.Name == "Quadra Poliesportiva").Id, SchoolId = escola.Id },
                     new Asset { Name = "Troféu de Campeão Escolar", Description = "Troféu de metal dourado", PatrimonyCode = 8005, AcquisitionValue = 180.00m, ConservationState = ConservationState.Bom, CategoryId = categorias.First(c => c.Name == "Esporte e Lazer").Id, RoomLocationId = salas.First(s => s.Name == "Diretoria").Id, SchoolId = escola.Id }
                 };
-
+            if (!context.Assets.Any())
+            {
 
                 await context.Assets.AddRangeAsync(ativos);
                 await context.SaveChangesAsync();
-
-                // =============================
-                // MOVIMENTAÇÕES DE ATIVOS
-                // =============================
-                var movimentacoes = new[]
+            }
+            // =============================
+            // MOVIMENTAÇÕES DE ATIVOS
+            // =============================
+            var movimentacoes = new[]
                 {
                     new AssetMovement { Asset = ativos.First(a => a.Name == "Computador Dell Optiplex"), FromRoom = salas.First(s => s.Name == "Diretoria"), ToRoom = salas.First(s => s.Name == "Laboratório de Informática"), Responsible = "João Silva", MovedAt = DateTime.UtcNow.AddDays(-30), SchoolId = escola.Id },
                     new AssetMovement { Asset = ativos.First(a => a.Name == "Projetor Epson"), FromRoom = salas.First(s => s.Name == "Laboratório de Informática"), ToRoom = salas.First(s => s.Name == "Auditório"), Responsible = "Maria Oliveira", MovedAt = DateTime.UtcNow.AddDays(-25), SchoolId = escola.Id },
@@ -176,14 +181,15 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                     new AssetMovement { Asset = ativos.First(a => a.Name == "Bebedouro Elétrico"), FromRoom = salas.First(s => s.Name == "Depósito de Materiais"), ToRoom = salas.First(s => s.Name == "Refeitório"), Responsible = "Daniel Castro", MovedAt = DateTime.UtcNow.AddDays(-5), SchoolId = escola.Id },
                     new AssetMovement { Asset = ativos.First(a => a.Name == "Quadro Branco"), FromRoom = salas.First(s => s.Name == "Depósito de Materiais"), ToRoom = salas.First(s => s.Name == "Laboratório de Informática"), Responsible = "Rafael Silva", MovedAt = DateTime.UtcNow.AddDays(-3), SchoolId = escola.Id }
                 };
-
+            if (!context.AssetMovements.Any())
+            {
                 await context.AssetMovements.AddRangeAsync(movimentacoes);
                 await context.SaveChangesAsync();
             }
-
-       
-      
         }
+
+
+    }
 
     }
 
