@@ -186,4 +186,4 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
         }
 
     }
-}
+
