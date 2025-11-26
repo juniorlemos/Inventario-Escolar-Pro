@@ -7,11 +7,19 @@ using System.Linq.Expressions;
 
 namespace InventarioEscolar.Infrastructure.DataAccess
 {
-    public class InventarioEscolarProDBContext(
-        DbContextOptions<InventarioEscolarProDBContext> options,
-        ICurrentUserService currentUserService)
-        : IdentityDbContext<ApplicationUser, ApplicationRole, long>(options)
+    public class InventarioEscolarProDBContext
+        : IdentityDbContext<ApplicationUser, ApplicationRole, long>
     {
+        private readonly ICurrentUserService _currentUserService;
+
+        public InventarioEscolarProDBContext(
+            DbContextOptions<InventarioEscolarProDBContext> options,
+            ICurrentUserService currentUserService)
+            : base(options)
+        {
+            _currentUserService = currentUserService;
+        }
+
         public DbSet<Asset> Assets { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<RoomLocation> RoomLocations { get; set; }
@@ -22,7 +30,8 @@ namespace InventarioEscolar.Infrastructure.DataAccess
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(InventarioEscolarProDBContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(
+                typeof(InventarioEscolarProDBContext).Assembly);
 
             var schoolEntityType = typeof(ISchoolEntity);
 
@@ -30,14 +39,13 @@ namespace InventarioEscolar.Infrastructure.DataAccess
             {
                 var clrType = entityType.ClrType;
 
-                // Ignora Identity
                 if (clrType.Namespace?.StartsWith("Microsoft.AspNetCore.Identity") == true)
                     continue;
 
                 var parameter = Expression.Parameter(clrType, "e");
                 Expression? filter = null;
 
-                // FILTRO: Active == true
+                // FILTRO Active == true
                 var activeProp = clrType.GetProperty("Active");
                 if (activeProp is not null && activeProp.PropertyType == typeof(bool))
                 {
@@ -50,7 +58,7 @@ namespace InventarioEscolar.Infrastructure.DataAccess
                     filter = activeFilter;
                 }
 
-                // FILTRO: SchoolId == CurrentUser.SchoolId
+                // FILTRO SchoolId
                 if (schoolEntityType.IsAssignableFrom(clrType))
                 {
                     var schoolIdAttr = Expression.Call(
@@ -58,9 +66,7 @@ namespace InventarioEscolar.Infrastructure.DataAccess
                         parameter,
                         Expression.Constant("SchoolId"));
 
-                    var currentSchoolId = Expression.Property(
-                        Expression.Constant(currentUserService),
-                        nameof(ICurrentUserService.SchoolId));
+                    var currentSchoolId = Expression.Constant(_currentUserService.SchoolId);
 
                     var schoolFilter = Expression.Equal(schoolIdAttr, currentSchoolId);
 
@@ -69,13 +75,19 @@ namespace InventarioEscolar.Infrastructure.DataAccess
                         : schoolFilter;
                 }
 
-                // APLICA O FILTRO
                 if (filter != null)
                 {
                     var lambda = Expression.Lambda(filter, parameter);
                     modelBuilder.Entity(clrType).HasQueryFilter(lambda);
                 }
             }
+
+            // FILTRO DO APPLICATIONUSER
+            modelBuilder.Entity<ApplicationUser>()
+                .HasQueryFilter(u =>
+                    !_currentUserService.IsAuthenticated ||
+                    u.SchoolId == _currentUserService.SchoolId
+                );
         }
     }
 }
