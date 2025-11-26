@@ -18,50 +18,59 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
 
             await context.Database.MigrateAsync();
 
-            // =============================
-            // ESCOLA, CATEGORIAS E SALAS
-            // =============================
+          
 
 
-           
-            if (!await context.Schools.AnyAsync())
+            var escola = await context.Schools.FirstOrDefaultAsync();
+            if (escola == null)
             {
-                var escola = new School
+                escola = new School
                 {
-                    Name = "Escola Municipal Modelo",
-                    Inep = "12345678",
-                    Address = "Rua Principal, Centro",
-                    City = "Quixeramobim"
+                    Name = "Escola Central",
+                    Address = "Rua Principal, 123",
                 };
 
                 await context.Schools.AddAsync(escola);
                 await context.SaveChangesAsync();
+            }
 
-                var user = new ApplicationUser
+            if (!await roleManager.RoleExistsAsync("Admin"))
+            {
+                await roleManager.CreateAsync(new ApplicationRole
+                {
+                    Name = "Admin",
+                    NormalizedName = "ADMIN"
+                });
+            }
+
+   
+            var adminUser = await userManager.FindByEmailAsync("admin@escola.com");
+
+            if (adminUser == null)
+            {
+                adminUser = new ApplicationUser
                 {
                     UserName = "admin@escola.com",
                     Email = "admin@escola.com",
                     EmailConfirmed = true,
-                    SchoolId = escola.Id,
-                    School = escola
+                    SchoolId = escola.Id
                 };
 
-                var result = await userManager.CreateAsync(user, "Admin@123");
+                var result = await userManager.CreateAsync(adminUser, "Admin@123");
 
-                if (result.Succeeded)
+                if (!result.Succeeded)
                 {
-                    if (!await roleManager.RoleExistsAsync("Admin"))
-                    {
-                        await roleManager.CreateAsync(new ApplicationRole
-                        {
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        });
-                    }
-
-                    await userManager.AddToRoleAsync(user, "Admin");
+                    throw new Exception("Falha ao criar admin: " +
+                        string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
-                // Categorias
+            }
+
+       
+            if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+            {
+                await userManager.AddToRoleAsync(adminUser, "Admin");
+            }
+
                 var categorias = new[]
                 {
                     new Category { Name = "Informática", Description = "Equipamentos e acessórios de tecnologia utilizados nas aulas e escritórios.", School = escola },
@@ -91,7 +100,6 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                     new RoomLocation { Name = "Depósito de Materiais", Building = "Bloco H", Description = "Área destinada ao armazenamento de equipamentos e materiais.", School = escola }
                 };
 
-                await context.Schools.AddAsync(escola);
                 await context.Categories.AddRangeAsync(categorias);
                 await context.RoomLocations.AddRangeAsync(salas);
                 await context.SaveChangesAsync();
