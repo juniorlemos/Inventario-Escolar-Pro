@@ -13,32 +13,30 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
         {
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<InventarioEscolarProDBContext>();
-
-            context.DisableGlobalFilters = true;
-
-
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
 
-
             await context.Database.MigrateAsync();
 
-          
-
-
-            var escola = await context.Schools.FirstOrDefaultAsync();
+            // ============================================
+            // 1️⃣ Criar escola padrão
+            // ============================================
+            var escola = await context.Schools.IgnoreQueryFilters().FirstOrDefaultAsync();
             if (escola == null)
             {
                 escola = new School
                 {
                     Name = "Escola Central",
-                    Address = "Rua Principal, 123",
+                    Active = true
                 };
 
-                await context.Schools.AddAsync(escola);
+                context.Schools.Add(escola);
                 await context.SaveChangesAsync();
             }
 
+            // ============================================
+            // 2️⃣ Criar role Admin
+            // ============================================
             if (!await roleManager.RoleExistsAsync("Admin"))
             {
                 await roleManager.CreateAsync(new ApplicationRole
@@ -48,7 +46,9 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                 });
             }
 
-   
+            // ============================================
+            // 3️⃣ Criar usuário administrador
+            // ============================================
             var adminUser = await userManager.FindByEmailAsync("admin@escola.com");
 
             if (adminUser == null)
@@ -61,20 +61,23 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                     SchoolId = escola.Id
                 };
 
-                var result = await userManager.CreateAsync(adminUser, "Admin@123");
+                var createResult = await userManager.CreateAsync(adminUser, "Admin123!");
 
-                if (!result.Succeeded)
-                {
-                    throw new Exception("Falha ao criar admin: " +
-                        string.Join(", ", result.Errors.Select(e => e.Description)));
-                }
+                if (!createResult.Succeeded)
+                    throw new Exception(string.Join(", ", createResult.Errors.Select(e => e.Description)));
             }
 
-       
+            // Garantir role Admin
             if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
             {
                 await userManager.AddToRoleAsync(adminUser, "Admin");
             }
+
+            // ============================================
+            // 4️⃣ Criar Categorias e Salas
+            // ============================================
+            if (!context.Categories.Any())
+            {
 
                 var categorias = new[]
                 {
@@ -105,19 +108,19 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                     new RoomLocation { Name = "Depósito de Materiais", Building = "Bloco H", Description = "Área destinada ao armazenamento de equipamentos e materiais.", School = escola }
                 };
 
-            if (!context.Categories.Any())
-            {
-
-                await context.Categories.AddRangeAsync(categorias);
-                await context.RoomLocations.AddRangeAsync(salas);
-                await context.SaveChangesAsync();
-
-            }
-            // =============================
-            // ATIVOS
-            // =============================
-            var ativos = new[]
+                if (!context.Categories.Any())
                 {
+
+                    await context.Categories.AddRangeAsync(categorias);
+                    await context.RoomLocations.AddRangeAsync(salas);
+                    await context.SaveChangesAsync();
+
+                }
+                // =============================
+                // ATIVOS
+                // =============================
+                var ativos = new[]
+                    {
                 // ==== Informática ====
                     new Asset { Name = "Computador Dell Optiplex", Description = "Desktop Core i5 com 8GB RAM", PatrimonyCode = 1001, AcquisitionValue = 3500.00m, ConservationState = ConservationState.Novo, CategoryId = categorias.First(c => c.Name == "Informática").Id, RoomLocationId = salas.First(s => s.Name == "Laboratório de Informática").Id, SchoolId = escola.Id },
                     new Asset { Name = "Projetor Epson", Description = "Projetor multimídia 3000 lumens", PatrimonyCode = 1005, AcquisitionValue = 2100.00m, ConservationState = ConservationState.Danificado, CategoryId = categorias.First(c => c.Name == "Informática").Id, RoomLocationId = salas.First(s => s.Name == "Auditório").Id, SchoolId = escola.Id },
@@ -159,17 +162,17 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                     new Asset { Name = "Tabela de Basquete", Description = "Estrutura metálica com aro e tabela", PatrimonyCode = 8004, AcquisitionValue = 1800.00m, ConservationState = ConservationState.Regular, CategoryId = categorias.First(c => c.Name == "Esporte e Lazer").Id, RoomLocationId = salas.First(s => s.Name == "Quadra Poliesportiva").Id, SchoolId = escola.Id },
                     new Asset { Name = "Troféu de Campeão Escolar", Description = "Troféu de metal dourado", PatrimonyCode = 8005, AcquisitionValue = 180.00m, ConservationState = ConservationState.Bom, CategoryId = categorias.First(c => c.Name == "Esporte e Lazer").Id, RoomLocationId = salas.First(s => s.Name == "Diretoria").Id, SchoolId = escola.Id }
                 };
-            if (!context.Assets.Any())
-            {
-
-                await context.Assets.AddRangeAsync(ativos);
-                await context.SaveChangesAsync();
-            }
-            // =============================
-            // MOVIMENTAÇÕES DE ATIVOS
-            // =============================
-            var movimentacoes = new[]
+                if (!context.Assets.Any())
                 {
+
+                    await context.Assets.AddRangeAsync(ativos);
+                    await context.SaveChangesAsync();
+                }
+                // =============================
+                // MOVIMENTAÇÕES DE ATIVOS
+                // =============================
+                var movimentacoes = new[]
+                    {
                     new AssetMovement { Asset = ativos.First(a => a.Name == "Computador Dell Optiplex"), FromRoom = salas.First(s => s.Name == "Diretoria"), ToRoom = salas.First(s => s.Name == "Laboratório de Informática"), Responsible = "João Silva", MovedAt = DateTime.UtcNow.AddDays(-30), SchoolId = escola.Id },
                     new AssetMovement { Asset = ativos.First(a => a.Name == "Projetor Epson"), FromRoom = salas.First(s => s.Name == "Laboratório de Informática"), ToRoom = salas.First(s => s.Name == "Auditório"), Responsible = "Maria Oliveira", MovedAt = DateTime.UtcNow.AddDays(-25), SchoolId = escola.Id },
                     new AssetMovement { Asset = ativos.First(a => a.Name == "Cadeira Giratória"), FromRoom = salas.First(s => s.Name == "Diretoria"), ToRoom = salas.First(s => s.Name == "Sala dos Professores"), Responsible = "Carlos Mendes", MovedAt = DateTime.UtcNow.AddDays(-22), SchoolId = escola.Id },
@@ -186,15 +189,16 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                     new AssetMovement { Asset = ativos.First(a => a.Name == "Bebedouro Elétrico"), FromRoom = salas.First(s => s.Name == "Depósito de Materiais"), ToRoom = salas.First(s => s.Name == "Refeitório"), Responsible = "Daniel Castro", MovedAt = DateTime.UtcNow.AddDays(-5), SchoolId = escola.Id },
                     new AssetMovement { Asset = ativos.First(a => a.Name == "Quadro Branco"), FromRoom = salas.First(s => s.Name == "Depósito de Materiais"), ToRoom = salas.First(s => s.Name == "Laboratório de Informática"), Responsible = "Rafael Silva", MovedAt = DateTime.UtcNow.AddDays(-3), SchoolId = escola.Id }
                 };
-            if (!context.AssetMovements.Any())
-            {
-                await context.AssetMovements.AddRangeAsync(movimentacoes);
-                await context.SaveChangesAsync();
+                if (!context.AssetMovements.Any())
+                {
+                    await context.AssetMovements.AddRangeAsync(movimentacoes);
+                    await context.SaveChangesAsync();
+                }
             }
+
+
         }
 
-
     }
-
-    }
+}
 

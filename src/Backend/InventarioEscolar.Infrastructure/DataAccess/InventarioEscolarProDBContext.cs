@@ -9,7 +9,8 @@ namespace InventarioEscolar.Infrastructure.DataAccess
 {
     public class InventarioEscolarProDBContext(
         DbContextOptions<InventarioEscolarProDBContext> options,
-        ICurrentUserService currentUserService) : IdentityDbContext<ApplicationUser, ApplicationRole, long>(options)
+        ICurrentUserService currentUserService)
+        : IdentityDbContext<ApplicationUser, ApplicationRole, long>(options)
     {
         public DbSet<Asset> Assets { get; set; }
         public DbSet<Category> Categories { get; set; }
@@ -17,7 +18,6 @@ namespace InventarioEscolar.Infrastructure.DataAccess
         public DbSet<School> Schools { get; set; }
         public DbSet<AssetMovement> AssetMovements { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
-        public bool DisableGlobalFilters { get; set; } = false;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,58 +30,49 @@ namespace InventarioEscolar.Infrastructure.DataAccess
             {
                 var clrType = entityType.ClrType;
 
+                // Ignora Identity
                 if (clrType.Namespace?.StartsWith("Microsoft.AspNetCore.Identity") == true)
                     continue;
 
                 var parameter = Expression.Parameter(clrType, "e");
                 Expression? filter = null;
 
-                // Filtro: e => EF.Property<bool>(e, "Active") == true
-                var isActiveProp = clrType.GetProperty("Active");
-                if (isActiveProp is not null && isActiveProp.PropertyType == typeof(bool))
+                // FILTRO: Active == true
+                var activeProp = clrType.GetProperty("Active");
+                if (activeProp is not null && activeProp.PropertyType == typeof(bool))
                 {
-                    var activeProperty = Expression.Call(
+                    var activeAttr = Expression.Call(
                         typeof(EF).GetMethod("Property")!.MakeGenericMethod(typeof(bool)),
                         parameter,
                         Expression.Constant("Active"));
 
-                    var activeComparison = Expression.Equal(activeProperty, Expression.Constant(true));
-                    filter = activeComparison;
+                    var activeFilter = Expression.Equal(activeAttr, Expression.Constant(true));
+                    filter = activeFilter;
                 }
 
-                // Filtro de SchoolId
+                // FILTRO: SchoolId == CurrentUser.SchoolId
                 if (schoolEntityType.IsAssignableFrom(clrType))
                 {
-                    var schoolIdProperty = Expression.Call(
+                    var schoolIdAttr = Expression.Call(
                         typeof(EF).GetMethod("Property")!.MakeGenericMethod(typeof(long)),
                         parameter,
                         Expression.Constant("SchoolId"));
 
                     var currentSchoolId = Expression.Property(
                         Expression.Constant(currentUserService),
-                        nameof(ICurrentUserService.SchoolId)
-                    );
+                        nameof(ICurrentUserService.SchoolId));
 
-                    var schoolComparison = Expression.Equal(schoolIdProperty, currentSchoolId);
+                    var schoolFilter = Expression.Equal(schoolIdAttr, currentSchoolId);
 
                     filter = filter is not null
-                        ? Expression.AndAlso(filter, schoolComparison)
-                        : schoolComparison;
+                        ? Expression.AndAlso(filter, schoolFilter)
+                        : schoolFilter;
                 }
 
-                // Se tiver algum filtro, aplica
-                if (filter is not null)
+                // APLICA O FILTRO
+                if (filter != null)
                 {
-                    // Adiciona condição: !DisableGlobalFilters && (filtro original)
-                    var disableFiltersProp = Expression.Property(
-                        Expression.Constant(this),
-                        nameof(InventarioEscolarProDBContext.DisableGlobalFilters)
-                    );
-
-                    var notDisabled = Expression.Equal(disableFiltersProp, Expression.Constant(false));
-                    var combined = Expression.AndAlso(notDisabled, filter);
-
-                    var lambda = Expression.Lambda(combined, parameter);
+                    var lambda = Expression.Lambda(filter, parameter);
                     modelBuilder.Entity(clrType).HasQueryFilter(lambda);
                 }
             }
