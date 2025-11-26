@@ -13,8 +13,12 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
         {
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<InventarioEscolarProDBContext>();
+            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
+
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
 
             await context.Database.MigrateAsync();
 
