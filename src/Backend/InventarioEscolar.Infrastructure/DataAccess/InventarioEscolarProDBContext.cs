@@ -7,19 +7,10 @@ using System.Linq.Expressions;
 
 namespace InventarioEscolar.Infrastructure.DataAccess
 {
-    public class InventarioEscolarProDBContext
-        : IdentityDbContext<ApplicationUser, ApplicationRole, long>
+    public class InventarioEscolarProDBContext(
+        DbContextOptions<InventarioEscolarProDBContext> options,
+        ICurrentUserService currentUserService) : IdentityDbContext<ApplicationUser, ApplicationRole, long>(options)
     {
-        private readonly ICurrentUserService _currentUserService;
-
-        public InventarioEscolarProDBContext(
-            DbContextOptions<InventarioEscolarProDBContext> options,
-            ICurrentUserService currentUserService)
-            : base(options)
-        {
-            _currentUserService = currentUserService;
-        }
-
         public DbSet<Asset> Assets { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<RoomLocation> RoomLocations { get; set; }
@@ -30,8 +21,7 @@ namespace InventarioEscolar.Infrastructure.DataAccess
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfigurationsFromAssembly(
-                typeof(InventarioEscolarProDBContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(InventarioEscolarProDBContext).Assembly);
 
             var schoolEntityType = typeof(ISchoolEntity);
 
@@ -45,49 +35,46 @@ namespace InventarioEscolar.Infrastructure.DataAccess
                 var parameter = Expression.Parameter(clrType, "e");
                 Expression? filter = null;
 
-                // FILTRO Active == true
-                var activeProp = clrType.GetProperty("Active");
-                if (activeProp is not null && activeProp.PropertyType == typeof(bool))
+                // Filtro: e => EF.Property<bool>(e, "Active") == true
+                var isActiveProp = clrType.GetProperty("Active");
+                if (isActiveProp is not null && isActiveProp.PropertyType == typeof(bool))
                 {
-                    var activeAttr = Expression.Call(
+                    var activeProperty = Expression.Call(
                         typeof(EF).GetMethod("Property")!.MakeGenericMethod(typeof(bool)),
                         parameter,
                         Expression.Constant("Active"));
 
-                    var activeFilter = Expression.Equal(activeAttr, Expression.Constant(true));
-                    filter = activeFilter;
+                    var activeComparison = Expression.Equal(activeProperty, Expression.Constant(true));
+                    filter = activeComparison;
                 }
 
-                // FILTRO SchoolId
+                // Filtro de SchoolId
                 if (schoolEntityType.IsAssignableFrom(clrType))
                 {
-                    var schoolIdAttr = Expression.Call(
+                    var schoolIdProperty = Expression.Call(
                         typeof(EF).GetMethod("Property")!.MakeGenericMethod(typeof(long)),
                         parameter,
                         Expression.Constant("SchoolId"));
 
-                    var currentSchoolId = Expression.Constant(_currentUserService.SchoolId);
+                    var currentSchoolId = Expression.Property(
+                        Expression.Constant(currentUserService),
+                        nameof(ICurrentUserService.SchoolId)
+                    );
 
-                    var schoolFilter = Expression.Equal(schoolIdAttr, currentSchoolId);
+                    var schoolComparison = Expression.Equal(schoolIdProperty, currentSchoolId);
 
                     filter = filter is not null
-                        ? Expression.AndAlso(filter, schoolFilter)
-                        : schoolFilter;
+                        ? Expression.AndAlso(filter, schoolComparison)
+                        : schoolComparison;
                 }
 
-                if (filter != null)
+                // Se tiver algum filtro, aplica
+                if (filter is not null)
                 {
                     var lambda = Expression.Lambda(filter, parameter);
                     modelBuilder.Entity(clrType).HasQueryFilter(lambda);
                 }
             }
-
-            // FILTRO DO APPLICATIONUSER
-            modelBuilder.Entity<ApplicationUser>()
-                .HasQueryFilter(u =>
-                    !_currentUserService.IsAuthenticated ||
-                    u.SchoolId == _currentUserService.SchoolId
-                );
         }
     }
 }
