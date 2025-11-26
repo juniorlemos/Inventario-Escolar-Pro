@@ -17,6 +17,7 @@ namespace InventarioEscolar.Infrastructure.DataAccess
         public DbSet<School> Schools { get; set; }
         public DbSet<AssetMovement> AssetMovements { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public bool DisableGlobalFilters { get; set; } = false;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -71,7 +72,16 @@ namespace InventarioEscolar.Infrastructure.DataAccess
                 // Se tiver algum filtro, aplica
                 if (filter is not null)
                 {
-                    var lambda = Expression.Lambda(filter, parameter);
+                    // Adiciona condição: !DisableGlobalFilters && (filtro original)
+                    var disableFiltersProp = Expression.Property(
+                        Expression.Constant(this),
+                        nameof(InventarioEscolarProDBContext.DisableGlobalFilters)
+                    );
+
+                    var notDisabled = Expression.Equal(disableFiltersProp, Expression.Constant(false));
+                    var combined = Expression.AndAlso(notDisabled, filter);
+
+                    var lambda = Expression.Lambda(combined, parameter);
                     modelBuilder.Entity(clrType).HasQueryFilter(lambda);
                 }
             }

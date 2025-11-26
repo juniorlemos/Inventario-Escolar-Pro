@@ -13,7 +13,8 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
         {
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<InventarioEscolarProDBContext>();
-            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
+            context.DisableGlobalFilters = true;
 
 
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
