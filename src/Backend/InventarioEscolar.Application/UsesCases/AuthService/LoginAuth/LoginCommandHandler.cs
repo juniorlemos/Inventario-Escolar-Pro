@@ -31,7 +31,7 @@ namespace InventarioEscolar.Application.UsesCases.AuthService.LoginAuth
             if (!result.Succeeded)
                 throw new UnauthorizedException("Usuário ou senha inválidos.");
 
-            var accessToken = jwtTokenGenerator.GenerateToken(user);
+            var accessToken = await jwtTokenGenerator.GenerateToken(user);
 
             var refreshToken = await refreshTokenService.GenerateRefreshToken(user);
 

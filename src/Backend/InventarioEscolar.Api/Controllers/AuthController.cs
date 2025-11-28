@@ -18,6 +18,7 @@ namespace InventarioEscolar.Api.Controllers
     public class AuthController(IMediator mediator) : InventarioApiBaseController
     {
         [HttpPost("register")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
@@ -69,7 +70,7 @@ namespace InventarioEscolar.Api.Controllers
             if (refreshToken == null || !refreshToken.IsActive)
                 return Unauthorized("Refresh token inválido ou expirado.");
 
-            var newAccessToken = tokenService.GenerateToken(refreshToken.User);
+            var newAccessToken = await tokenService.GenerateToken(refreshToken.User);
 
             var newRefreshToken = await refreshTokenService.GenerateRefreshToken(refreshToken.User);
 

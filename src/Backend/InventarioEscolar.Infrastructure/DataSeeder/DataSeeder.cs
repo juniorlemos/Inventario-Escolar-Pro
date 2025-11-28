@@ -100,7 +100,6 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                     new RoomLocation { Name = "Depósito de Materiais", Building = "Bloco H", Description = "Área destinada ao armazenamento de equipamentos e materiais.", School = escola }
                 };
 
-                await context.Schools.AddAsync(escola);
                 await context.Categories.AddRangeAsync(categorias);
                 await context.RoomLocations.AddRangeAsync(salas);
                 await context.SaveChangesAsync();

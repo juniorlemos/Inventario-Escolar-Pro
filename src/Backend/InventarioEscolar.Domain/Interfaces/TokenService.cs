@@ -4,6 +4,6 @@ namespace InventarioEscolar.Domain.Interfaces
 {
     public interface ITokenService
     {
-        string GenerateToken(ApplicationUser user);
+        Task<string> GenerateToken(ApplicationUser user);
     }
 }
