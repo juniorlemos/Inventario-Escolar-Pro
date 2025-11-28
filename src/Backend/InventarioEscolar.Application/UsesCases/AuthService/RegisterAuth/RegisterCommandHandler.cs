@@ -61,6 +61,8 @@ namespace InventarioEscolar.Application.UsesCases.AuthService.RegisterAuth
                
                 if (!result.Succeeded)
                     throw new BusinessException("Erro ao criar usuário: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+               
+                await userManager.AddToRoleAsync(user, "User");
             });
 
             return Unit.Value;

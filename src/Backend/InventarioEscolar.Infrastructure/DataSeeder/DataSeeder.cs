@@ -37,7 +37,7 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                 await context.Schools.AddAsync(escola);
                 await context.SaveChangesAsync();
 
-                var user = new ApplicationUser
+                var adminUser = new ApplicationUser
                 {
                     UserName = "admin@escola.com",
                     Email = "admin@escola.com",
@@ -46,7 +46,7 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                     School = escola
                 };
 
-                var result = await userManager.CreateAsync(user, "Admin@123");
+                var result = await userManager.CreateAsync(adminUser, "Admin@123");
 
                 if (result.Succeeded)
                 {
@@ -59,7 +59,16 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                         });
                     }
 
-                    await userManager.AddToRoleAsync(user, "Admin");
+                    if (!await roleManager.RoleExistsAsync("User"))
+                    {
+                        await roleManager.CreateAsync(new ApplicationRole
+                        {
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
+                    }
+
+                    await userManager.AddToRoleAsync(adminUser, "Admin");
                 }
                 // Categorias
                 var categorias = new[]
@@ -172,9 +181,6 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
                 await context.AssetMovements.AddRangeAsync(movimentacoes);
                 await context.SaveChangesAsync();
             }
-
-       
-      
         }
 
     }
