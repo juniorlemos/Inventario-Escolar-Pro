@@ -366,6 +366,8 @@ src/Backend/InventarioEscolar.Api/appsettings.json
 src/Backend/InventarioEscolar.Api/appsettings.*.json
 src/Backend/InventarioEscolar.Api/Secrets/
 EscolarInventarioApp/
+.env
+
 
 
 

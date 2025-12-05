@@ -1,13 +1,12 @@
-
 services:
   postgres:
     image: postgres:16
     container_name: inventario_postgres
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: INVENTARIOESCOLAR
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
@@ -23,8 +22,8 @@ services:
     depends_on:
       - postgres
     environment:
-      ASPNETCORE_ENVIRONMENT: "Development"
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=INVENTARIOESCOLAR;Username=postgres;Password=123456"
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ConnectionStrings__DefaultConnection: ${CONNECTION_STRING}
     ports:
       - "8080:8080"
     networks:
