@@ -15,7 +15,7 @@ Pensado para atender demandas reais da rotina escolar, o sistema reduz perdas, f
 - 👤 **Gestão de Usuários (Microsoft Identity)**  
   Autenticação e autorização com roles  
   Login via JWT  
-  Acesso privilegiado para administradores
+  Acesso privilegiado para administradores  
   Recuperação de senha por email  
 
 - 📦 **Cadastro de Itens**  
