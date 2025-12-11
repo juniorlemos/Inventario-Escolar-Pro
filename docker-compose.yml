@@ -3,6 +3,8 @@ services:
     image: postgres:16
     container_name: inventario_postgres
     restart: always
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -21,6 +23,8 @@ services:
     container_name: inventario_api
     depends_on:
       - postgres
+    env_file:
+      - .env
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
       ConnectionStrings__DefaultConnection: ${CONNECTION_STRING}
@@ -43,6 +47,7 @@ services:
 
 networks:
   inventario_net:
+
 
 volumes:
   postgres_data:

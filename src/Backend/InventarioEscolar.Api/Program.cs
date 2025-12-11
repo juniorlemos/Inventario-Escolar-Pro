@@ -7,7 +7,10 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 LoggerConfigurationFactory.ConfigureSerilog(builder);
+builder.Host.UseSerilog();
+
 
 builder.Services.AddCors(options =>
 {
@@ -22,11 +25,12 @@ builder.Services.AddCors(options =>
 
     options.AddPolicy("DevCors", policy =>
     {
-        policy.AllowAnyOrigin()  
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
+
 
 builder.Services.AddControllers(options =>
 {
@@ -34,27 +38,41 @@ builder.Services.AddControllers(options =>
 })
 .AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-    options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    options.JsonSerializerOptions.ReferenceHandler =
+        System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+
+    options.JsonSerializerOptions.DefaultIgnoreCondition =
+        System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+
+    options.JsonSerializerOptions.Converters.Add(
+        new System.Text.Json.Serialization.JsonStringEnumConverter()
+    );
 });
 
+
 builder.Services.AddOpenApi();
-builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddSwaggerGen();
-builder.Services.AddMvc(options => options.Filters.Add(typeof(ExceptionFilter)));
+
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+builder.Services.AddMvc(options =>
+{
+    options.Filters.Add(typeof(ExceptionFilter));
+});
+
+
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Host.UseSerilog();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 
 var app = builder.Build();
+
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
+
     app.UseCors("DevCors");
 }
 else
@@ -69,8 +87,10 @@ using (var scope = app.Services.CreateScope())
     await DataSeeder.SeedDatabaseAsync(services);
 }
 
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
-await app.RunAsync(); 
+await app.RunAsync();
