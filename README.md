@@ -16,7 +16,7 @@ Pensado para atender demandas reais da rotina escolar, o sistema reduz perdas, f
   Autenticação e autorização com roles  
   Login via JWT  
   Acesso privilegiado para administradores  
-  Recuperação de senha por email  
+  Recuperação de senha por email (via Brevo)  
 
 - 📦 **Cadastro de Itens**  
   Registro completo de equipamentos e materiais  
