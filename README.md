@@ -15,7 +15,8 @@ Pensado para atender demandas reais da rotina escolar, o sistema reduz perdas, f
 - 👤 **Gestão de Usuários (Microsoft Identity)**  
   Autenticação e autorização com roles  
   Login via JWT  
-  Acesso privilegiado para administradores  
+  Acesso privilegiado para administradores
+  Recuperação de senha por email  
 
 - 📦 **Cadastro de Itens**  
   Registro completo de equipamentos e materiais  
@@ -104,3 +105,8 @@ docker compose up -d
 
 # 4️⃣ Acessar a aplicação
 http://localhost:4200
+
+## 📬 Contato e Sugestões
+Se você tiver qualquer dúvida, encontrar algum problema ou quiser sugerir melhorias para o **Inventário-360**, fique à vontade para entrar em contato comigo.
+
+Toda contribuição é bem-vinda! 🚀
