@@ -10,7 +10,7 @@ namespace InventarioEscolar.Infrastructure.Extensions
         }
         public static string ConnectionStringPostgres(this IConfiguration configuration)
         {
-            return configuration.GetConnectionString("ConnectionPostgres")!;
+            return configuration.GetConnectionString("DefaultConnection")!;
         }
     }
 }
