@@ -78,7 +78,7 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseHttpsRedirection();
-    app.UseCors("AllowSpecificOrigins");
+    app.UseCors("DevCors");
 }
 
 using (var scope = app.Services.CreateScope())
