@@ -16,7 +16,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("https://inventario360-front.onrender.com")
+        policy.WithOrigins("https://inventario360-front.onrender.com",
+             "http://localhost",
+             "http://frontend",
+             "http://inventario_front")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials()
@@ -78,7 +81,7 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseHttpsRedirection();
-    app.UseCors("DevCors");
+    app.UseCors("AllowSpecificOrigins");
 }
 
 using (var scope = app.Services.CreateScope())
