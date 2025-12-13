@@ -39,8 +39,8 @@ namespace InventarioEscolar.Infrastructure.DataSeeder
 
                 var adminUser = new ApplicationUser
                 {
-                    UserName = "juniorlemosoi@gmail.com",
-                    Email = "juniorlemosoi@gmail.com",
+                    UserName = "admin@escola.com",
+                    Email = "admin@escola.com",
                     EmailConfirmed = true,
                     SchoolId = escola.Id,
                     School = escola
