@@ -76,7 +76,12 @@ namespace InventarioEscolar.Infrastructure
 
             services.AddDbContext<InventarioEscolarProDBContext>(dbContextOptions =>
             {
-                dbContextOptions.UseNpgsql(connectionString);
+                dbContextOptions.UseNpgsql(
+    connectionString,
+    npgsql => npgsql.EnableRetryOnFailure(
+        maxRetryCount: 5,
+        maxRetryDelay: TimeSpan.FromSeconds(5),
+        errorCodesToAdd: null));
             });
         }
         private static void AddRepositories(IServiceCollection services)
