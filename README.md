@@ -92,19 +92,28 @@ Senha: `Admin@123`
 ---
 
 ## 📥 Como Rodar Localmente com Docker
+
 ```bash
 # 1️⃣ Clonar o repositório
-git clone [https://github.com/juniorlemos/inventario-escolar.git]
+git clone https://github.com/juniorlemos/inventario-escolar.git
 cd inventario-escolar
 
 # 2️⃣ Criar o arquivo .env
 cp .env.example .env
+# 👉 Preencha as variáveis de ambiente necessárias (DB, JWT_SECRET, PORT etc.)
 
 # 3️⃣ Subir os containers
 docker compose up -d
 
-# 4️⃣ Acessar a aplicação
-http://localhost:4200
+🌐 Acessar a aplicação
+Front-end: http://localhost:4200
+
+API (Swagger): http://localhost:8080/swagger
+
+🔑 Credenciais padrão
+Login: admin@escola.com
+Senha: Admin@123
+
 
 ## 📬 Contato e Sugestões
 Se você tiver qualquer dúvida, encontrar algum problema ou quiser sugerir melhorias para o **Inventário-360**, fique à vontade para entrar em contato comigo.
