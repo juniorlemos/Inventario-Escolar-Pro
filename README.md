@@ -106,7 +106,7 @@ cp .env.example .env
 docker compose up -d
 
 🌐 Acessar a aplicação
-Front-end: http://localhost:4200
+Front-end: http://localhost
 
 API (Swagger): http://localhost:8080/swagger
 
