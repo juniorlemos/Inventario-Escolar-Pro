@@ -100,7 +100,7 @@ cd inventario-escolar
 
 # 2️⃣ Criar o arquivo .env
 cp .env.example .env
-# 👉 Preencha as variáveis de ambiente necessárias (DB, JWT_SECRET, PORT etc.)
+# 👉 Preencha as variáveis de ambiente necessárias (DB, JWT_SECRET, PORT etc.) e no frontend    
 
 # 3️⃣ Subir os containers
 docker compose up -d
