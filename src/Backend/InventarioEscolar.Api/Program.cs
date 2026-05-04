@@ -65,6 +65,7 @@ builder.Services.AddApplication(builder.Configuration);
 
 var app = builder.Build();
 app.MapMethods("{*path}", new[] { "OPTIONS" }, () => Results.Ok());
+app.MapGet("/teste", () => "API NOVA");
 
 app.Use(async (context, next) =>
 {
@@ -91,7 +92,7 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseCors("AllowSpecificOrigins");
-    //app.UseHttpsRedirection();
+    app.UseHttpsRedirection();
     
 }
 
