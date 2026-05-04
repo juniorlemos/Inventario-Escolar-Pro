@@ -18,8 +18,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins("https://inventario360-front.onrender.com")
               .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
+              .AllowAnyHeader();
+             
     });
 
     options.AddPolicy("DevCors", policy =>
@@ -65,6 +65,19 @@ builder.Services.AddApplication(builder.Configuration);
 
 var app = builder.Build();
 
+app.Use(async (context, next) =>
+{
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.Headers["Access-Control-Allow-Origin"] = "https://inventario360-front.onrender.com";
+        context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
+        context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+        context.Response.StatusCode = 200;
+        return;
+    }
+
+    await next();
+});
 
 if (app.Environment.IsDevelopment())
 {
@@ -77,7 +90,7 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseCors("AllowSpecificOrigins");
-    app.UseHttpsRedirection();
+    //app.UseHttpsRedirection();
     
 }
 
