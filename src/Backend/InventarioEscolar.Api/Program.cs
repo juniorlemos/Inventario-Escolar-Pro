@@ -64,6 +64,7 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 
 var app = builder.Build();
+app.MapMethods("{*path}", new[] { "OPTIONS" }, () => Results.Ok());
 
 app.Use(async (context, next) =>
 {
