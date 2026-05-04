@@ -19,7 +19,6 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("https://inventario360-front.onrender.com")
               .AllowAnyMethod()
               .AllowAnyHeader();
-             
     });
 
     options.AddPolicy("DevCors", policy =>
@@ -64,22 +63,7 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 
 var app = builder.Build();
-app.MapMethods("{*path}", new[] { "OPTIONS" }, () => Results.Ok());
-app.MapGet("/teste", () => "API NOVA");
 
-app.Use(async (context, next) =>
-{
-    if (context.Request.Method == "OPTIONS")
-    {
-        context.Response.Headers["Access-Control-Allow-Origin"] = "https://inventario360-front.onrender.com";
-        context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
-        context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-        context.Response.StatusCode = 200;
-        return;
-    }
-
-    await next();
-});
 
 if (app.Environment.IsDevelopment())
 {
@@ -91,9 +75,8 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseCors("AllowSpecificOrigins");
     app.UseHttpsRedirection();
-    
+    app.UseCors("AllowSpecificOrigins");
 }
 
 using (var scope = app.Services.CreateScope())
