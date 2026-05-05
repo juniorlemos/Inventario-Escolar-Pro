@@ -16,14 +16,14 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins("https://inventario360-front.onrender.com")
               .AllowAnyHeader()
-              .AllowAnyMethod(); 
+              .AllowAnyMethod();
     });
 
     options.AddPolicy("DevCors", policy =>
     {
         policy.AllowAnyOrigin()
               .AllowAnyHeader()
-              .AllowAnyMethod(); 
+              .AllowAnyMethod();
     });
 });
 
@@ -73,12 +73,8 @@ else
     app.UseCors("AllowSpecificOrigins");
 }
 
-
 app.UseAuthentication();
 app.UseAuthorization();
-
-
-app.MapMethods("{*path}", new[] { "OPTIONS" }, () => Results.Ok());
 
 using (var scope = app.Services.CreateScope())
 {
