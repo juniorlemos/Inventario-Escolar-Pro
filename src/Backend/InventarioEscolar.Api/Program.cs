@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 LoggerConfigurationFactory.ConfigureSerilog(builder);
 builder.Host.UseSerilog();
 
+// Configuração global de CORS
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -52,6 +53,7 @@ builder.Services.AddApplication(builder.Configuration);
 
 var app = builder.Build();
 
+// Sempre aplica CORS, sem if/else
 app.UseHttpsRedirection();
 app.UseCors();
 
