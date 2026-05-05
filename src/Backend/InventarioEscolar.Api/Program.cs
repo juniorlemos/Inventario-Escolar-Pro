@@ -12,16 +12,9 @@ builder.Host.UseSerilog();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigins", policy =>
+    options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins("https://inventario360-front.onrender.com")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-
-    options.AddPolicy("DevCors", policy =>
-    {
-        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -59,19 +52,8 @@ builder.Services.AddApplication(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-
-    app.UseCors("DevCors");
-}
-else
-{
-    app.UseHttpsRedirection();
-    app.UseCors("AllowSpecificOrigins");
-}
+app.UseHttpsRedirection();
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
