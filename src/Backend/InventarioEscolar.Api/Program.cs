@@ -15,7 +15,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("https://inventario360-front.onrender.com")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
