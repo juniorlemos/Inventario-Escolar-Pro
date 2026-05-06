@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 
 export const NAV_ITEMS = [
-  { routeLink: '/dashboard', icon: 'fal fa-home', label: 'Inicio', showInHeader: false },
-  { routeLink: '/asset', icon: 'fal fa-box-open', label: 'Inventario', showInHeader: true },
-  { routeLink: '/roomlocation', icon: 'fal fa-map-marker', label: 'Localizações', showInHeader: false },
-  { routeLink: '/category', icon: 'fal fa-tags', label: 'Categorias', showInHeader: false },
-  { routeLink: '/assetmovement', icon: 'fal fa-exchange', label: 'Movimentações', showInHeader: true },
-  { routeLink: '/report', icon: 'fal fa-file', label: 'Relatórios', showInHeader: true },
-  { routeLink: '/settings', icon: 'fal fa-user', label: 'Perfil', showInHeader: false },
-  { action: 'logout', icon: 'fal fa-sign-out', label: 'Sair', showInHeader: false },
+  { routeLink: '/dashboard', icon: 'fa-solid fa-home', label: 'Inicio', showInHeader: false },
+  { routeLink: '/asset', icon: 'fa-solid fa-box-open', label: 'Inventario', showInHeader: true },
+  { routeLink: '/roomlocation', icon: 'fa-solid fa-location-dot', label: 'Localizações', showInHeader: false },
+  { routeLink: '/category', icon: 'fa-solid fa-tags', label: 'Categorias', showInHeader: false },
+  { routeLink: '/assetmovement', icon: 'fa-solid fa-right-left', label: 'Movimentações', showInHeader: true },
+  { routeLink: '/report', icon: 'fa-solid fa-file', label: 'Relatórios', showInHeader: true },
+  { routeLink: '/settings', icon: 'fa-solid fa-user', label: 'Perfil', showInHeader: false },
+  { action: 'logout', icon: 'fa-solid fa-right-from-bracket', label: 'Sair', showInHeader: false },
 ];
-
 @Injectable({
   providedIn: 'root'
 })
