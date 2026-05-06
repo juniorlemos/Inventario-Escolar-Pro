@@ -15,7 +15,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("https://inventario360-front.onrender.com")
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -53,9 +53,8 @@ builder.Services.AddApplication(builder.Configuration);
 
 var app = builder.Build();
 
-// Sempre aplica CORS, sem if/else
 app.UseHttpsRedirection();
-app.UseCors();
+
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -65,7 +64,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     await DataSeeder.SeedDatabaseAsync(services);
 }
-
+app.UseCors();
 app.MapControllers();
 
 await app.RunAsync();
