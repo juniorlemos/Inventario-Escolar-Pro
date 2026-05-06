@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiURL: 'https://inventario360-lqe4.onrender.com/',
+  apiURL: 'https://inventarioescolarapi-latest.onrender.com/',
 };
