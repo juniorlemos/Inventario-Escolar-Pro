@@ -55,6 +55,7 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -64,7 +65,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     await DataSeeder.SeedDatabaseAsync(services);
 }
-app.UseCors();
+
 app.MapControllers();
 
 await app.RunAsync();
