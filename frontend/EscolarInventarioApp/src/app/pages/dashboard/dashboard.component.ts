@@ -17,50 +17,49 @@ export class DashboardComponent implements OnInit {
   school?: School;
 
   dashboardData: DashboardData = {
-    inventario: {
-      titulo: 'Inventário',
-      valor: 0,
-      icone: 'fal fa-box-open',
-      cor: 'primary',
-      rota: '/asset'
-    },
-    movimentacoes: {
-      titulo: 'Movimentações',
-      valor: 0,
-      icone: 'fal fa-exchange',
-      cor: 'success',
-      rota: '/assetmovement'
-    },
-    localizacoes: {
-      titulo: 'Loalizações',
-      valor: 0,
-      icone: 'fal fa-map-marker',
-      cor: 'success',
-      rota: '/roomlocation'
-    },
-    categorias: {
-      titulo: 'Categorias',
-      valor: 0,
-      icone: 'fal fa-tags',
-      cor: 'success',
-      rota: '/category'
-    },
-    relatorios: {
-      titulo: 'Relatórios',
-      valor: 0,
-      icone: 'fal fa-file-alt',
-      cor: 'warning',
-      rota: '/report'
-    },
-    perfil: {
-      titulo: 'Perfil',
-      valor: 0,
-      icone: 'fal fa-user',
-      cor: 'info',
-      rota: '/settings'
-    }
-  };
-
+  inventario: {
+    titulo: 'Inventário',
+    valor: 0,
+    icone: 'fa-solid fa-boxes-stacked',
+    cor: 'primary',
+    rota: '/asset'
+  },
+  movimentacoes: {
+    titulo: 'Movimentações',
+    valor: 0,
+    icone: 'fa-solid fa-arrow-right-arrow-left',
+    cor: 'success',
+    rota: '/assetmovement'
+  },
+  localizacoes: {
+    titulo: 'Localizações',
+    valor: 0,
+    icone: 'fa-solid fa-location-dot',
+    cor: 'info',
+    rota: '/roomlocation'
+  },
+  categorias: {
+    titulo: 'Categorias',
+    valor: 0,
+    icone: 'fa-solid fa-layer-group',
+    cor: 'secondary',
+    rota: '/category'
+  },
+  relatorios: {
+    titulo: 'Relatórios',
+    valor: 0,
+    icone: 'fa-solid fa-chart-column',
+    cor: 'warning',
+    rota: '/report'
+  },
+  perfil: {
+    titulo: 'Perfil',
+    valor: 0,
+    icone: 'fa-solid fa-circle-user',
+    cor: 'dark',
+    rota: '/settings'
+  }
+};
   constructor(
     private router: Router,
     private schoolService: SchoolService,
